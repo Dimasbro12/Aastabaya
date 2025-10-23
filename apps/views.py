@@ -1,9 +1,18 @@
-from re import template
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
+from .services.API_service import get_news_data
+from .services.API_service import get_inpographic_data
+from .services.API_service import get_publication_data
 
 
 def apps(request):
-    template = loader.get_template('index.html')
-    return HttpResponse(template.render())
+    # Fetch data directly from the service functions
+    dataNews = get_news_data()
+    dataInpographic = get_inpographic_data()
+    dataPublication = get_publication_data()
+
+    context = {
+        'dataNews': dataNews,
+        'dataInpographic': dataInpographic,
+        'dataPublication': dataPublication,
+    }
+    return render(request, 'index.html', context)
