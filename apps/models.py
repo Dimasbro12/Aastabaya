@@ -1,7 +1,8 @@
-from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-class User(models.Model):
-    username = models.CharField(max_length=250)
-    password = models.CharField(max_length=250)
-    email = models.CharField(max_length=250)
+class User(AbstractUser):
+    """
+    Custom user model that inherits from Django's AbstractUser.
+    This provides all the necessary fields and methods for authentication.
+    """
+    pass
