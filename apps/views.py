@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from re import A
+from django.shortcuts import get_object_or_404, render
 from .services.API_service import get_news_data
 from .services.API_service import get_inpographic_data
 from .services.API_service import get_publication_data
@@ -6,13 +7,14 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import serializers
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer
-from .models import User
+from .serializers import UserSerializer, DataSerializers
+from .models import User, Data
 
 @api_view(['POST'])
 def register_user(request):
@@ -56,6 +58,59 @@ def user_logout(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+def ApiOverview(request):
+    api_urls = {
+        'all_items' : '/',
+        'Search by Category' : '/?category=category_name',
+        'Search by Subcategory' : '/?subcategory=category_name',
+        'Add': '/create',
+        'Update': '/update/pk',
+        'Delete': '/item/pk/delete'
+    }
+    return Response(api_urls)
+
+
+@api_view(['POST'])
+def add_data (request):
+    data = DataSerializers(data=request.data)
+    if Data.objects.filter(**request.data).exists():
+        raise serializers.ValidationError('This data already exists')
+    if data.is_valid():
+        data.save()
+        return Response(data.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def view_data (request):
+    if request.query_params:
+        data = Data.objects.filter(**request.query_params.dict())
+    else:
+        data = Data.objects.all()
+    if data:
+        serializer = DataSerializers(data, many=True)
+        return Response(serializer.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+def update_data (request, pk):
+    datas = Data.objects.get(pk=pk)
+    data = DataSerializers(instance=datas, data=request.data)
+    if data.is_valid():
+        data.save()
+        return Response(data.data)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['DELETE'])
+def delete_data (request, pk):
+    data = get_object_or_404(data, pk=pk)
+    data.delete()
+    return Response(status=status.HTTP_202_ACCEPTED)
+    
+    
 def apps(request):
     # Fetch data directly from the service functions
     dataNews = get_news_data()
@@ -68,3 +123,5 @@ def apps(request):
         'dataPublication': dataPublication,
     }
     return render(request, 'index.html', context)
+
+

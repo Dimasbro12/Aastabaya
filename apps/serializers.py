@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Data
+from django.db.models import fields
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,3 +15,10 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+    
+class DataSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Data
+        fields = ('data_name', 'data_description', 'data_image', 'data_view_count', 'data_created_at')
+        
+    
