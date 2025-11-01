@@ -1,21 +1,72 @@
-from re import A
 from django.shortcuts import get_object_or_404, render
-from .services.API_service import get_news_data
-from .services.API_service import get_inpographic_data
-from .services.API_service import get_publication_data
+from .services.API_service import BPSInfographicService, BPSNewsService, BPSPublicationService
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import serializers
-from rest_framework import status
+from rest_framework import serializers, status, viewsets
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, DataSerializers
-from .models import User, Data
+from .serializers import UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
+from .models import User, Data, News, Infographic, Publication
 
+class NewsViewSet(viewsets.ModelViewSet):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+
+
+class InpographicViewSet(viewsets.ModelViewSet):
+    queryset = Infographic.objects.all()
+    serializer_class = InfographicSerializer
+
+class PublicationViewSet(viewsets.ModelViewSet):
+    queryset = Publication.objects.all()
+    serializer_class = PublicationSerializer
+
+@api_view(['GET'])
+def sync_bps_news(request):
+    try:
+        saved = BPSNewsService.sync_news()
+        return Response({
+            "status": "success",
+            "message": f"{saved} berita berhasil disinkronkan dari API BPS."
+        })
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e)
+        }, status=500)
+        
+@api_view(['GET'])
+def sync_bps_infographic(request):
+    try:
+        saved = BPSInfographicService.sync_infographic()
+        return Response({
+            "status": "success",
+            "message": f"{saved} infografis berhasil disinkronkan dari API BPS."
+        })
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e)
+        }, status=500)
+        
+@api_view(['GET'])
+def sync_bps_publication(request):
+    try:
+        saved = BPSPublicationService.sync_publication()
+        return Response({
+            "status": "success",
+            "message": f"{saved} publikasi berhasil disinkronkan dari API BPS."
+        })
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e)
+        }, status=500)
+        
+        
 @api_view(['POST'])
 def register_user(request):
     if request.method == 'POST':
@@ -106,16 +157,16 @@ def update_data (request, pk):
 
 @api_view(['DELETE'])
 def delete_data (request, pk):
-    data = get_object_or_404(data, pk=pk)
+    data = get_object_or_404(Data, pk=pk)
     data.delete()
     return Response(status=status.HTTP_202_ACCEPTED)
     
     
 def apps(request):
     # Fetch data directly from the service functions
-    dataNews = get_news_data()
-    dataInpographic = get_inpographic_data()
-    dataPublication = get_publication_data()
+    dataNews = News.objects.all()
+    dataInpographic = Infographic.objects.all()
+    dataPublication = Publication.objects.all()
 
     context = {
         'dataNews': dataNews,
@@ -123,5 +174,3 @@ def apps(request):
         'dataPublication': dataPublication,
     }
     return render(request, 'index.html', context)
-
-

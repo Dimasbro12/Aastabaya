@@ -12,4 +12,7 @@ urlpatterns = [
     path('all/', views.view_data, name="view_data"),
     path('update/<int:pk>/', views.update_data, name="update_data"),
     path('delete/<int:pk>/', views.delete_data, name="delete_data"),   
+    path('sync/news/', views.sync_bps_news, name='sync-bps-news'),
+    path('sync/infographics/', views.sync_bps_infographic, name='sync-bps-infographic'),
+    path('sync/publications/', views.sync_bps_publication, name='sync-bps-publication'),
 ]
