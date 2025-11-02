@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Astabaya - Sign Up</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Poppins", sans-serif;
+        text-align: center;
+        background: linear-gradient(135deg, #a0c3cfff, #a0c3cfff);
+        margin: 0;
+        padding: 50px;
+        color: white;
+      }
+
+      /* Container Box */
+      .container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        display: inline-block;
+        width: 350px;
+      }
+
+      h2 {
+        color: white;
+        margin-bottom: 15px;
+      }
+
+      /* Form Styles */
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+        background: rgba(249, 242, 242, 0.93);
+        color: rgb(30, 29, 29);
+      }
+
+      input::placeholder {
+        color: #a0c3cfff;
+      }
+
+      /* Button Styles */
+      button {
+        background: linear-gradient(90deg, #ff416c, #ff4b2b);
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+
+      button:hover {
+        transform: scale(1.05);
+        background: linear-gradient(90deg, #ff4b2b, #ff416c);
+      }
+
+      /* Password Error Message */
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+        display: none; /* Hidden by default */
+      }
+
+      /* Login Section */
+      .login-section {
+        margin-top: 20px;
+        font-size: 14px;
+      }
+
+      .login-btn {
+        display: inline-block;
+        margin-top: 10px;
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+
+      .login-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(90deg, #00f2fe, #4facfe);
+      }
+      img {
+        border-radius: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="{% static 'icon/LogoAstabaya-removebg-preview.png' %}" alt="Logo Astabaya" width="150" />
+      <h2>Create Your Account</h2>
+      <form id="signup-form">
+        {% csrf_token %}
+        <label for="username">Username</label>
+        <input type="text" name="username" placeholder="Username" required />
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="Email" required />
+        <label for="password1">Password</label>
+        <input type="password" name="password" placeholder="Password" required />
+        <p id="password-error" class="error-message">⚠️ Password must be at least 8 characters and not too common.</p>
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <!-- Login Section -->
+      <div class="login-section">
+        <p>Already have an account?</p>
+        <a href="{% url 'login' %}" class="login-btn">Login</a>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("signup-form").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Mencegah form dari submit default
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        const csrfToken = data.csrfmiddlewaretoken;
+
+        const passwordError = document.getElementById("password-error");
+        passwordError.style.display = "none"; // Sembunyikan pesan error sebelumnya
+
+        try {
+          const response = await fetch("{% url 'api-register' %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            // Jika registrasi berhasil (status 201 CREATED)
+            alert("Registration successful! Please log in.");
+            window.location.href = "{% url 'login' %}"; // Arahkan ke halaman login
+          } else {
+            // Jika ada error dari server
+            const errorData = await response.json();
+            const errorMessage = Object.values(errorData).flat().join("\n");
+            passwordError.textContent = `⚠️ ${errorMessage}`;
+            passwordError.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          passwordError.textContent = "⚠️ An unexpected error occurred. Please try again.";
+          passwordError.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>
