@@ -140,7 +140,7 @@
 
           if (response.ok) {
             localStorage.setItem("authToken", responseData.token); // Simpan token
-            window.location.href = "{% url 'index' %}"; // Arahkan ke halaman utama
+            window.location.href = "{% url 'dashboard' %}"; // Arahkan ke halaman utama
           } else {
             loginError.textContent = `⚠️ ${responseData.error || "Login failed."}`;
             loginError.style.display = "block";

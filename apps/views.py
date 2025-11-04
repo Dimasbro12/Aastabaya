@@ -183,3 +183,16 @@ def apps(request):
         'dataPublication': dataPublication,
     }
     return render(request, 'index.html', context)
+
+def dashboard(request):
+    # Fetch data directly from the service functions
+    dataNews = News.objects.all()
+    dataInpographic = Infographic.objects.all()
+    dataPublication = Publication.objects.all()
+
+    context = {
+        'dataNews': dataNews,
+        'dataInpographic': dataInpographic,
+        'dataPublication': dataPublication,
+    }
+    return render(request, 'dashboard/dashboard.html', context)

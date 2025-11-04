@@ -28,5 +28,5 @@ router.register(r'publications', PublicationViewSet, basename='publication')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.urls')),
-    path('api/', include(router.urls)),
+    path('api/v1/', include(router.urls)), # Changed to avoid conflict with other api paths
 ]
