@@ -186,6 +186,7 @@ def apps(request):
 
 def dashboard(request):
     # Fetch data directly from the service functions
+    
     dataNews = News.objects.all()
     dataInpographic = Infographic.objects.all()
     dataPublication = Publication.objects.all()

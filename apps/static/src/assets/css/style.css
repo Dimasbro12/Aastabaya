@@ -12509,7 +12509,7 @@ fieldset:disabled .btn {
   --bs-nav-link-padding-x: 1rem;
   --bs-nav-link-padding-y: 0.5rem;
   --bs-nav-link-font-weight: ;
-  --bs-nav-link-color: var(--bs-link-color);
+  --bs-nav-link-color: var(--bs-blue);
   --bs-nav-link-hover-color: var(--bs-link-hover-color);
   --bs-nav-link-disabled-color: var(--bs-secondary-color);
   display: flex;
@@ -24723,6 +24723,10 @@ table.dataTable tbody td.select-checkbox:after {
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease;
 }
+.page-body-wrapper {
+  padding-top: 60px;
+  /* navbar height */
+}
 .sidebar .nav {
   overflow: hidden;
   flex-wrap: nowrap;
@@ -24971,6 +24975,11 @@ table.dataTable tbody td.select-checkbox:after {
   }
   .sidebar-offcanvas.active {
     right: 0;
+  }
+}
+@media screen and (max-width: 991px) {
+  .sidebar-offcanvas {
+    z-index: 1045;
   }
 }
 /* Navbar */
