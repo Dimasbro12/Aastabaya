@@ -5,59 +5,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Astabaya - Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
     <style>
-      /* General Styles */
+      /* Gaya Kustom yang Tidak Ada di Bootstrap */
       body {
+        /* Menggabungkan gaya kustom background */
         font-family: "Poppins", sans-serif;
         text-align: center;
-        background: linear-gradient(135deg, #a0c3cfff, #a0c3cfff);
-        margin: 0;
-        padding: 50px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{% static 'img/background-login-register.jpg' %}") no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh; /* Agar mengisi seluruh tinggi viewport */
         color: white;
       }
 
-      /* Container Box */
-      .container {
+      /* Container Box kustom */
+      .custom-container {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
-        padding: 30px;
+        padding: 20px 40px;
         border-radius: 15px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        display: inline-block;
-        width: 350px;
       }
 
-      h2 {
-        color: white;
-        margin-bottom: 15px;
-      }
-
-      /* Form Styles */
-      form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      input,
-      select,
-      textarea {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        outline: none;
+      /* Gaya kustom untuk input agar sesuai dengan tampilan lama */
+      .form-control-custom {
         background: rgba(249, 242, 242, 0.93);
         color: rgb(30, 29, 29);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
       }
-
-      input::placeholder {
+      .form-control-custom::placeholder {
         color: #a0c3cfff;
       }
 
-      /* Button Styles */
-      button {
+      /* Gaya kustom untuk tombol Sign Up */
+      .btn-signup-custom {
         background: linear-gradient(90deg, #ff416c, #ff4b2b);
         color: white;
         padding: 12px;
@@ -69,69 +54,56 @@
         transition: 0.3s;
       }
 
-      button:hover {
+      .btn-signup-custom:hover {
         transform: scale(1.05);
         background: linear-gradient(90deg, #ff4b2b, #ff416c);
       }
 
-      /* Password Error Message */
-      .error-message {
-        color: red;
-        font-size: 14px;
-        margin-top: 5px;
-        display: none; /* Hidden by default */
-      }
-
-      /* Login Section */
-      .login-section {
-        margin-top: 20px;
-        font-size: 14px;
-      }
-
-      .login-btn {
-        display: inline-block;
-        margin-top: 10px;
+      /* Gaya kustom untuk tombol Login */
+      .btn-login-custom {
         background: linear-gradient(90deg, #4facfe, #00f2fe);
-        color: white;
-        padding: 10px 15px;
-        border-radius: 8px;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         font-weight: bold;
         text-decoration: none;
-        transition: 0.3s;
-      }
-
-      .login-btn:hover {
-        transform: scale(1.05);
-        background: linear-gradient(90deg, #00f2fe, #4facfe);
-      }
-      img {
-        border-radius: 20px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <img src="{% static 'icon/LogoAstabaya-removebg-preview.png' %}" alt="Logo Astabaya" width="150" />
-      <h2>Create Your Account</h2>
-      <form id="signup-form">
+
+  <body class="d-flex justify-content-center align-items-center">
+    <div class="custom-container w-100" style="max-width: 400px">
+      <img src="{% static 'icon/A-removebg-preview.png' %}" alt="Logo Astabaya" class="img-fluid mb-3" style="width: 250px; height: auto" />
+
+      <h2 class="text-white mb-4">Create Your Account</h2>
+
+      <form id="signup-form" class="d-flex flex-column gap-3">
         {% csrf_token %}
-        <label for="username">Username</label>
-        <input type="text" name="username" placeholder="Username" required />
-        <label for="email">Email</label>
-        <input type="email" name="email" placeholder="Email" required />
-        <label for="password1">Password</label>
-        <input type="password" name="password" placeholder="Password" required />
+        <div class="text-start">
+          <label for="username" class="form-label visually-hidden">Username</label>
+          <input type="text" name="username" placeholder="Username" required class="form-control form-control-custom" />
+        </div>
+
+        <div class="text-start">
+          <label for="email" class="form-label visually-hidden">Email</label>
+          <input type="email" name="email" placeholder="Email" required class="form-control form-control-custom" />
+        </div>
+
+        <div class="text-start">
+          <label for="password1" class="form-label visually-hidden">Password</label>
+          <input type="password" name="password" placeholder="Password" required class="form-control form-control-custom" />
+        </div>
+
         <p id="password-error" class="error-message">⚠️ Password must be at least 8 characters and not too common.</p>
-        <button type="submit">Sign Up</button>
+
+        <button type="submit" class="btn btn-signup-custom w-100 mt-2">Sign Up</button>
       </form>
 
-      <!-- Login Section -->
-      <div class="login-section">
-        <p>Already have an account?</p>
-        <a href="{% url 'login' %}" class="login-btn">Login</a>
+      <div class="login-section mt-4 pt-2 border-top border-secondary">
+        <p class="mb-2" style="font-size: 14px">Already have an account? <a href="{% url 'login' %}" class="btn-login-custom">Login</a></p>
       </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
     <script>
       document.getElementById("signup-form").addEventListener("submit", async function (event) {

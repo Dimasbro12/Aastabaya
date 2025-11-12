@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .services.API_service import BPSInfographicService, BPSNewsService, BPSPublicationService
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout, login as auth_login
 from rest_framework.response import Response
 from rest_framework import serializers, status, viewsets
 from django.core.exceptions import ObjectDoesNotExist
@@ -117,6 +117,24 @@ def user_logout(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return redirect('login')
+
+def logout_view(request):
+    """
+    Logout view that clears both token and session.
+    Accepts POST, GET and other methods and redirects to home.
+    """
+    # Delete token if the user has one
+    try:
+        if request.user.is_authenticated and hasattr(request.user, 'auth_token'):
+            request.user.auth_token.delete()
+    except Exception:
+        pass
+    
+    # Clear Django session
+    logout(request)
+    
+    # Redirect to home page
+    return redirect('index')
 
 @api_view(['GET'])
 def ApiOverview(request):

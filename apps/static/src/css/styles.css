@@ -1,0 +1,43 @@
+/* Override rules loaded after templatemo CSS */
+.main-banner {
+  padding: 90px 0 !important;
+}
+
+.main-banner h6 {
+  text-transform: none !important;
+}
+
+.main-banner .start-btn {
+  background: linear-gradient(90deg, #004080, #007bff) !important;
+  color: white !important;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  /* slide-in animation on page load */
+  transform: translateX(0);
+  animation: slideInFromLeft 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.35s both !important;
+}
+
+.main-banner .start-btn:hover {
+  background: linear-gradient(90deg, #002a5c, #0056b3) !important;
+  transform: scale(1.05);
+}
+
+/* keyframes for start-btn slide-in */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* class-triggered animation (used by JS to ensure it runs on first load) */
+.animate-start-btn {
+  animation: slideInFromLeft 0.8s cubic-bezier(.2,.8,.2,1) 0s both !important;
+}

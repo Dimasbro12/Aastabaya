@@ -139,8 +139,12 @@
           const responseData = await response.json();
 
           if (response.ok) {
-            localStorage.setItem("authToken", responseData.token); // Simpan token
-            window.location.href = "{% url 'dashboard' %}"; // Arahkan ke halaman utama
+            if (responseData.token) {
+              // API response - store token
+              localStorage.setItem("authToken", responseData.token);
+            }
+            // Redirect to dashboard (works for both API and form responses)
+            window.location.href = responseData.redirect || "{% url 'dashboard' %}";
           } else {
             loginError.textContent = `⚠️ ${responseData.error || "Login failed."}`;
             loginError.style.display = "block";
