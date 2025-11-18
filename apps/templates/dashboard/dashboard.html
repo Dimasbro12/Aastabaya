@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{% static 'src/assets/vendors/datatables.net-bs5/dataTables.bootstrap5.css' %}" />
     <link rel="stylesheet" href="{% static 'src/assets/vendors/ti-icons/css/themify-icons.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'src/assets/vendors/js/select.dataTables.min.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{% static 'src/assets/css/style.css' %}" />
@@ -54,18 +55,6 @@
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="icon-menu"></span>
           </button>
-          <ul class="navbar-nav mr-lg-2">
-            <li class="nav-item nav-search d-none d-lg-block">
-              <div class="input-group">
-                <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                  <span class="input-group-text" id="search">
-                    <i class="icon-search"></i>
-                  </span>
-                </div>
-                <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search" />
-              </div>
-            </li>
-          </ul>
           <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown">
               <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
@@ -144,19 +133,60 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-layout menu-icon"></i>
-                <span class="menu-title">UI Elements</span>
+              <a class="nav-link" data-bs-toggle="collapse" href="#ekonomi-keuangan" aria-expanded="false" aria-controls="ekonomi-keuangan">
+                <i class="bi bi-cash-coin menu-icon"></i>
+                <span class="menu-title">Ekonomi - Keuangan</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="ui-basic">
+              <div class="collapse" id="ekonomi-keuangan">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Buttons</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Dropdowns</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Typography</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Inflasi</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">PDRB</a></li>
                 </ul>
               </div>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#kemiskinan-ketenagakerjaan" aria-expanded="false" aria-controls="kemiskinan-ketenagakerjaan">
+                <i class="bi bi-people menu-icon"></i>
+                <span class="menu-title">Sosial - Ekonomi</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="kemiskinan-ketenagakerjaan">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Kemiskinan</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Ketenagakerjaan</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#pariwisata" aria-expanded="false" aria-controls="pariwisata">
+                <i class="bi bi-luggage menu-icon"></i>
+                <span class="menu-title">Pariwisata</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="pariwisata">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Hunian Hotel</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="false" aria-controls="pembangunan-manusia">
+                <i class="bi bi-buildings menu-icon"></i>
+                <span class="menu-title">Pembangunan Manusia</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="pembangunan-manusia">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">IPM</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Gini Ratio</a></li>
+                </ul>
+              </div>
+            </li>
+
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
                 <i class="icon-columns menu-icon"></i>
@@ -246,8 +276,8 @@
               <div class="col-md-12 grid-margin">
                 <div class="row">
                   <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                    <h3 class="font-weight-bold">Welcome John</h3>
-                    <h6 class="font-weight-normal mb-0">All systems are running smoothly! You have <span class="text-primary">3 unread alerts!</span></h6>
+                    <h3 class="font-weight-bold">Selamat Datang Pengguna!</h3>
+                    <h6 class="font-weight-normal mb-0">Aastabaya <span class="text-primary">Website untuk melihat indikator strategis!</span></h6>
                   </div>
                   <div class="col-12 col-xl-4">
                     <div class="justify-content-end d-flex">
@@ -268,61 +298,69 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
-                <div class="card tale-bg">
-                  <div class="card-people mt-auto">
-                    <img src="{% static 'src/assets/images/dashboard/people.svg' %}" alt="people" />
-                    <div class="weather-info">
-                      <div class="d-flex">
-                        <div>
-                          <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>31<sup>C</sup></h2>
+              <div class="col-md-6 grid-margin stretch-card transparent">
+                <div class="card">
+                  <div id="carouselExampleDark" class="carousel carousel-dark slide h-100" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                      <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                      <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                      <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    </div>
+                    <div class="carousel-inner">
+                      <div class="carousel-item active" data-bs-interval="5000">
+                        <img src="{% static 'src/assets/images/dashboard/people.png' %}" class="d-block w-600 h-100" alt="Slide 1" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5>Selamat Datang di Aastabaya</h5>
+                          <p>Pusat data indikator strategis Kota Surabaya.</p>
                         </div>
-                        <div class="ms-2">
-                          <h4 class="location font-weight-normal">Chicago</h4>
-                          <h6 class="font-weight-normal">Illinois</h6>
+                      </div>
+                      {% for new in news %}
+                      <div class="carousel-item" data-bs-interval="5000">
+                        <img src="{% static 'src/assets/images/dashboard/city.png' %}" class="d-block w-600 h-100" alt="Slide 2" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5>{{ new.title }}</h5>
+                          <p>{{ new.content }}</p>
+                        </div>
+                      </div>
+                      {% endfor %}
+                      <div class="carousel-item">
+                        <img src="{% static 'src/assets/images/dashboard/server.png' %}" class="d-block w-600 h-100" alt="Slide 3" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5>Third slide label</h5>
+                          <p>Some representative placeholder content for the third slide.</p>
                         </div>
                       </div>
                     </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
                   </div>
                 </div>
               </div>
               <div class="col-md-6 grid-margin transparent">
                 <div class="row">
-                  <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="col-md-17 mb-4 stretch-card transparent">
                     <div class="card card-tale">
                       <div class="card-body">
-                        <p class="mb-4">Today’s Bookings</p>
-                        <p class="fs-30 mb-2">4006</p>
-                        <p>10.00% (30 days)</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6 mb-4 stretch-card transparent">
-                    <div class="card card-dark-blue">
-                      <div class="card-body">
-                        <p class="mb-4">Total Bookings</p>
-                        <p class="fs-30 mb-2">61344</p>
-                        <p>22.00% (30 days)</p>
+                        <p class="mb-4">Infographic</p>
+                        <i class="bi bi-clipboard2-data fs-30 mb-2"></i>
+                        <p>Infografis statistik dari Kota Surabaya</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                  <div class="col-md-12 mb-4 mb-lg-0 stretch-card transparent">
                     <div class="card card-light-blue">
                       <div class="card-body">
-                        <p class="mb-4">Number of Meetings</p>
-                        <p class="fs-30 mb-2">34040</p>
-                        <p>2.00% (30 days)</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6 stretch-card transparent">
-                    <div class="card card-light-danger">
-                      <div class="card-body">
-                        <p class="mb-4">Number of Clients</p>
-                        <p class="fs-30 mb-2">47033</p>
-                        <p>0.22% (30 days)</p>
+                        <p class="mb-4">Publication</p>
+                        <i class="bi bi-journal fs-30 mb-2"></i>
+                        <p>Publikasi statistik dari Kota Surabaya</p>
                       </div>
                     </div>
                   </div>
