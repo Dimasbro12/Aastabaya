@@ -3,12 +3,76 @@ import requests
 import logging
 from django.conf import settings
 import time
-from apps.models import Publication, Infographic, News
-from apps.serializers import PublicationSerializer, InfographicSerializer, NewsSerializer
+from apps.models import HumanDevelopmentIndex, Publication, Infographic, News
+from apps.serializers import HumanDevelopmentIndexSerializer, PublicationSerializer, InfographicSerializer, NewsSerializer
 
 logger = logging.getLogger(__name__)
 
 
+class IPMService:
+    @staticmethod
+    def fetch_ipm_data():
+        base_url = f"https://api.apispreadsheets.com/data/eocUoY1uZPV9bUh8/"
+        headers = {
+            "accessKey": "{settings.Access_KEY}",
+            "secretKey": "{settings.Secret_KEY}",
+        }
+        try:
+            print("📡 Fetching IPM data from apispreadsheets...")
+            response = requests.get(base_url, headers=headers)
+            response.raise_for_status()  
+            data = response.json().get("data", [])
+            print(f"✅ Total records fetched: {len(data)}")
+            return data
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to retrieve IPM data: {e}")
+            return []
+
+    @staticmethod
+    def save_ipm_to_db(ipm_list):
+        """Saves fetched IPM data to the database after processing."""
+        saved_count = 0
+        location_type = HumanDevelopmentIndex.LocationType.REGENCY
+
+        for row in ipm_list:
+            location_name = row.get("Kabupaten/Kota\nRegency/Municipality", "").strip()
+
+            if not location_name or "Sumber/Source" in location_name:
+                continue
+
+            if "Kota/Municipality" in location_name:
+                location_type = HumanDevelopmentIndex.LocationType.MUNICIPALITY
+                continue
+
+            for year_str, ipm_value_str in row.items():
+                if year_str.isdigit():
+                    year = int(year_str)
+                    try:
+                        ipm_value = float(ipm_value_str)
+                        data_to_save = {
+                            'location_name': location_name,
+                            'location_type': location_type,
+                            'year': year,
+                            'ipm_value': ipm_value
+                        }
+                        obj, created = HumanDevelopmentIndex.objects.update_or_create(
+                            location_name=location_name, year=year,
+                            defaults=data_to_save
+                        )
+                        if created:
+                            saved_count += 1
+                    except (ValueError, TypeError):
+                        logger.warning(f"Skipping invalid IPM value '{ipm_value_str}' for {location_name} in {year}")
+        print(f"💾 Total new IPM records saved: {saved_count}")
+        return saved_count
+
+    @classmethod
+    def sync_ipm(cls):
+        """Fungsi utama untuk sinkronisasi data API -> database."""
+        ipm_list = cls.fetch_ipm_data()
+        saved = cls.save_ipm_to_db(ipm_list)
+        return saved
+        
 class BPSNewsService:
     @staticmethod
     def fetch_news_data():

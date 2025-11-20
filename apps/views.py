@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from .services.API_service import BPSInfographicService, BPSNewsService, BPSPublicationService
+from .services.API_service import BPSInfographicService, BPSNewsService, BPSPublicationService, IPMService
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout, login as auth_login
 from rest_framework.response import Response
@@ -8,8 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
-from .models import User, Data, News, Infographic, Publication
+from .serializers import HumanDevelopmentIndexSerializer, UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
+from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication
 
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -24,6 +24,10 @@ class InpographicViewSet(viewsets.ModelViewSet):
 class PublicationViewSet(viewsets.ModelViewSet):
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
+
+class HumanDevelopmentIndexViewSet(viewsets.ModelViewSet):
+    queryset = HumanDevelopmentIndex.objects.all()
+    serializer_class = HumanDevelopmentIndexSerializer
 
 @api_view(['GET'])
 def sync_bps_news(request):
@@ -66,7 +70,23 @@ def sync_bps_publication(request):
             "status": "error",
             "message": str(e)
         }, status=500)
+
+@api_view(['GET'])
+def sync_human_development_index(request):
+    try:
+        saved = IPMService.sync_ipm()
+        return Response({
+            "status": "success",
+            "message": f"{saved} berita berhasil disinkronkan dari API BPS."
+        })
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e)
+        }, status=500)
         
+
+     
         
 # --- Views to render HTML pages ---
 def signup_page(request):

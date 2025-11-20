@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Data, News, Infographic, Publication
+from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication
 from django.db.models import fields
 
 
@@ -37,4 +37,8 @@ class PublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publication
         fields = ('pub_id','title','abstract','image','dl','date','size')
-        
+
+class HumanDevelopmentIndexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HumanDevelopmentIndex
+        fields = ('location_name', 'location_type', 'year')

@@ -51,3 +51,25 @@ class Publication(models.Model):
 
     def __str__(self):
         return self.title
+
+class HumanDevelopmentIndex(models.Model):
+    """
+    Stores the Human Development Index (IPM) for a specific location and year.
+    This model is designed to hold the transposed data.
+    """
+    class LocationType(models.TextChoices):
+        REGENCY = 'REG', 'Kabupaten/Regency'
+        MUNICIPALITY = 'MUN', 'Kota/Municipality'
+
+    location_name = models.CharField(max_length=100)
+    location_type = models.CharField(max_length=3, choices=LocationType.choices, default=LocationType.REGENCY)
+    year = models.PositiveIntegerField()
+    ipm_value = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.location_name} ({self.year}) - {self.ipm_value}"
+    
+    class Meta:
+        unique_together = ('location_name', 'year')
+        verbose_name = "Human Development Index (IPM)"
+        verbose_name_plural = "Human Development Indices (IPM)"

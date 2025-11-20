@@ -17,6 +17,17 @@ from dotenv import load_dotenv
 #Connect to dotenv API
 load_dotenv()
 
+# Access Key
+Access_KEY = os.getenv('Access_KEY')
+if not Access_KEY:
+    raise ValueError("Access_KEY not found in environment variables. Please check your .env file.")
+
+# Secret Key
+Secret_KEY = os.getenv('Secret_KEY')
+if not Secret_KEY:
+    raise ValueError("Secret_KEY not found in environment variables. Please check your .env file.")
+
+
 # API Key 
 API_KEY = os.getenv('API_KEY')
 if not API_KEY:
