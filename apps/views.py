@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.shortcuts import get_object_or_404, render, redirect
 from .services.API_service import BPSInfographicService, BPSNewsService, BPSPublicationService, IPMService
 from rest_framework.authtoken.models import Token
@@ -10,7 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import HumanDevelopmentIndexSerializer, UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
 from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication
-
+from django.contrib.auth.decorators import login_required
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
@@ -32,10 +33,11 @@ class HumanDevelopmentIndexViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def sync_bps_news(request):
     try:
-        saved = BPSNewsService.sync_news()
+        created_count, updated_count = BPSNewsService.sync_news()
         return Response({
             "status": "success",
-            "message": f"{saved} berita berhasil disinkronkan dari API BPS."
+            "message": f"Sinkronisasi berita selesai. Data baru: {created_count}, data diperbarui: {updated_count}.",
+            "details": {"created": created_count, "updated": updated_count}
         })
     except Exception as e:
         return Response({
@@ -46,10 +48,11 @@ def sync_bps_news(request):
 @api_view(['GET'])
 def sync_bps_infographic(request):
     try:
-        saved = BPSInfographicService.sync_infographic()
+        created_count, updated_count = BPSInfographicService.sync_infographic()
         return Response({
             "status": "success",
-            "message": f"{saved} infografis berhasil disinkronkan dari API BPS."
+            "message": f"Sinkronisasi infografis selesai. Data baru: {created_count}, data diperbarui: {updated_count}.",
+            "details": {"created": created_count, "updated": updated_count}
         })
     except Exception as e:
         return Response({
@@ -60,10 +63,11 @@ def sync_bps_infographic(request):
 @api_view(['GET'])
 def sync_bps_publication(request):
     try:
-        saved = BPSPublicationService.sync_publication()
+        created_count, updated_count = BPSPublicationService.sync_publication()
         return Response({
             "status": "success",
-            "message": f"{saved} publikasi berhasil disinkronkan dari API BPS."
+            "message": f"Sinkronisasi publikasi selesai. Data baru: {created_count}, data diperbarui: {updated_count}.",
+            "details": {"created": created_count, "updated": updated_count}
         })
     except Exception as e:
         return Response({
@@ -74,10 +78,11 @@ def sync_bps_publication(request):
 @api_view(['GET'])
 def sync_human_development_index(request):
     try:
-        saved = IPMService.sync_ipm()
+        created_count, updated_count = IPMService.sync_ipm()
         return Response({
             "status": "success",
-            "message": f"{saved} berita berhasil disinkronkan dari API BPS."
+            "message": f"Sinkronisasi IPM selesai. Data baru: {created_count}, data diperbarui: {updated_count}.",
+            "details": {"created": created_count, "updated": updated_count}
         })
     except Exception as e:
         return Response({
@@ -208,10 +213,9 @@ def delete_data (request, pk):
     data.delete()
     return Response(status=status.HTTP_202_ACCEPTED)
     
-    
 def apps(request):
     # Fetch data directly from the service functions
-    dataNews = News.objects.all()
+    dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
     dataInpographic = Infographic.objects.all()
     dataPublication = Publication.objects.all()
 
@@ -224,14 +228,42 @@ def apps(request):
 
 def dashboard(request):
     # Fetch data directly from the service functions
-    
-    dataNews = News.objects.all()
-    dataInpographic = Infographic.objects.all()
-    dataPublication = Publication.objects.all()
-
+    dataNewss = News.objects.order_by('-release_date')
+    countNews = News.objects.count()
+    dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
     context = {
+        'countNews':countNews,
+        'dataNewss':dataNewss,
         'dataNews': dataNews,
-        'dataInpographic': dataInpographic,
-        'dataPublication': dataPublication,
     }
     return render(request, 'dashboard/dashboard.html', context)
+
+def infographics(request):
+    """Merender halaman infografis."""
+    dataNewss = News.objects.order_by('-release_date')
+    countNews = News.objects.count()
+    dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
+    dataInpographic = Infographic.objects.all()
+    # labels = [inf.title or f'Item {}']
+    context = {
+        'dataInpographic': dataInpographic,
+        'countNews':countNews,
+        'dataNewss':dataNewss,
+        'dataNews': dataNews,
+    }
+    return render(request, 'dashboard/infographics.html', context)
+
+
+def publications(request):
+    """Merender halaman publikasi."""
+    dataNewss = News.objects.order_by('-release_date')
+    countNews = News.objects.count()
+    dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
+    dataPublication = Publication.objects.all()
+    context = {   
+        'dataPublication': dataPublication,
+        'countNews':countNews,
+        'dataNewss':dataNewss,
+        'dataNews': dataNews,
+    }
+    return render(request, 'dashboard/publications.html', context)

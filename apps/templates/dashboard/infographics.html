@@ -1,0 +1,328 @@
+{% extends 'dashboard/dashboard.html' %} {% load static %} {% block infographics %}
+<div class="infographics">
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      {# #}
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <p class="card-title">Infographics Report</p>
+          </div>
+          <p class="font-weight-500">The total number of sessions within the date range. It is the period time from database infographics</p>
+          <!-- <div id="sales-chart-legend" class="chartjs-legend mt-4 mb-2"></div> -->
+          <!-- <canvas id="sales-chart"></canvas> -->
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-4">
+                <canvas id="myLineChart" class="chart" style="vertical-align: middle; width: 100%; margin: 0 auto; position: relative; display: inline-block"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card position-relative">
+        <div class="card-body">
+          <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <div class="row">
+                  <div class="col-md-12 col-xl-3 d-flex flex-column justify-content-start">
+                    <div class="ml-xl-4 mt-3">
+                      <p class="card-title">Detailed Reports</p>
+                      <h1 class="text-primary">$34040</h1>
+                      <h3 class="font-weight-500 mb-xl-4 text-primary">North America</h3>
+                      <p class="mb-2 mb-xl-0">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-xl-9">
+                    <div class="row">
+                      <div class="col-md-6 border-right">
+                        <div class="table-responsive mb-3 mb-md-0 mt-3">
+                          <table class="table table-borderless report-table">
+                            <tr>
+                              <td class="text-muted">Illinois</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-primary" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">713</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Washington</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-warning" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">583</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Mississippi</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-danger" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">924</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">California</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-info" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">664</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Maryland</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">560</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Alaska</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">793</h5>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="col-md-6 mt-3">
+                        <div class="daoughnutchart-wrapper">
+                          <canvas id="north-america-chart"></canvas>
+                        </div>
+                        <div id="north-america-chart-legend"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="row">
+                  <div class="col-md-12 col-xl-3 d-flex flex-column justify-content-start">
+                    <div class="ml-xl-4 mt-3">
+                      <p class="card-title">Detailed Reports</p>
+                      <h1 class="text-primary">$34040</h1>
+                      <h3 class="font-weight-500 mb-xl-4 text-primary">North America</h3>
+                      <p class="mb-2 mb-xl-0">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-xl-9">
+                    <div class="row">
+                      <div class="col-md-6 border-right">
+                        <div class="table-responsive mb-3 mb-md-0 mt-3">
+                          <table class="table table-borderless report-table">
+                            <tr>
+                              <td class="text-muted">Illinois</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-primary" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">713</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Washington</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-warning" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">583</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Mississippi</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-danger" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">924</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">California</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-info" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">664</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Maryland</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">560</h5>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-muted">Alaska</td>
+                              <td class="w-100 px-0">
+                                <div class="progress progress-md mx-4">
+                                  <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </td>
+                              <td>
+                                <h5 class="font-weight-bold mb-0">793</h5>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="col-md-6 mt-3">
+                        <div class="daoughnutchart-wrapper">
+                          <canvas id="south-america-chart"></canvas>
+                        </div>
+                        <div id="south-america-chart-legend"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#detailedReports" role="button" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </a>
+            <a class="carousel-control-next" href="#detailedReports" role="button" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+<script>
+  // Data
+  var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [
+      {
+        label: "My First dataset",
+        fillColor: "rgba(220,220,220,0.2)",
+        strokeColor: "rgba(220,220,220,1)",
+        pointColor: "rgba(220,220,220,1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        data: [65, 59, 80, 81, 56, 55, 40],
+      },
+      {
+        label: "My Second dataset",
+        fillColor: "rgba(151,187,205,0.2)",
+        strokeColor: "rgba(151,187,205,1)",
+        pointColor: "rgba(151,187,205,1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90],
+      },
+    ],
+  };
+
+  var data2 = [
+    {
+      value: 300,
+      color: "#F7464A",
+      highlight: "#FF5A5E",
+      label: "Red",
+    },
+    {
+      value: 50,
+      color: "#46BFBD",
+      highlight: "#5AD3D1",
+      label: "Green",
+    },
+    {
+      value: 100,
+      color: "#FDB45C",
+      highlight: "#FFC870",
+      label: "Yellow",
+    },
+    {
+      value: 40,
+      color: "#949FB1",
+      highlight: "#A8B3C5",
+      label: "Grey",
+    },
+    {
+      value: 120,
+      color: "#4D5360",
+      highlight: "#616774",
+      label: "Dark Grey",
+    },
+  ];
+
+  // Global + Custom Chart Config Options
+
+  var options = {
+    bezierCurve: false,
+    animation: true,
+    animationEasing: "easeOutQuart",
+    showScale: false,
+    tooltipEvents: ["mousemove", "touchstart", "touchmove"],
+    tooltipCornerRadius: 3,
+    pointDot: true,
+    pointDotRadius: 4,
+    datasetFill: true,
+    scaleShowLine: true,
+    animationEasing: "easeOutBounce",
+    animateRotate: true,
+    animateScale: true,
+  };
+
+  // Load Chart
+
+  var ctx1 = document.getElementById("myLineChart").getContext("2d");
+  var ctx = document.getElementById("myDonutChart").getContext("2d");
+
+  var myLineChart = new Chart(ctx1).Line(data, options);
+  // var myBarChart = new Chart(ctx).Bar(data, options);
+  // var myRadarChart = new Chart(ctx).Radar(data, options);
+  // new Chart(ctx).PolarArea(data2, options);
+
+  // For a pie chart
+  // var myPieChart = new Chart(ctx).Pie(data2,options);
+
+  // And for a doughnut chart
+  var myDoughnutChart = new Chart(ctx).Doughnut(data2, options);
+</script>
+{% endblock %}

@@ -41,4 +41,4 @@ class PublicationSerializer(serializers.ModelSerializer):
 class HumanDevelopmentIndexSerializer(serializers.ModelSerializer):
     class Meta:
         model = HumanDevelopmentIndex
-        fields = ('location_name', 'location_type', 'year')
+        fields = ['id', 'location_name', 'location_type', 'year', 'ipm_value']

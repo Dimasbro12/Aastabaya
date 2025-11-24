@@ -1,6 +1,10 @@
 import json
 import requests
 import logging
+import gspread
+import pandas as pd
+from oauth2client.service_account import ServiceAccountCredentials
+
 from django.conf import settings
 import time
 from apps.models import HumanDevelopmentIndex, Publication, Infographic, News
@@ -12,66 +16,114 @@ logger = logging.getLogger(__name__)
 class IPMService:
     @staticmethod
     def fetch_ipm_data():
-        base_url = f"https://api.apispreadsheets.com/data/eocUoY1uZPV9bUh8/"
-        headers = {
-            "accessKey": "{settings.Access_KEY}",
-            "secretKey": "{settings.Secret_KEY}",
-        }
+        """Fetches and processes IPM data from Google Sheets into a long-format DataFrame."""
+        print("📡 Fetching IPM data from Google Sheets...")
         try:
-            print("📡 Fetching IPM data from apispreadsheets...")
-            response = requests.get(base_url, headers=headers)
-            response.raise_for_status()  
-            data = response.json().get("data", [])
-            print(f"✅ Total records fetched: {len(data)}")
-            return data
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Failed to retrieve IPM data: {e}")
-            return []
+            # Scope akses Google Sheets dan Google Drive
+            scope = [
+                'https://www.googleapis.com/auth/spreadsheets',
+                'https://www.googleapis.com/auth/drive'
+            ]
+            # Autentikasi
+            credentials = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+            client = gspread.authorize(credentials)
+
+            # ID Google Sheet dari link
+            SHEET_ID = "1keS9YFYO1qzAawWgLh2U2pY6xX5ppKUnhbdHQYfU5HM"
+            sheet = client.open_by_key(SHEET_ID).worksheet("Indeks Pembangunan Manusia Menu")
+
+            # Ambil semua data dan buat DataFrame
+            data = sheet.get_all_values()
+            headers = data[0]
+            data_rows = data[1:]
+            df = pd.DataFrame(data_rows, columns=headers)
+            print(f"✅ Raw data fetched with shape: {df.shape}")
+
+            # --- Data Cleaning and Transformation ---
+            df = df.rename(columns={'Kabupaten/Kota\nRegency/Municipality': 'Kabupaten/Kota'})
+            empty_columns = [col for col in df.columns if col == '']
+            if empty_columns:
+                df = df.drop(columns=empty_columns)
+
+            # Melt DataFrame to long format
+            year_columns = [col for col in df.columns if col.isdigit()]
+            df_melted = pd.melt(df, id_vars=['Kabupaten/Kota'], value_vars=year_columns,
+                                var_name='Tahun', value_name='Value')
+
+            # Convert data types
+            df_melted['Tahun'] = pd.to_numeric(df_melted['Tahun'])
+            df_melted['Value'] = pd.to_numeric(df_melted['Value'], errors='coerce')
+
+            # Hapus baris dengan nilai IPM yang tidak valid/kosong
+            df_melted.dropna(subset=['Value'], inplace=True)
+
+            print(f"✅ Data processed. Total valid records: {len(df_melted)}")
+            return df_melted
+
+        except gspread.exceptions.SpreadsheetNotFound:
+            logger.error(f"Spreadsheet with ID '{SHEET_ID}' not found.")
+        except gspread.exceptions.WorksheetNotFound:
+            logger.error(f"Worksheet 'Indeks Pembangunan Manusia Menu' not found.")
+        except Exception as e:
+            logger.error(f"An error occurred while fetching/processing IPM data: {e}")
+        return pd.DataFrame() # Return empty DataFrame on error
 
     @staticmethod
-    def save_ipm_to_db(ipm_list):
-        """Saves fetched IPM data to the database after processing."""
-        saved_count = 0
-        location_type = HumanDevelopmentIndex.LocationType.REGENCY
+    def save_ipm_to_db(ipm_df):
+        """Saves the processed IPM DataFrame to the database using a serializer."""
+        if ipm_df.empty:
+            print("⚠️ No IPM data to save.")
+            return 0, 0
 
-        for row in ipm_list:
-            location_name = row.get("Kabupaten/Kota\nRegency/Municipality", "").strip()
+        created_count = 0
+        updated_count = 0
 
+        for index, row in ipm_df.iterrows():
+            location_name = str(row['Kabupaten/Kota']).strip()
+
+            # Skip any residual non-data rows
             if not location_name or "Sumber/Source" in location_name:
                 continue
 
-            if "Kota/Municipality" in location_name:
-                location_type = HumanDevelopmentIndex.LocationType.MUNICIPALITY
-                continue
+            # Determine location type
+            location_type = HumanDevelopmentIndex.LocationType.MUNICIPALITY if location_name.startswith("KOTA") else HumanDevelopmentIndex.LocationType.REGENCY
 
-            for year_str, ipm_value_str in row.items():
-                if year_str.isdigit():
-                    year = int(year_str)
-                    try:
-                        ipm_value = float(ipm_value_str)
-                        data_to_save = {
-                            'location_name': location_name,
-                            'location_type': location_type,
-                            'year': year,
-                            'ipm_value': ipm_value
-                        }
-                        obj, created = HumanDevelopmentIndex.objects.update_or_create(
-                            location_name=location_name, year=year,
-                            defaults=data_to_save
-                        )
-                        if created:
-                            saved_count += 1
-                    except (ValueError, TypeError):
-                        logger.warning(f"Skipping invalid IPM value '{ipm_value_str}' for {location_name} in {year}")
-        print(f"💾 Total new IPM records saved: {saved_count}")
-        return saved_count
+            data_to_serialize = {
+                'location_name': location_name,
+                'location_type': location_type.value,
+                'year': row['Tahun'],
+                'ipm_value': row['Value']
+            }
+
+            # Coba dapatkan instance yang ada terlebih dahulu
+            try:
+                instance = HumanDevelopmentIndex.objects.get(location_name=location_name, year=row['Tahun'])
+            except HumanDevelopmentIndex.DoesNotExist:
+                instance = None
+
+            # Berikan instance ke serializer jika ada (untuk mode update)
+            serializer = HumanDevelopmentIndexSerializer(instance=instance, data=data_to_serialize)
+
+            if serializer.is_valid():
+                # Gunakan serializer.save() yang akan menangani create atau update secara otomatis
+                obj = serializer.save()
+                created = instance is None # Jika instance sebelumnya tidak ada, berarti ini adalah create
+                if created:
+                    created_count += 1
+                else:
+                    updated_count += 1
+            else:
+                print(f"❌ Error saat menyimpan IPM untuk {location_name} tahun {row['Tahun']}: {serializer.errors}")
+
+        print(f"💾 Total IPM records created: {created_count}, updated: {updated_count}")
+        return created_count, updated_count
 
     @classmethod
     def sync_ipm(cls):
         """Fungsi utama untuk sinkronisasi data API -> database."""
-        ipm_list = cls.fetch_ipm_data()
-        saved = cls.save_ipm_to_db(ipm_list)
-        return saved
+        ipm_df = cls.fetch_ipm_data()
+        created_count, updated_count = cls.save_ipm_to_db(ipm_df)
+        return created_count, updated_count
         
 class BPSNewsService:
     @staticmethod
@@ -92,7 +144,8 @@ class BPSNewsService:
     @staticmethod
     def save_news_to_db(news_list):
         """Simpan hasil fetch ke database menggunakan serializer."""
-        saved_count = 0
+        created_count = 0
+        updated_count = 0
         for item in news_list:
             # Map API fields to model fields
             data_to_serialize = {
@@ -106,21 +159,25 @@ class BPSNewsService:
             }
             serializer = NewsSerializer(data=data_to_serialize)
             if serializer.is_valid():
-                News.objects.update_or_create(
+                obj, created = News.objects.update_or_create(
                     news_id=item.get("news_id"),
                     defaults=serializer.validated_data
                 )
-                saved_count += 1
+                if created:
+                    created_count += 1
+                else:
+                    updated_count += 1
             else:
                 print(f"❌ Error saat menyimpan news_id {item.get('news_id')}: {serializer.errors}")
-        print(f"💾 Total berita tersimpan: {saved_count}")
-        return saved_count
+        print(f"💾 Total berita dibuat: {created_count}, diperbarui: {updated_count}")
+        return created_count, updated_count
+
     @classmethod
     def sync_news(cls):
         """Fungsi utama untuk sinkronisasi data API -> database."""
         news_list = cls.fetch_news_data()
-        saved = cls.save_news_to_db(news_list)
-        return saved
+        created_count, updated_count = cls.save_news_to_db(news_list)
+        return created_count, updated_count
 class BPSPublicationService:
     @staticmethod
     def fetch_publication_data():
@@ -140,7 +197,8 @@ class BPSPublicationService:
     @staticmethod
     def save_publication_to_db(publication_list):
         """Simpan hasil fetch ke database menggunakan serializer."""
-        saved_count = 0
+        created_count = 0
+        updated_count = 0
         for item in publication_list:
             # Map API fields to model fields
             data_to_serialize = {
@@ -154,21 +212,25 @@ class BPSPublicationService:
             }
             serializer = PublicationSerializer(data=data_to_serialize)
             if serializer.is_valid():
-                Publication.objects.update_or_create(
+                obj, created = Publication.objects.update_or_create(
                     pub_id=item.get("pub_id"),
                     defaults=serializer.validated_data
                 )
-                saved_count += 1
+                if created:
+                    created_count += 1
+                else:
+                    updated_count += 1
             else:
                 print(f"❌ Error saat menyimpan pub_id {item.get('pub_id')}: {serializer.errors}")
-        print(f"💾 Total publikasi tersimpan: {saved_count}")
-        return saved_count
+        print(f"💾 Total publikasi dibuat: {created_count}, diperbarui: {updated_count}")
+        return created_count, updated_count
+
     @classmethod
     def sync_publication(cls):
         """Fungsi utama untuk sinkronisasi data API -> database."""
         publication_list = cls.fetch_publication_data()
-        saved = cls.save_publication_to_db(publication_list)
-        return saved
+        created_count, updated_count = cls.save_publication_to_db(publication_list)
+        return created_count, updated_count
 
 class BPSInfographicService:
     @staticmethod
@@ -189,7 +251,8 @@ class BPSInfographicService:
     @staticmethod
     def save_infographic_to_db(infographic_list):
         """Simpan hasil fetch ke database menggunakan serializer."""
-        saved_count = 0
+        created_count = 0
+        updated_count = 0
         for item in infographic_list:
             # Map API fields to model fields
             data_to_serialize = {
@@ -199,21 +262,25 @@ class BPSInfographicService:
             }
             serializer = InfographicSerializer(data=data_to_serialize)
             if serializer.is_valid():
-                Infographic.objects.update_or_create(
+                obj, created = Infographic.objects.update_or_create(
                     title=item.get("title"), # Assuming title is unique for infographics
                     defaults=serializer.validated_data
                 )
-                saved_count += 1
+                if created:
+                    created_count += 1
+                else:
+                    updated_count += 1
             else:
                 print(f"❌ Error saat menyimpan infografis {item.get('title')}: {serializer.errors}")
-        print(f"💾 Total infografis tersimpan: {saved_count}")
-        return saved_count
+        print(f"💾 Total infografis dibuat: {created_count}, diperbarui: {updated_count}")
+        return created_count, updated_count
+
     @classmethod
     def sync_infographic(cls):
         """Fungsi utama untuk sinkronisasi data API -> database."""
         infographic_list = cls.fetch_infographic_data()
-        saved = cls.save_infographic_to_db(infographic_list)
-        return saved
+        created_count, updated_count = cls.save_infographic_to_db(infographic_list)
+        return created_count, updated_count
 # def _fetch_bps_data(model: str):
 #     """
 #     Fetches data from the BPS Web API for a given model, handling pagination.

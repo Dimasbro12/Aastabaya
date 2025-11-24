@@ -1,13 +1,25 @@
 from django.urls import path
 from . import views
+# from rest_framework.routers import DefaultRouter
+from apps.views import NewsViewSet, InpographicViewSet, PublicationViewSet,HumanDevelopmentIndexViewSet 
+# router = DefaultRouter()
+# router.register(r'news', NewsViewSet, basename='news')
+# router.register(r'infographics', InpographicViewSet, basename='infographic')
+# router.register(r'publications', PublicationViewSet, basename='publication')
+# router.register(r'human-development-index', HumanDevelopmentIndexViewSet, basename='human-development-index')
 
 urlpatterns = [
+    
+    # path('api/v1/', (router.urls)),
     # Page rendering views
     path('', views.apps, name='index'),
     path('signup/', views.signup_page, name='signup'),
     path('login/', views.login_page, name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),
+    path('infographics/', views.infographics, name='infographics'),
+    path('publications/', views.publications, name='publications'),
+
 
     # API endpoints for authentication
     path('api/register/', views.register_user, name='api-register'),

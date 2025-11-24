@@ -18,13 +18,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Access Key
-Access_KEY = os.getenv('Access_KEY')
-if not Access_KEY:
+ACCESS_KEY = os.getenv('ACCESS_KEY')
+if not ACCESS_KEY:
     raise ValueError("Access_KEY not found in environment variables. Please check your .env file.")
 
 # Secret Key
-Secret_KEY = os.getenv('Secret_KEY')
-if not Secret_KEY:
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
     raise ValueError("Secret_KEY not found in environment variables. Please check your .env file.")
 
 
@@ -143,7 +143,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -151,9 +150,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'apps.User'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+LOGIN_EXEMPT_URLS = [
+    r'infographics$',
+    r'publications$',
+]

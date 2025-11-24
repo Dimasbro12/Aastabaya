@@ -58,18 +58,22 @@ class HumanDevelopmentIndex(models.Model):
     This model is designed to hold the transposed data.
     """
     class LocationType(models.TextChoices):
-        REGENCY = 'REG', 'Kabupaten/Regency'
-        MUNICIPALITY = 'MUN', 'Kota/Municipality'
+        REGENCY = 'REGENCY', 'Kabupaten'
+        MUNICIPALITY = 'MUNICIPALITY', 'Kota'
 
-    location_name = models.CharField(max_length=100)
-    location_type = models.CharField(max_length=3, choices=LocationType.choices, default=LocationType.REGENCY)
-    year = models.PositiveIntegerField()
-    ipm_value = models.DecimalField(max_digits=5, decimal_places=2)
+    location_name = models.CharField(max_length=255, verbose_name="Nama Lokasi")
+    location_type = models.CharField(
+        max_length=20,
+        choices=LocationType.choices,
+        verbose_name="Tipe Lokasi"
+    )
+    year = models.PositiveSmallIntegerField(verbose_name="Tahun")
+    ipm_value = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Nilai IPM")
 
     def __str__(self):
         return f"{self.location_name} ({self.year}) - {self.ipm_value}"
     
     class Meta:
         unique_together = ('location_name', 'year')
-        verbose_name = "Human Development Index (IPM)"
-        verbose_name_plural = "Human Development Indices (IPM)"
+        verbose_name = "Indeks Pembangunan Manusia"
+        verbose_name_plural = "Indeks Pembangunan Manusia"
