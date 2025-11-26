@@ -19,6 +19,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('infographics/', views.infographics, name='infographics'),
     path('publications/', views.publications, name='publications'),
+    path('news/', views.news, name='news'),
 
 
     # API endpoints for authentication

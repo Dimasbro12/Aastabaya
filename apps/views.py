@@ -12,6 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import HumanDevelopmentIndexSerializer, UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
 from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
@@ -240,30 +242,82 @@ def dashboard(request):
 
 def infographics(request):
     """Merender halaman infografis."""
-    dataNewss = News.objects.order_by('-release_date')
-    countNews = News.objects.count()
-    dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
-    dataInpographic = Infographic.objects.all()
-    # labels = [inf.title or f'Item {}']
-    context = {
-        'dataInpographic': dataInpographic,
-        'countNews':countNews,
-        'dataNewss':dataNewss,
-        'dataNews': dataNews,
-    }
-    return render(request, 'dashboard/infographics.html', context)
+    infographics_list = Infographic.objects.all().order_by('-id')
 
+    paginator = Paginator(infographics_list, 12)
+    page = request.GET.get('page', 1)
+    
+    try:
+        infographics_data = paginator.page(page)
+    except PageNotAnInteger:
+        infographics_data = paginator.page(1)
+    except EmptyPage:
+        infographics_data = paginator.page(paginator.num_pages)
+    
+    # Get latest news for sidebar
+    latest_news = News.objects.order_by('-release_date', '-news_id')[:5]
+    news_count = News.objects.count()
+    
+    context = {
+        'dataInpographic': infographics_data,
+        'dataNews': latest_news,
+        'countNews': news_count,
+        'countInfographic': Infographic.objects.count(),
+        'page_title': 'Infographics',
+        'user': request.user,
+    }
+
+    return render(request, 'dashboard/infographics.html', context)
 
 def publications(request):
     """Merender halaman publikasi."""
-    dataNewss = News.objects.order_by('-release_date')
-    countNews = News.objects.count()
-    dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
-    dataPublication = Publication.objects.all()
-    context = {   
-        'dataPublication': dataPublication,
-        'countNews':countNews,
-        'dataNewss':dataNewss,
-        'dataNews': dataNews,
+    publications_list = Publication.objects.all().order_by('-date')
+
+    paginator = Paginator(publications_list, 10)
+    page = request.GET.get('page', 1)
+    
+    try:
+        publications_data = paginator.page(page)
+    except PageNotAnInteger:
+        publications_data = paginator.page(1)
+    except EmptyPage:
+        publications_data = paginator.page(paginator.num_pages)
+    
+    # Get latest news for sidebar
+    latest_news = News.objects.order_by('-release_date', '-news_id')[:5]
+    news_count = News.objects.count()
+    
+    context = {
+        'dataPublication': publications_data,
+        'dataNews': latest_news,
+        'countNews': news_count,
+        'countPublication': Publication.objects.count(),
+        'page_title': 'Publications',
+        'user': request.user,
     }
+
     return render(request, 'dashboard/publications.html', context)
+
+def news(request):
+ 
+    all_news = News.objects.order_by('-release_date', '-news_id')
+  
+    paginator = Paginator(all_news, 15)
+    page = request.GET.get('page', 1)
+    
+    try:
+        news_data = paginator.page(page)
+    except PageNotAnInteger:
+        news_data = paginator.page(1)
+    except EmptyPage:
+        news_data = paginator.page(paginator.num_pages)
+
+    context = {
+        'dataNewss': news_data,
+        'countNews': News.objects.count(),
+        'page_title': 'News',
+        'user': request.user,
+    }
+    
+
+    return render(request, 'dashboard/news.html', context)
