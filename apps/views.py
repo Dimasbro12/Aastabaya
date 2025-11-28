@@ -92,7 +92,6 @@ def sync_human_development_index(request):
             "message": str(e)
         }, status=500)
         
-
      
         
 # --- Views to render HTML pages ---
@@ -233,10 +232,24 @@ def dashboard(request):
     dataNewss = News.objects.order_by('-release_date')
     countNews = News.objects.count()
     dataNews = News.objects.order_by('-release_date', '-news_id')[:5]
+    dataNewsLatest = dataNews
+    dataInfographic = Infographic.objects.order_by('-id')[:5]
+    dataInfographics = Infographic.objects.order_by('-id')
+    dataInfographicLatest = Infographic.objects.order_by('-id')[:4]
+    dataPublication = Publication.objects.order_by('-date')[:5]
+    dataPublications = Publication.objects.order_by('-date')
+    dataPublicationsLatest = Publication.objects.order_by('-date')[:5]
     context = {
         'countNews':countNews,
         'dataNewss':dataNewss,
         'dataNews': dataNews,
+        'dataInfographic': dataInfographic,
+        'dataInfographics': dataInfographics,
+        'dataInfographicLatest': dataInfographicLatest,
+        'dataPublication': dataPublication,
+        'dataPublications': dataPublications,
+        'dataNewsLatest': dataNewsLatest,
+        'dataPublicationsLatest': dataPublicationsLatest,
     }
     return render(request, 'dashboard/dashboard.html', context)
 
@@ -299,10 +312,43 @@ def publications(request):
     return render(request, 'dashboard/publications.html', context)
 
 def news(request):
- 
-    all_news = News.objects.order_by('-release_date', '-news_id')
-  
-    paginator = Paginator(all_news, 15)
+    # Get filters and search query
+    search_query = request.GET.get('search', '').strip()
+    category_id_filter = request.GET.get('category_id', '').strip()
+    sort_order = request.GET.get('sort', 'latest')
+    
+    # Start with all news
+    news_list = News.objects.all()
+    
+    # Apply search filter
+    if search_query:
+        news_list = news_list.filter(
+            Q(title__icontains=search_query) |
+            Q(content__icontains=search_query) |
+            Q(category_name__icontains=search_query)
+        )
+    
+    # Apply category ID filter
+    if category_id_filter:
+        news_list = news_list.filter(category_id=category_id_filter)
+    
+    # Apply sorting
+    if sort_order == 'oldest':
+        news_list = news_list.order_by('release_date', 'news_id')
+    else:  # latest (default)
+        news_list = news_list.order_by('-release_date', '-news_id')
+    
+    # Get total count after filtering
+    total_count = news_list.count()
+    
+    # Get available categories for filter dropdown (using category_id)
+    available_categories = News.objects.filter(
+        category_id__isnull=False,
+        category_name__isnull=False
+    ).values('category_id', 'category_name').distinct().order_by('category_name')
+    
+    # Pagination - 15 items per page
+    paginator = Paginator(news_list, 15)
     page = request.GET.get('page', 1)
     
     try:
@@ -311,13 +357,17 @@ def news(request):
         news_data = paginator.page(1)
     except EmptyPage:
         news_data = paginator.page(paginator.num_pages)
-
+    
     context = {
         'dataNewss': news_data,
         'countNews': News.objects.count(),
+        'filtered_count': total_count,
+        'search_query': search_query,
+        'category_id_filter': category_id_filter,
+        'sort_order': sort_order,
+        'available_categories': available_categories,
         'page_title': 'News',
         'user': request.user,
     }
     
-
     return render(request, 'dashboard/news.html', context)

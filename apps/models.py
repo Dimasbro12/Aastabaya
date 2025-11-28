@@ -41,7 +41,7 @@ class Infographic(models.Model):
         return self.title
 
 class Publication(models.Model):
-    pub_id = models.CharField(unique=True)
+    pub_id = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=255, blank=True,null=True )
     image = models.URLField(max_length=500, blank=True, null=True)
     dl = models.URLField(max_length=500, blank=True, null=True)

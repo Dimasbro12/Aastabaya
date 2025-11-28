@@ -5,31 +5,64 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../assets/css/style.css" />
     <style>
       /* General Styles */
       body {
+        /* Menggabungkan gaya kustom background */
         font-family: "Poppins", sans-serif;
         text-align: center;
-        background: linear-gradient(135deg, #a0c3cfff, #a0c3cfff);
-        margin: 0;
-        padding: 50px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{% static 'img/background-login-register.jpg' %}") no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh; /* Agar mengisi seluruh tinggi viewport */
         color: white;
+        padding-top: 70px;
+        justify-content: center;
+        display: flex;
+        overflow: hidden;
       }
 
       /* Container Box */
       .container {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        display: inline-block;
-        width: 350px;
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 48px 40px;
+        padding-top: 30px;
+        width: 250px;
+        height: 320px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        justify-content: center;
+        align-items: center;
       }
 
       h2 {
-        color: white;
-        margin-bottom: 15px;
+        font-size: 25px;
+        font-family: sans-serif;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+        text-align: center;
+        letter-spacing: -0.5px;
+      }
+
+      h3 {
+        font-size: 15px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        font-weight: 400;
+        color: #fff;
+        margin-bottom: 20px;
+        margin-top: 7px;
+        text-align: center;
+        letter-spacing: -0.5px;
       }
 
       /* Form Styles */
@@ -40,31 +73,35 @@
       }
 
       input {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
+        width: 88%;
+        padding: 8px 16px 8px 16px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 15px;
+        transition: all 0.3s ease;
         outline: none;
-        background: rgba(249, 242, 242, 0.93);
-        color: rgb(30, 29, 29);
       }
 
       input::placeholder {
-        color: #a0c3cfff;
+        color: rgb(240, 251, 255);
       }
 
       /* Button Styles */
       button {
-        background: linear-gradient(90deg, #ff416c, #ff4b2b);
-        color: white;
-        padding: 12px;
+        width: 100%;
+        padding: 11px;
+        background: linear-gradient(135deg, #258ffa 0%, #1c7dd8 100%);
+        color: #fff;
         border: none;
-        border-radius: 8px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 18px;
-        font-weight: bold;
-        transition: 0.3s;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
 
       button:hover {
@@ -72,32 +109,130 @@
         background: linear-gradient(90deg, #ff4b2b, #ff416c);
       }
 
-      /* Forgot Password */
-      .forgot-password {
-        margin-top: 10px;
-        font-size: 14px;
-      }
-
-      .forgot-password a {
-        color: #ffcc00;
-        text-decoration: none;
-        font-weight: bold;
-        transition: 0.3s;
-      }
-
-      .forgot-password a:hover {
-        text-decoration: underline;
-      }
       img {
         border-radius: 20px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);*/
+      }
+
+      .register-link {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+        color: #d0e1f0;
+      }
+
+      .register-link a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      .register-link a:hover {
+        color: #ff4b2b;
+      }
+
+      /* Mobile Responsive Styles */
+      @media screen and (max-width: 768px) {
+        body {
+          padding: 20px;
+          min-height: 100vh;
+          display: flex;
+        }
+
+        .container {
+          max-width: 380px;
+          width: 90%;
+          padding: 40px 32px;
+          padding-top: 28px;
+          min-height: auto;
+          margin: auto;
+        }
+
+        h2 {
+          font-size: 24px;
+          margin-bottom: 8px;
+        }
+
+        h3 {
+          font-size: 15px;
+          margin-bottom: 20px;
+        }
+
+        input {
+          font-size: 16px;
+          padding: 12px 16px;
+          width: 86%;
+        }
+
+        button {
+          padding: 13px;
+          font-size: 16px;
+        }
+
+        .register-link {
+          font-size: 14px;
+          margin-top: 22px;
+        }
+
+        form {
+          gap: 16px;
+        }
+      }
+
+      /* Extra Small Mobile */
+      @media screen and (max-width: 380px) {
+        .container {
+          max-width: 340px;
+          width: 88%;
+          padding: 36px 28px;
+        }
+
+        h2 {
+          font-size: 23px;
+        }
+
+        h3 {
+          font-size: 14px;
+        }
+
+        input {
+          padding: 11px 14px;
+          font-size: 16px;
+        }
+
+        button {
+          padding: 12px;
+          font-size: 15px;
+        }
+
+        form {
+          gap: 14px;
+        }
+      }
+
+      /* Very Small Screens */
+      @media screen and (max-width: 320px) {
+        .container {
+          width: 90%;
+          padding: 32px 24px;
+        }
+
+        h2 {
+          font-size: 21px;
+        }
+
+        h3 {
+          font-size: 13px;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <img src="{% static 'icon/LogoAstabaya-removebg-preview.png' %}" alt="Logo Astabaya" width="150" />
-      <h2>Login to Your Account</h2>
+      <img src="{% static 'icon/logoastabayav2.png' %}" alt="Logo Astabaya" width="150" />
+      <h2>Selamat Datang</h2>
+      <h3>Masuk ke akun anda</h3>
       <p id="login-error" class="error-message" style="color: red; display: none"></p>
       <form id="login-form">
         {% csrf_token %}
@@ -107,11 +242,8 @@
       </form>
 
       <!-- Forgot Password -->
-      {% comment %}
-      <div class="forgot-password">
-        <a href="{% url 'password_reset' %}">Forgot Password?</a>
-      </div>
-      {% endcomment %}
+
+      <div class="register-link">Belum memiliki akun? <a href="{% url 'signup' %}">Daftar</a></div>
     </div>
 
     <script>

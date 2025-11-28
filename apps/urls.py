@@ -21,7 +21,6 @@ urlpatterns = [
     path('publications/', views.publications, name='publications'),
     path('news/', views.news, name='news'),
 
-
     # API endpoints for authentication
     path('api/register/', views.register_user, name='api-register'),
     path('api/login/', views.user_login, name='api-login'),
