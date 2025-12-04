@@ -1,0 +1,476 @@
+{% extends 'dashboard/dashboard.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="news-page">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="font-weight-bold mb-2">Berita BPS Kota Surabaya</h3>
+                    <p class="text-muted mb-0">Total: <span class="badge bg-primary">{{ countNews }}</span> berita</p>
+                </div>
+                <button class="btn btn-primary" onclick="refreshData()">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter & Search - Better Layout with AJAX -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3 mb-md-0">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" 
+                       class="form-control border-start-0 ps-0" 
+                       id="searchInput"
+                       name="search"
+                       value="{{ search_query }}"
+                       placeholder="Cari berita berdasarkan judul atau konten...">
+                {% if search_query or category_id_filter %}
+                <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">
+                    <i class="bi bi-x-circle"></i> Clear
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+            <select class="form-select shadow-sm" id="categoryFilter" name="category_id">
+                <option value="">Semua Kategori</option>
+                {% for category in available_categories %}
+                <option value="{{ category.category_id }}" 
+                        {% if category_id_filter == category.category_id %}selected{% endif %}>
+                    {{ category.category_id }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select shadow-sm" id="sortFilter" name="sort">
+                <option value="latest" {% if sort_order == 'latest' %}selected{% endif %}>Terbaru</option>
+                <option value="oldest" {% if sort_order == 'oldest' %}selected{% endif %}>Terlama</option>
+            </select>
+        </div>
+    </div>
+
+
+
+    <!-- News Timeline -->
+    <div class="row" id="newsContainer">
+        {% if dataNewss %}
+            {% for news in dataNewss %}
+            <div class="col-12 mb-4 news-item" 
+                 data-category="{{ news.category_name }}"
+                 data-date="{{ news.release_date|date:'Y-m-d' }}">
+                <div class="card hover-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- News Image -->
+                            <div class="col-md-3">
+                                {% if news.picture_url %}
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                                     data-src="{{ news.picture_url }}" 
+                                     alt="{{ news.title }}"
+                                     class="img-fluid rounded lazy-load"
+                                     style="width: 100%; height: 200px; object-fit: cover;"
+                                     loading="lazy">
+                                {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 100%; height: 200px;">
+                                    <i class="bi bi-newspaper" style="font-size: 3rem; color: #ccc;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- News Content -->
+                            <div class="col-md-9">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="card-title mb-2">{{ news.title }}</h5>
+                                        <div class="mb-2">
+                                            {% if news.category_name %}
+                                            <span class="badge bg-primary me-2">
+                                                {{ news.category_name }}
+                                            </span>
+                                            {% endif %}
+                                            
+                                            {% if news.release_date %}
+                                            <span class="text-muted small">
+                                                <i class="bi bi-calendar"></i> {{ news.release_date|date:"d M Y" }}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="card-text text-muted">
+                                    {{ news.content|truncatewords:50 }}
+                                </p>
+                                
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        data-index="{{ forloop.counter0 }}"
+                                        onclick="showNewsModal(this.dataset.index)">
+                                    <i class="bi bi-book"></i> Baca Selengkapnya
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> Belum ada data berita. 
+                    <a href="{% url 'sync-bps-news' %}" class="alert-link">Sinkronkan data</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if dataNewss.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if dataNewss.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ dataNewss.previous_page_number }}">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+            </li>
+            {% endif %}
+
+            {% for num in dataNewss.paginator.page_range %}
+                {% if dataNewss.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > dataNewss.number|add:'-3' and num < dataNewss.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if dataNewss.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ dataNewss.next_page_number }}">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+            </li>
+            {% endif %}
+        </ul>
+        <p class="text-center text-muted small">
+            Showing {{ dataNewss.start_index }} to {{ dataNewss.end_index }} of {{ filtered_count }} news
+            {% if search_query or category_filter %}(filtered from {{ countNews }} total){% endif %}
+        </p>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Modal for News Detail -->
+<div class="modal fade" id="newsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2" id="modalCategory"></span>
+                    <span class="text-muted small" id="modalDate"></span>
+                </div>
+                
+                <div class="mb-4" id="modalImageContainer"></div>
+                
+                <div id="modalContent" style="line-height: 1.8; text-align: justify;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data container -->
+<div id="newsDataContainer" style="display: none;">
+{% for news in dataNewss %}
+    <div class="news-data"
+         data-title="{{ news.title|escapejs }}"
+         data-content="{{ news.content|escapejs }}"
+         data-category="{{ news.category_name|default:'Umum' }}"
+         data-date="{{ news.release_date|date:'d M Y'|default:'N/A' }}"
+         data-image="{{ news.picture_url|escapejs }}"></div>
+{% endfor %}
+</div>
+
+
+
+<style>
+.hover-card {
+    transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.news-timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.news-timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e0e0e0;
+}
+</style>
+
+
+<script>
+    // Clear all filters - smooth transition
+    function clearFilters() {
+        // Clear input values
+        document.getElementById('searchInput').value = '';
+        document.getElementById('categoryFilter').value = '';
+        document.getElementById('sortFilter').value = 'latest';
+        
+        // Update URL without reload
+        const url = new URL(window.location.href);
+        url.search = ''; // Clear all params
+        window.history.pushState({}, '', url);
+        
+        // Reload page smoothly
+        window.location.href = "{% url 'news' %}";
+    }
+
+    // Change page without full reload
+    function changePage(pageNum) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        params.set('page', pageNum);
+        
+        // Update URL
+        window.history.pushState({}, '', '?' + params.toString());
+        
+        // Smooth scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Reload page
+        window.location.href = '?' + params.toString();
+    }
+
+    // Apply filters with smooth transition
+    function applyFilters() {
+        const search = document.getElementById('searchInput').value;
+        const category = document.getElementById('categoryFilter').value;
+        const sort = document.getElementById('sortFilter').value;
+        
+        const params = new URLSearchParams();
+        if (search) params.set('search', search);
+        if (category) params.set('category_id', category);
+        if (sort) params.set('sort', sort);
+        
+        // Smooth scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Navigate with params
+        window.location.href = '{% url "news" %}?' + params.toString();
+    }
+
+    // Debounce function for search
+    let searchTimeout;
+    function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 800); // Wait 800ms after user stops typing
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search on input with debounce
+        document.getElementById('searchInput').addEventListener('input', debounceSearch);
+        
+        // Filter on change
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortFilter').addEventListener('change', applyFilters);
+        
+        // Allow pressing Enter to search immediately
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                applyFilters();
+            }
+        });
+    });
+
+
+    // Lazy loading for images
+    document.addEventListener('DOMContentLoaded', function() {
+    const lazyImages = document.querySelectorAll('img.lazy-load');
+    
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+            const img = entry.target;
+            const src = img.dataset.src;
+            
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                img.src = src;
+                img.classList.remove('lazy-load');
+            };
+            tempImg.onerror = function() {
+                // Show error placeholder
+                const parent = img.parentElement;
+                parent.innerHTML = '<div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;"><i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i></div>';
+            };
+            tempImg.src = src;
+            
+            imageObserver.unobserve(img);
+            }
+        });
+        }, { rootMargin: '100px' });
+        
+        lazyImages.forEach(img => imageObserver.observe(img));
+    } else {
+        lazyImages.forEach(img => {
+        img.src = img.dataset.src;
+        });
+    }
+    });
+
+    // Store news data for modal
+    const newsData = [];
+
+    // Load data from HTML attributes
+    const newsElements = document.querySelectorAll('.news-data');
+    newsElements.forEach(el => {
+        newsData.push({
+            title: el.dataset.title,
+            content: el.dataset.content,
+            category: el.dataset.category,
+            date: el.dataset.date,
+            image: el.dataset.image
+        });
+    });
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        filterNews();
+    });
+
+    // Category filter
+    document.getElementById('categoryFilter').addEventListener('change', function(e) {
+        filterNews();
+    });
+
+    // Sort functionality
+    document.getElementById('sortFilter').addEventListener('change', function(e) {
+        const container = document.getElementById('newsContainer');
+        const items = Array.from(document.querySelectorAll('.news-item'));
+        
+        items.sort((a, b) => {
+            const dateA = new Date(a.dataset.date);
+            const dateB = new Date(b.dataset.date);
+            
+            if (e.target.value === 'latest') {
+                return dateB - dateA;
+            } else {
+                return dateA - dateB;
+            }
+        });
+        
+        items.forEach(item => container.appendChild(item));
+    });
+
+    function filterNews() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const selectedCategory = document.getElementById('categoryFilter').value;
+        const items = document.querySelectorAll('.news-item');
+        
+        items.forEach(item => {
+            const title = item.querySelector('.card-title').textContent.toLowerCase();
+            const content = item.querySelector('.card-text').textContent.toLowerCase();
+            const category = item.dataset.category;
+            
+            const matchesSearch = title.includes(searchTerm) || content.includes(searchTerm);
+            const matchesCategory = !selectedCategory || category === selectedCategory;
+            
+            if (matchesSearch && matchesCategory) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Modal functionality
+    function showNewsModal(index) {
+        const news = newsData[index];
+        
+        document.getElementById('modalTitle').textContent = news.title;
+        document.getElementById('modalCategory').textContent = news.category;
+        document.getElementById('modalDate').innerHTML = '<i class="bi bi-calendar"></i> ' + news.date;
+        document.getElementById('modalContent').textContent = news.content;
+        
+        const imageContainer = document.getElementById('modalImageContainer');
+        if (news.image) {
+            const imgElement = document.createElement('img');
+            imgElement.src = news.image;
+            imgElement.onerror = function() {
+                imageContainer.innerHTML = '<div class="alert alert-warning">Image not available</div>';
+            };
+            imageContainer.appendChild(imgElement);
+        } else {
+            imageContainer.innerHTML = '';
+        }
+        
+        const modal = new bootstrap.Modal(document.getElementById('newsModal'));
+        modal.show();
+    }
+
+    // Refresh data
+    async function refreshData() {
+        const btn = event.target.closest('button');
+        const originalContent = btn.innerHTML;
+        
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Syncing...';
+        
+        try {
+            const response = await fetch("{% url 'sync-bps-news' %}");
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                alert(`Sync berhasil! ${data.details.created} data baru, ${data.details.updated} data diperbarui.`);
+                location.reload();
+            } else {
+                alert('Sync gagal: ' + data.message);
+            }
+        } catch (error) {
+            alert('Error saat sync data: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+        }
+    }
+</script>
+{% endblock %}

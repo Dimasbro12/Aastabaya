@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <style>
+      /* General Styles */
+      body {
+        /* Menggabungkan gaya kustom background */
+        font-family: "Poppins", sans-serif;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{% static 'img/background-login-register.jpg' %}") no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh; /* Agar mengisi seluruh tinggi viewport */
+        color: white;
+        padding-top: 70px;
+        justify-content: center;
+        display: flex;
+        overflow: hidden;
+      }
+
+      /* Container Box */
+      .container {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 48px 40px;
+        padding-top: 30px;
+        width: 250px;
+        height: 320px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        justify-content: center;
+        align-items: center;
+      }
+
+      h2 {
+        font-size: 25px;
+        font-family: sans-serif;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+        text-align: center;
+        letter-spacing: -0.5px;
+      }
+
+      h3 {
+        font-size: 15px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        font-weight: 400;
+        color: #fff;
+        margin-bottom: 20px;
+        margin-top: 7px;
+        text-align: center;
+        letter-spacing: -0.5px;
+      }
+
+      /* Form Styles */
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      input {
+        width: 88%;
+        padding: 8px 16px 8px 16px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      input::placeholder {
+        color: rgb(240, 251, 255);
+      }
+
+      /* Button Styles */
+      button {
+        width: 100%;
+        padding: 11px;
+        background: linear-gradient(135deg, #258ffa 0%, #1c7dd8 100%);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      button:hover {
+        transform: scale(1.05);
+        background: linear-gradient(90deg, #ff4b2b, #ff416c);
+      }
+
+      img {
+        border-radius: 20px;
+        /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);*/
+      }
+
+      .register-link {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+        color: #d0e1f0;
+      }
+
+      .register-link a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      .register-link a:hover {
+        color: #ff4b2b;
+      }
+
+      /* Mobile Responsive Styles */
+      @media screen and (max-width: 768px) {
+        body {
+          padding: 20px;
+          min-height: 100vh;
+          display: flex;
+        }
+
+        .container {
+          max-width: 380px;
+          width: 90%;
+          padding: 40px 32px;
+          padding-top: 28px;
+          min-height: auto;
+          margin: auto;
+        }
+
+        h2 {
+          font-size: 24px;
+          margin-bottom: 8px;
+        }
+
+        h3 {
+          font-size: 15px;
+          margin-bottom: 20px;
+        }
+
+        input {
+          font-size: 16px;
+          padding: 12px 16px;
+          width: 86%;
+        }
+
+        button {
+          padding: 13px;
+          font-size: 16px;
+        }
+
+        .register-link {
+          font-size: 14px;
+          margin-top: 22px;
+        }
+
+        form {
+          gap: 16px;
+        }
+      }
+
+      /* Extra Small Mobile */
+      @media screen and (max-width: 380px) {
+        .container {
+          max-width: 340px;
+          width: 88%;
+          padding: 36px 28px;
+        }
+
+        h2 {
+          font-size: 23px;
+        }
+
+        h3 {
+          font-size: 14px;
+        }
+
+        input {
+          padding: 11px 14px;
+          font-size: 16px;
+        }
+
+        button {
+          padding: 12px;
+          font-size: 15px;
+        }
+
+        form {
+          gap: 14px;
+        }
+      }
+
+      /* Very Small Screens */
+      @media screen and (max-width: 320px) {
+        .container {
+          width: 90%;
+          padding: 32px 24px;
+        }
+
+        h2 {
+          font-size: 21px;
+        }
+
+        h3 {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="{% static 'icon/logoastabayav2.png' %}" alt="Logo Astabaya" width="150" />
+      <h2>Selamat Datang</h2>
+      <h3>Masuk ke akun anda</h3>
+      <p id="login-error" class="error-message" style="color: red; display: none"></p>
+      <form id="login-form">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+
+      <!-- Forgot Password -->
+
+      <div class="register-link">Belum memiliki akun? <a href="{% url 'signup' %}">Daftar</a></div>
+    </div>
+
+    <script>
+      document.getElementById("login-form").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Mencegah form dari submit default
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        const csrfToken = data.csrfmiddlewaretoken;
+
+        const loginError = document.getElementById("login-error");
+        loginError.style.display = "none";
+
+        try {
+          const response = await fetch("{% url 'api-login' %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify(data),
+          });
+
+          const responseData = await response.json();
+
+          if (response.ok) {
+            if (responseData.token) {
+              // API response - store token
+              localStorage.setItem("authToken", responseData.token);
+            }
+            // Redirect to dashboard (works for both API and form responses)
+            window.location.href = responseData.redirect || "{% url 'dashboard' %}";
+          } else {
+            loginError.textContent = `⚠️ ${responseData.error || "Login failed."}`;
+            loginError.style.display = "block";
+          }
+        } catch (error) {
+          loginError.textContent = "⚠️ An unexpected error occurred. Please try again.";
+          loginError.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

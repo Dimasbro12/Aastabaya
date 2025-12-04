@@ -1,0 +1,326 @@
+{% extends 'dashboard/dashboard.html' %} {% load static %} {% block dashboard_content %}
+<div class="publications-page">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="font-weight-bold mb-2">Publikasi BPS Kota Surabaya</h3>
+          <p class="text-muted mb-0">Total: <span class="badge bg-primary">{{ countPublication }}</span> publikasi</p>
+        </div>
+        <button class="btn btn-primary" onclick="refreshData()"><i class="bi bi-arrow-clockwise"></i> Refresh Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Search - Better Layout -->
+  <div class="row mb-4">
+    <div class="col-md-8 mb-3 mb-md-0">
+      <div class="input-group shadow-sm">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-start-0 ps-0" id="searchInput" placeholder="Cari publikasi berdasarkan judul atau abstrak..." />
+      </div>
+    </div>
+    <div class="col-md-4">
+      <select class="form-select shadow-sm" id="yearFilter">
+        <option value="">Semua Tahun</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Publications List -->
+  <div class="row">
+    {% if dataPublication %} {% for publication in dataPublication %}
+    <div class="col-12 mb-4 publication-item" data-year="{{ publication.date|date:'Y' }}">
+      <div class="card hover-card">
+        <div class="card-body">
+          <div class="row">
+            <!-- Cover Image -->
+            <div class="col-md-2 text-center">
+              <img
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 200'%3E%3Crect fill='%23f0f0f0' width='150' height='200'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='14' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                data-src="{{ publication.image }}"
+                alt="{{ publication.title }}"
+                class="img-fluid rounded shadow-sm lazy-load"
+                style="max-height: 150px; cursor: pointer"
+                loading="lazy"
+                data-index="{{ forloop.counter0 }}"
+                onclick="showModal(this.dataset.index)"
+              />
+            </div>
+
+            <!-- Publication Info -->
+            <div class="col-md-7">
+              <h5 class="card-title mb-2">{{ publication.title }}</h5>
+
+              <div class="mb-2">
+                {% if publication.date %}
+                <span class="badge bg-info me-2"> <i class="bi bi-calendar"></i> {{ publication.date|date:"d M Y" }} </span>
+                {% endif %} {% if publication.size %}
+                <span class="badge bg-secondary"> <i class="bi bi-file-earmark-pdf"></i> {{ publication.size }} </span>
+                {% endif %}
+              </div>
+
+              <p class="card-text text-muted mb-0">{{ publication.abstract|truncatewords:30 }}</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-md-3 d-flex flex-column justify-content-center">
+              <button class="btn btn-outline-primary btn-sm mb-2" data-index="{{ forloop.counter0 }}" onclick="showModal(this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
+              <a href="{{ publication.dl }}" class="btn btn-primary btn-sm" target="_blank" download> <i class="bi bi-download"></i> Download PDF </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <div class="col-12">
+      <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> Belum ada data publikasi.
+        <a href="{% url 'sync-bps-publications' %}" class="alert-link">Sinkronkan data</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Pagination -->
+  {% if dataPublication.has_other_pages %}
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if dataPublication.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ dataPublication.previous_page_number }}"> <i class="bi bi-chevron-left"></i> Previous </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+      </li>
+      {% endif %} {% for num in dataPublication.paginator.page_range %} {% if dataPublication.number == num %}
+      <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num > dataPublication.number|add:'-3' and num < dataPublication.number|add:'3' %}
+      <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+      {% endif %} {% endfor %} {% if dataPublication.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ dataPublication.next_page_number }}"> Next <i class="bi bi-chevron-right"></i> </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+      </li>
+      {% endif %}
+    </ul>
+    <p class="text-center text-muted small">Showing {{ dataPublication.start_index }} to {{ dataPublication.end_index }} of {{ dataPublication.paginator.count }} publications</p>
+  </nav>
+  {% endif %}
+</div>
+
+<!-- Modal for Publication Detail -->
+<div class="modal fade" id="publicationModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4 text-center mb-3">
+            <img id="modalImage" src="" alt="" class="img-fluid rounded shadow" />
+          </div>
+          <div class="col-md-8">
+            <div class="mb-3">
+              <strong>Tanggal Publikasi:</strong>
+              <span id="modalDate"></span>
+            </div>
+            <div class="mb-3">
+              <strong>Ukuran File:</strong>
+              <span id="modalSize"></span>
+            </div>
+            <div class="mb-3">
+              <strong>ID Publikasi:</strong>
+              <span id="modalPubId"></span>
+            </div>
+            <hr />
+            <div>
+              <strong>Abstrak:</strong>
+              <p id="modalAbstract" class="mt-2 text-muted"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a id="modalDownload" href="" class="btn btn-primary" target="_blank" download> <i class="bi bi-download"></i> Download PDF </a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hover-card {
+    transition: all 0.3s ease;
+  }
+
+  .hover-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+</style>
+
+<!-- Hidden data container for publications -->
+<div id="publicationsDataContainer" style="display: none">
+  {% for publication in dataPublication %}
+  <div
+    class="publication-data"
+    data-title="{{ publication.title|escapejs }}"
+    data-image="{{ publication.image|escapejs }}"
+    data-date="{{ publication.date|date:'d M Y'|default:'N/A' }}"
+    data-size="{{ publication.size|default:'N/A' }}"
+    data-pub-id="{{ publication.pub_id|escapejs }}"
+    data-abstract="{{ publication.abstract|escapejs }}"
+    data-download="{{ publication.dl|escapejs }}"
+  ></div>
+  {% endfor %}
+</div>
+
+<script>
+  // Lazy loading for images
+  document.addEventListener('DOMContentLoaded', function () {
+    const lazyImages = document.querySelectorAll('img.lazy-load');
+
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              const src = img.dataset.src;
+
+              const tempImg = new Image();
+              tempImg.onload = function () {
+                img.src = src;
+                img.classList.remove('lazy-load');
+              };
+              tempImg.onerror = function () {
+                img.src =
+                  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200"%3E%3Crect fill="%23f0f0f0" width="150" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="14" font-family="Arial"%3ENo Image%3C/text%3E%3C/svg%3E';
+              };
+              tempImg.src = src;
+
+              imageObserver.unobserve(img);
+            }
+          });
+        },
+        { rootMargin: '50px' }
+      );
+
+      lazyImages.forEach((img) => imageObserver.observe(img));
+    } else {
+      lazyImages.forEach((img) => {
+        img.src = img.dataset.src;
+      });
+    }
+  });
+
+  // Store publication data for modal
+  const publications = [];
+
+  // Load data from HTML attributes
+  const dataElements = document.querySelectorAll('.publication-data');
+  dataElements.forEach((el) => {
+    publications.push({
+      title: el.dataset.title,
+      image: el.dataset.image,
+      date: el.dataset.date,
+      size: el.dataset.size,
+      pubId: el.dataset.pubId,
+      abstract: el.dataset.abstract,
+      download: el.dataset.download,
+    });
+  });
+
+  // Rest of your existing script...
+
+  // Search functionality
+  document.getElementById('searchInput').addEventListener('input', function (e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.publication-item');
+
+    items.forEach((item) => {
+      const title = item.querySelector('.card-title').textContent.toLowerCase();
+      const abstract = item.querySelector('.card-text').textContent.toLowerCase();
+
+      if (title.includes(searchTerm) || abstract.includes(searchTerm)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+
+  // Year filter
+  document.getElementById('yearFilter').addEventListener('change', function (e) {
+    const selectedYear = e.target.value;
+    const items = document.querySelectorAll('.publication-item');
+
+    items.forEach((item) => {
+      const itemYear = item.dataset.year;
+
+      if (!selectedYear || itemYear === selectedYear) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+
+  // Modal functionality
+  function showModal(index) {
+    const pub = publications[index];
+
+    document.getElementById('modalTitle').textContent = pub.title;
+    document.getElementById('modalImage').src = pub.image;
+    document.getElementById('modalDate').textContent = pub.date;
+    document.getElementById('modalSize').textContent = pub.size;
+    document.getElementById('modalPubId').textContent = pub.pubId;
+    document.getElementById('modalAbstract').textContent = pub.abstract;
+    document.getElementById('modalDownload').href = pub.download;
+
+    const modal = new bootstrap.Modal(document.getElementById('publicationModal'));
+    modal.show();
+  }
+
+  // Refresh data
+  async function refreshData() {
+    const btn = event.target.closest('button');
+    const originalContent = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Syncing...';
+
+    try {
+      const response = await fetch("{% url 'sync-bps-publications' %}");
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        alert(`Sync berhasil! ${data.details.created} data baru, ${data.details.updated} data diperbarui.`);
+        location.reload();
+      } else {
+        alert('Sync gagal: ' + data.message);
+      }
+    } catch (error) {
+      alert('Error saat sync data: ' + error.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+    }
+  }
+</script>
+{% endblock %}

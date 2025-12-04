@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Aastabaya</title>
+    <!-- Core CSS from template -->
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/feather/feather.css' %}" />
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/ti-icons/css/themify-icons.css' %}" />
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/css/vendor.bundle.base.css' %}" />
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/datatables.net-bs5/dataTables.bootstrap5.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'src/assets/vendors/js/select.dataTables.min.css' %}" />
+    <!-- External CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'src/assets/css/style.css' %}" />
+    <link rel="shortcut icon" href="{% static 'src/assets/images/favicon.png' %}" />
+  </head>
+  <body>
+    <div class="container-scroller">
+      <div class="row p-0 m-0 proBanner" id="proBanner">
+        <div class="col-md-12 p-0 m-0">
+          <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between" style="background-color: #00d0ff">
+            <div>
+              <div class="d-flex align-items-center justify-content-between">
+                <p class="mb-0 font-weight-medium me-3 buy-now-text">Berhati hatilah dalam menggunakan web Aastabaya ini!</p>
+                <a href="#" target="_blank" class="btn me-2 buy-now-btn border-0" style="color: #47bfef">Lihat Panduan</a>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <button id="bannerClose" class="btn border-0 p-0">
+                <i class="ti-close text-white"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- partial:partials/_navbar.html -->
+      <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+          <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><img src="{% static 'icon/A-removebg-preview.png' %}" width="150" height="45" alt="logo" /></a>
+          <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}"><img src="{% static 'icon/LogoAstabaya-removebg-preview.png' %}" width="50" height="50" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="icon-menu"></span>
+          </button>
+          <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item dropdown">
+              <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+                <i class="icon-bell mx-0"></i>
+                <span class="count"></span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+                <a class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <div class="preview-icon bg-success">
+                      <i class="ti-info-alt mx-0"></i>
+                    </div>
+                  </div>
+                  <div class="preview-item-content">
+                    <h6 class="preview-subject font-weight-normal">Application Error</h6>
+                    <p class="font-weight-light small-text mb-0 text-muted">Just now</p>
+                  </div>
+                </a>
+                <a class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <div class="preview-icon bg-warning">
+                      <i class="ti-settings mx-0"></i>
+                    </div>
+                  </div>
+                  <div class="preview-item-content">
+                    <h6 class="preview-subject font-weight-normal">Settings</h6>
+                    <p class="font-weight-light small-text mb-0 text-muted">Private message</p>
+                  </div>
+                </a>
+                <a class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <div class="preview-icon bg-info">
+                      <i class="ti-user mx-0"></i>
+                    </div>
+                  </div>
+                  <div class="preview-item-content">
+                    <h6 class="preview-subject font-weight-normal">New user registration</h6>
+                    <p class="font-weight-light small-text mb-0 text-muted">2 days ago</p>
+                  </div>
+                </a>
+              </div>
+            </li>
+            <li class="nav-item nav-profile dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+                <img src="{% static 'src/assets/images/faces/face28.jpg' %}" alt="profile" />
+              </a>
+              <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                <a class="dropdown-item"> <i class="ti-settings text-primary"></i> Settings </a>
+                <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item btn btn-link" style="padding: 0; color: inherit; text-align: left"><i class="ti-power-off text-primary"></i> Logout</button>
+                </form>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'publications' %}">
+                <i class="icon-book menu-icon"></i>
+                <span class="menu-title">Publikasi</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'infographics' %}">
+                <i class="bi bi-bar-chart-line menu-icon"></i>
+                <span class="menu-title">Infografis</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'news' %}">
+                <i class="bi bi-file-earmark-text menu-icon"></i>
+                <span class="menu-title">Berita</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#inflasi" aria-expanded="false" aria-controls="inflasi">
+                <i class="bi bi-cash-coin menu-icon"></i>
+                <span class="menu-title">Inflasi</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="inflasi">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Inflasi (Y-on-Y)</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Inflasi (M-to-M)</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#PDRB" aria-expanded="false" aria-controls="PDRB">
+                <i class="bi bi-cash-coin menu-icon"></i>
+                <span class="menu-title">PDRB</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="PDRB">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">PDRB ADHK</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">PDRB ADHB</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#kemiskinan" aria-expanded="false" aria-controls="kemiskinan">
+                <i class="bi bi-people menu-icon"></i>
+                <span class="menu-title">Kemiskinan</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="kemiskinan">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Jumlah Penduduk Miskin</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Persentase Penduduk Miskin</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#ketenagakerjaan" aria-expanded="false" aria-controls="ketenagakerjaan">
+                <i class="bi bi-people menu-icon"></i>
+                <span class="menu-title">Ketenagakerjaan</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="ketenagakerjaan">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Pengangguran</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Partisipasi</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#TingkatHunianHotel" aria-expanded="false" aria-controls="TingkatHunianHotel">
+                <i class="bi bi-luggage menu-icon"></i>
+                <span class="menu-title">Tingkat Hunian Hotel</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="TingkatHunianHotel">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Hunian Hotel</a></li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="false" aria-controls="pembangunan-manusia">
+                <i class="bi bi-buildings menu-icon"></i>
+                <span class="menu-title">Pembangunan Manusia</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="pembangunan-manusia">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm' %}">IPM</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#giniratio" aria-expanded="false" aria-controls="giniratio">
+                <i class="bi bi-buildings menu-icon"></i>
+                <span class="menu-title">Gini Ratio</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="giniratio">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Gini Ratio</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+                <i class="icon-columns menu-icon"></i>
+                <span class="menu-title">Form elements</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="form-elements">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Basic Elements</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
+                <i class="icon-bar-graph menu-icon"></i>
+                <span class="menu-title">Charts</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="charts">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">ChartJs</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+                <i class="icon-grid-2 menu-icon"></i>
+                <span class="menu-title">Tables</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="tables">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Basic table</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+                <i class="icon-contract menu-icon"></i>
+                <span class="menu-title">Icons</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="icons">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#">Mdi icons</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">User Pages</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="auth">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#"> Login </a></li>
+                  <li class="nav-item"><a class="nav-link" href="#"> Register </a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
+                <i class="icon-ban menu-icon"></i>
+                <span class="menu-title">Error pages</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="error">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"><a class="nav-link" href="#"> 404 </a></li>
+                  <li class="nav-item"><a class="nav-link" href="#"> 500 </a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="icon-paper menu-icon"></i>
+                <span class="menu-title">Documentation</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            {% block dashboard_content %}
+            <div class="row">
+              <div class="col-md-12 grid-margin">
+                <div class="row">
+                  <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                    <h3 class="font-weight-bold">Selamat Datang Pengguna!</h3>
+                    <h6 class="font-weight-normal mb-0">Aastabaya <span class="text-primary">Website untuk melihat indikator strategis!</span></h6>
+                  </div>
+                  <div class="col-12 col-xl-4">
+                    <div class="justify-content-end d-flex">
+                      <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                        <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                          <i class="mdi mdi-calendar"></i> Today (10 Jan 2021)
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
+                          <a class="dropdown-item" href="#">January - March</a>
+                          <a class="dropdown-item" href="#">March - June</a>
+                          <a class="dropdown-item" href="#">June - August</a>
+                          <a class="dropdown-item" href="#">August - November</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 grid-margin stretch-card transparent">
+                <div class="card">
+                  <!-- Carousel News (Default) -->
+                  <div id="carouselNews" class="carousel carousel-dark slide h-100" data-bs-ride="carousel" style="border-radius: 20px">
+                    <div class="carousel-indicators">
+                      {% for new in dataNews %}
+                      <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+                      {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                      {% for new in dataNews %}
+                      <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
+                        <img src="{{ new.picture_url }}" class="d-block w-100 h-100" alt="{{ new.title }}" style="object-fit: cover" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <!-- <h5>{{ new.title }}</h5>
+                          <p>{{ new.content }}</p> -->
+                        </div>
+                      </div>
+                      {% empty %}
+                      <div class="carousel-item active">
+                        <img src="{% static 'src/assets/images/dashboard/people.png' %}" class="d-block w-100 h-100" alt="Welcome Slide" style="object-fit: cover" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5>Selamat Datang di Aastabaya</h5>
+                          <p>Pusat data indikator strategis Kota Surabaya.</p>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselNews" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+
+                  <!-- Carousel Infographic -->
+                  <div id="carouselInfographic" class="carousel carousel-dark slide h-100" style="border-radius: 20px; display: none">
+                    <div class="carousel-indicators">
+                      {% for infographic in dataInfographic %}
+                      <button
+                        type="button"
+                        data-bs-target="#carouselInfographic"
+                        data-bs-slide-to="{{ forloop.counter0 }}"
+                        class="{% if forloop.first %}active{% endif %}"
+                        aria-current="true"
+                        aria-label="Slide {{ forloop.counter }}"
+                      ></button>
+                      {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                      {% for infographic in dataInfographic %}
+                      <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
+                        <img src="{{ infographic.image }}" class="d-block w-100 h-100" alt="{{ infographic.title }}" style="object-fit: cover" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <!-- <h5>{{ infographic.title }}</h5> -->
+                        </div>
+                      </div>
+                      {% empty %}
+                      <div class="carousel-item active">
+                        <img src="{% static 'src/assets/images/dashboard/people.png' %}" class="d-block w-100 h-100" alt="Welcome Slide" style="object-fit: cover" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5>Infografis</h5>
+                          <p>Tidak ada infografis tersedia.</p>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselInfographic" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselInfographic" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+
+                  <!-- Carousel Publication -->
+                  <div id="carouselPublication" class="carousel carousel-dark slide h-100" style="border-radius: 20px; display: none">
+                    <div class="carousel-indicators">
+                      {% for publication in dataPublication %}
+                      <button
+                        type="button"
+                        data-bs-target="#carouselPublication"
+                        data-bs-slide-to="{{ forloop.counter0 }}"
+                        class="{% if forloop.first %}active{% endif %}"
+                        aria-current="true"
+                        aria-label="Slide {{ forloop.counter }}"
+                      ></button>
+                      {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                      {% for publication in dataPublication %}
+                      <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
+                        <img src="{{ publication.image }}" class="d-block w-100 h-100" alt="{{ publication.title }}" style="object-fit: cover" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <!-- <h5>{{ publication.title }}</h5> -->
+                        </div>
+                      </div>
+                      {% empty %}
+                      <div class="carousel-item active">
+                        <img src="{% static 'src/assets/images/dashboard/people.png' %}" class="d-block w-100 h-100" alt="Welcome Slide" style="object-fit: cover" />
+                        <div class="carousel-caption d-none d-md-block">
+                          <h5>Publikasi</h5>
+                          <p>Tidak ada publikasi tersedia.</p>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselPublication" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselPublication" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 grid-margin transparent">
+                <div class="row">
+                  <div class="col-md-17 mb-4 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('infographic')">
+                    <div class="card card-tale h-100">
+                      <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                          <p class="mb-4">Infografis</p>
+                          <i class="bi bi-clipboard2-data fs-30 mb-2"></i>
+                        </div>
+                        <p>Infografis statistik dari Kota Surabaya</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 mb-4 mb-lg-0 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('publication')">
+                    <div class="card card-light-blue h-100">
+                      <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                          <p class="mb-4">Publikasi</p>
+                          <i class="bi bi-journal fs-30 mb-2"></i>
+                        </div>
+                        <p>Publikasi statistik dari Kota Surabaya</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 mb-4 mb-lg-0 stretch-card transparent pt-4" style="cursor: pointer" onclick="switchCarousel('news')">
+                    <div class="card card-tale h-100">
+                      <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                          <p class="mb-4">Berita</p>
+                          <i class="bi bi-journal fs-30 mb-2"></i>
+                        </div>
+                        <p>Berita dari Kota Surabaya</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Tabel Report -->
+            <!-- <div class="row">
+              <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <p class="card-title mb-0">Top Products</p>
+                    <div class="table-responsive">
+                      <table class="table table-striped table-borderless">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Search Engine Marketing</td>
+                            <td class="font-weight-bold">$362</td>
+                            <td>21 Sep 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-success">Completed</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Search Engine Optimization</td>
+                            <td class="font-weight-bold">$116</td>
+                            <td>13 Jun 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-success">Completed</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Display Advertising</td>
+                            <td class="font-weight-bold">$551</td>
+                            <td>28 Sep 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-warning">Pending</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Pay Per Click Advertising</td>
+                            <td class="font-weight-bold">$523</td>
+                            <td>30 Jun 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-warning">Pending</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>E-Mail Marketing</td>
+                            <td class="font-weight-bold">$781</td>
+                            <td>01 Nov 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-danger">Cancelled</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Referral Marketing</td>
+                            <td class="font-weight-bold">$283</td>
+                            <td>20 Mar 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-warning">Pending</div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Social media marketing</td>
+                            <td class="font-weight-bold">$897</td>
+                            <td>26 Oct 2018</td>
+                            <td class="font-weight-medium">
+                              <div class="badge badge-success">Completed</div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div id="demo-output" style="margin-bottom: 1em" class="chart-display"></div>
+
+            <!-- Table News (Default) -->
+            <div id="tableNewsContainer">
+              <table id="tableNews" class="display table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>ID Category</th>
+                    <th>Name Category</th>
+                    <th>Release Date</th>
+                    <th>Picture URL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for new in dataNewss %}
+                  <tr>
+                    <td>{{ new.title }}</td>
+                    <td>{{ new.content }}</td>
+                    <td>{{ new.category_id }}</td>
+                    <td>{{ new.category_name }}</td>
+                    <td>{{ new.release_date }}</td>
+                    <td>{{ new.picture_url }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>ID Category</th>
+                    <th>Name Category</th>
+                    <th>Release Date</th>
+                    <th>Picture URL</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Table Infographic -->
+            <div id="tableInfographicContainer" style="display: none">
+              <table id="tableInfographic" class="display table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Download Link</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for infographic in dataInfographics %}
+                  <tr>
+                    <td>{{ infographic.title }}</td>
+                    <td>{{ infographic.image }}</td>
+                    <td><a href="{{ infographic.dl }}" target="_blank">{{ infographic.dl }}</a></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Download Link</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Infographics Section (shown when infographic is clicked) -->
+            {% if dataInfographicLatest %}
+            <div id="infographicsSection" style="display: none; margin-top: 2rem">
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="font-weight-bold mb-0">Infographic</h3>
+                    <a href="{% url 'infographics' %}" class="btn btn-link text-primary text-decoration-none">Lihat Semuanya <i class="bi bi-arrow-right"></i></a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                {% for infographic in dataInfographicLatest %}
+                <div class="col-sm-6 col-lg-3">
+                  <div class="card infographic-card h-100">
+                    <div class="infographic-thumb">
+                      <img
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect fill='%23f0f0f0' width='400' height='400'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                        data-src="{{ infographic.image }}"
+                        alt="{{ infographic.title }}"
+                        class="img-fluid rounded lazy-load"
+                        style="width: 100%; height: 220px; object-fit: cover"
+                        loading="lazy"
+                        data-index="{{ forloop.counter0 }}"
+                        onclick="showInfographicModal(this.dataset.index)"
+                      />
+                    </div>
+                    <div class="card-body text-center">
+                      <h6 class="fw-bold text-truncate mb-3" title="{{ infographic.title }}">{{ infographic.title }}</h6>
+                      <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" data-index="{{ forloop.counter0 }}" onclick="showInfographicModal(this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
+                        <a href="{{ infographic.dl }}" class="btn btn-primary btn-sm" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Table Publication -->
+            <div id="tablePublicationContainer" style="display: none">
+              <table id="tablePublication" class="display table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Abstract</th>
+                    <th>Image</th>
+                    <th>Date</th>
+                    <th>Size</th>
+                    <th>Download Link</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for publication in dataPublications %}
+                  <tr>
+                    <td>{{ publication.title }}</td>
+                    <td>{{ publication.abstract }}</td>
+                    <td>{{ publication.image }}</td>
+                    <td>{{ publication.date }}</td>
+                    <td>{{ publication.size }}</td>
+                    <td><a href="{{ publication.dl }}" target="_blank">{{ publication.dl }}</a></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Title</th>
+                    <th>Abstract</th>
+                    <th>Image</th>
+                    <th>Date</th>
+                    <th>Size</th>
+                    <th>Download Link</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- News Section (shown when news is clicked) -->
+            {% if dataNewsLatest %}
+            <div id="newsSection" style="display: none; margin-top: 2rem">
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="font-weight-bold mb-0">News</h3>
+                    <a href="{% url 'news' %}" class="btn btn-link text-primary text-decoration-none">Lihat Semuanya <i class="bi bi-arrow-right"></i></a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                {% for news in dataNewsLatest %}
+                <div class="col-12 mb-4">
+                  <div class="card hover-card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-3">
+                          {% if news.picture_url %}
+                          <img
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                            data-src="{{ news.picture_url }}"
+                            alt="{{ news.title }}"
+                            class="img-fluid rounded shadow-sm lazy-load"
+                            style="width: 100%; height: 200px; object-fit: cover"
+                            loading="lazy"
+                            data-index="{{ forloop.counter0 }}"
+                            onclick="showNewsCardModal(this.dataset.index)"
+                          />
+                          {% else %}
+                          <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 100%; height: 200px">
+                            <i class="bi bi-newspaper" style="font-size: 3rem; color: #ccc"></i>
+                          </div>
+                          {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                          <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                              <h5 class="card-title mb-2">{{ news.title }}</h5>
+                              <div class="mb-2">
+                                {% if news.category_name %}
+                                <span class="badge bg-primary me-2">{{ news.category_name }}</span>
+                                {% endif %} {% if news.release_date %}
+                                <span class="text-muted small"><i class="bi bi-calendar"></i> {{ news.release_date|date:"d M Y" }}</span>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                          <p class="card-text text-muted mb-3">{{ news.content|striptags|truncatewords:40 }}</p>
+                          <button class="btn btn-outline-primary btn-sm" data-index="{{ forloop.counter0 }}" onclick="showNewsCardModal(this.dataset.index)"><i class="bi bi-book"></i> Baca Selengkapnya</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Modal for News Detail -->
+            <div class="modal fade" id="newsCardModal" tabindex="-1">
+              <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="newsModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <span class="badge bg-primary me-2" id="newsModalCategory"></span>
+                      <span class="text-muted small" id="newsModalDate"></span>
+                    </div>
+                    <div class="mb-3" id="newsModalImageContainer"></div>
+                    <div id="newsModalContent" class="text-muted" style="line-height: 1.8; text-align: justify"></div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Infographic Detail -->
+            <div class="modal fade" id="infographicModal" tabindex="-1">
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="infographicModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body text-center">
+                    <img id="infographicModalImage" src="" alt="" class="img-fluid rounded shadow mb-3" />
+                  </div>
+                  <div class="modal-footer">
+                    <a id="infographicModalDownload" href="" class="btn btn-primary" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Publications Section (shown when publication is clicked) -->
+            <div id="publicationsSection" style="display: none; margin-top: 2rem">
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="font-weight-bold mb-0">Publication</h3>
+                    <a href="{% url 'publications' %}" class="btn btn-link text-primary text-decoration-none"> Lihat Semuanya <i class="bi bi-arrow-right"></i> </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                {% for publication in dataPublicationsLatest %}
+                <div class="col-12 mb-4">
+                  <div class="card hover-card">
+                    <div class="card-body">
+                      <div class="row">
+                        <!-- Cover Image -->
+                        <div class="col-md-2 text-center">
+                          <img
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 200'%3E%3Crect fill='%23f0f0f0' width='150' height='200'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='14' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                            data-src="{{ publication.image }}"
+                            alt="{{ publication.title }}"
+                            class="img-fluid rounded shadow-sm lazy-load"
+                            style="max-height: 150px; cursor: pointer"
+                            loading="lazy"
+                            data-index="{{ forloop.counter0 }}"
+                            onclick="showPublicationModal(this.dataset.index)"
+                          />
+                        </div>
+
+                        <!-- Publication Info -->
+                        <div class="col-md-7">
+                          <h5 class="card-title mb-2">{{ publication.title }}</h5>
+
+                          <div class="mb-2">
+                            {% if publication.date %}
+                            <span class="badge bg-info me-2"> <i class="bi bi-calendar"></i> {{ publication.date|date:"d M Y" }} </span>
+                            {% endif %} {% if publication.size %}
+                            <span class="badge bg-secondary"> <i class="bi bi-file-earmark-pdf"></i> {{ publication.size }} </span>
+                            {% endif %}
+                          </div>
+
+                          <p class="card-text text-muted mb-0">{{ publication.abstract|truncatewords:30 }}</p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="col-md-3 d-flex flex-column justify-content-center">
+                          <button class="btn btn-outline-primary btn-sm mb-2" data-index="{{ forloop.counter0 }}" onclick="showPublicationModal(this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
+                          <a href="{{ publication.dl }}" class="btn btn-primary btn-sm" target="_blank" download> <i class="bi bi-download"></i> Download PDF </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Modal for Publication Detail -->
+            <div class="modal fade" id="publicationModal" tabindex="-1">
+              <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-md-4 text-center mb-3">
+                        <img id="modalImage" src="" alt="" class="img-fluid rounded shadow" />
+                      </div>
+                      <div class="col-md-8">
+                        <div class="mb-3">
+                          <strong>Tanggal Publikasi:</strong>
+                          <span id="modalDate"></span>
+                        </div>
+                        <div class="mb-3">
+                          <strong>Ukuran File:</strong>
+                          <span id="modalSize"></span>
+                        </div>
+                        <div class="mb-3">
+                          <strong>ID Publikasi:</strong>
+                          <span id="modalPubId"></span>
+                        </div>
+                        <hr />
+                        <div>
+                          <strong>Abstrak:</strong>
+                          <p id="modalAbstract" class="mt-2 text-muted"></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <a id="modalDownload" href="" class="btn btn-primary" target="_blank" download> <i class="bi bi-download"></i> Download PDF </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hidden data container for publications -->
+            <div id="publicationsDataContainer" style="display: none">
+              {% for publication in dataPublicationsLatest %}
+              <div
+                class="publication-data"
+                data-title="{{ publication.title|escapejs }}"
+                data-image="{{ publication.image|escapejs }}"
+                data-date="{{ publication.date|date:'d M Y'|default:'N/A' }}"
+                data-size="{{ publication.size|default:'N/A' }}"
+                data-pub-id="{{ publication.pub_id|escapejs }}"
+                data-abstract="{{ publication.abstract|escapejs }}"
+                data-download="{{ publication.dl|escapejs }}"
+              ></div>
+              {% endfor %}
+            </div>
+
+            <!-- Hidden data container for infographics -->
+            <div id="infographicsDataContainer" style="display: none">
+              {% for infographic in dataInfographicLatest %}
+              <div class="infographic-card-data" data-title="{{ infographic.title|escapejs }}" data-image="{{ infographic.image|escapejs }}" data-download="{{ infographic.dl|escapejs }}"></div>
+              {% endfor %}
+            </div>
+
+            <!-- Hidden data container for news -->
+            <div id="newsCardsDataContainer" style="display: none">
+              {% for news in dataNewsLatest %}
+              <div
+                class="news-card-data"
+                data-title="{{ news.title|escapejs }}"
+                data-category="{{ news.category_name|default:'Umum'|escapejs }}"
+                data-date="{{ news.release_date|date:'d M Y'|default:'N/A' }}"
+                data-image="{{ news.picture_url|escapejs }}"
+                data-content="{{ news.content|escapejs }}"
+              ></div>
+              {% endfor %}
+            </div>
+            {% endblock %} {% block infographics %} {% endblock %} {% block publications %} {% endblock %}
+          </div>
+          <input type="checkbox" id="check" /> <label class="chat-btn" for="check"> <i class="fa fa-commenting-o comment"></i> <i class="fa fa-close close"></i> </label>
+          <div class="wrapper">
+            <div class="header"><h6>Aastabaya Chat</h6></div>
+            <div class="chat-area" id="chat-box"></div>
+            <div class="typing-area">
+              <form id="chat-form" class="d-flex">
+                <input type="text" id="message-input" class="form-control" placeholder="Ketik pesan..." autocomplete="off" />
+                <button type="submit" class="btn btn-primary ms-2"><i class="fa fa-paper-plane"></i></button>
+              </form>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2025 from Dimas & Team. All rights reserved.</span>
+              <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Coding with <i class="ti-heart text-danger ms-1"></i></span>
+            </div>
+          </footer>
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- Core JS from template -->
+    <script src="{% static 'src/assets/vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- Plugin JS -->
+    <script src="{% static 'src/assets/vendors/chart.js/chart.umd.js' %}"></script>
+    <script src="{% static 'src/assets/vendors/datatables.net/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'src/assets/vendors/datatables.net-bs5/dataTables.bootstrap5.js' %}"></script>
+    <script src="{% static 'src/assets/js/dataTables.select.min.js' %}"></script>
+    <!-- Custom JS for template -->
+    <script src="{% static 'src/assets/js/off-canvas.js' %}"></script>
+    <script src="{% static 'src/assets/js/template.js' %}"></script>
+    <script src="{% static 'src/assets/js/settings.js' %}"></script>
+    <script src="{% static 'src/assets/js/todolist.js' %}"></script>
+    <script src="{% static 'src/assets/js/jquery.cookie.js' %}" type="text/javascript"></script>
+    <script src="{% static 'src/assets/js/dashboard.js' %}"></script>
+    <!-- External JS from CDN -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <script>
+      // Establish a secure WebSocket connection
+      const socketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const socket = new WebSocket(`${socketProtocol}//${window.location.host}/ws/chat/`);
+
+      // Reference to the chat display container
+      const chatBox = document.getElementById("chat-box");
+
+      // Handle incoming WebSocket messages
+      socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const messageEl = document.createElement("div");
+        messageEl.className = "chat-message incoming";
+        messageEl.innerHTML = `<span>${data.message}</span>`;
+        chatBox.appendChild(messageEl);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      };
+
+      // Send the user's message through WebSocket
+      function sendMessage() {
+        const input = document.getElementById("message-input");
+        const message = input.value;
+        if (message.trim() === "") return;
+
+        const messageEl = document.createElement("div");
+        messageEl.className = "chat-message outgoing";
+        messageEl.innerHTML = `<span>${message}</span>`;
+        chatBox.appendChild(messageEl);
+
+        socket.send(JSON.stringify({ message: message }));
+        input.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      // Handle form submission
+      document.getElementById("chat-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        sendMessage();
+      });
+
+      // Optional: Send message on Enter key press
+      document.getElementById("message-input").addEventListener("keypress", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+      // Global variables for tables and chart
+      let tableNews, tableInfographic, tablePublication, chart;
+      let currentTable = null;
+      let tableInitialized = {
+        news: false,
+        infographic: false,
+        publication: false,
+      };
+
+      // Function to switch table
+      function switchTable(type) {
+        // Hide all table containers (this will hide the entire DataTable including wrapper)
+        const tableNewsContainer = document.getElementById("tableNewsContainer");
+        const tableInfographicContainer = document.getElementById("tableInfographicContainer");
+        const tablePublicationContainer = document.getElementById("tablePublicationContainer");
+        const publicationsSection = document.getElementById("publicationsSection");
+        const newsSection = document.getElementById("newsSection");
+        const infographicsSection = document.getElementById("infographicsSection");
+
+        if (tableNewsContainer) tableNewsContainer.style.display = "none";
+        if (tableInfographicContainer) tableInfographicContainer.style.display = "none";
+        if (tablePublicationContainer) tablePublicationContainer.style.display = "none";
+        if (publicationsSection) publicationsSection.style.display = "none";
+        if (newsSection) newsSection.style.display = "none";
+        if (infographicsSection) infographicsSection.style.display = "none";
+
+        // Initialize and show selected table
+        const tableConfig = {
+          paging: true,
+          scrollCollapse: true,
+          scrollY: 500,
+          scrollX: true,
+        };
+
+        if (type === "news") {
+          if (!tableInitialized.news) {
+            tableNews = new DataTable("#tableNews", tableConfig);
+            tableInitialized.news = true;
+            // Set up event listener for news table
+            tableNews.on("draw", function () {
+              if (currentTable === tableNews) {
+                chart.series[0].setData(chartData(tableNews));
+              }
+            });
+          }
+          if (tableNewsContainer) tableNewsContainer.style.display = "none";
+          if (newsSection) newsSection.style.display = "block";
+          currentTable = tableNews;
+        } else if (type === "infographic") {
+          if (!tableInitialized.infographic) {
+            tableInfographic = new DataTable("#tableInfographic", tableConfig);
+            tableInitialized.infographic = true;
+            // Set up event listener for infographic table
+            tableInfographic.on("draw", function () {
+              if (currentTable === tableInfographic) {
+                chart.series[0].setData(chartData(tableInfographic));
+              }
+            });
+          }
+          if (infographicsSection) infographicsSection.style.display = "block";
+          currentTable = tableInfographic;
+        } else if (type === "publication") {
+          if (!tableInitialized.publication) {
+            tablePublication = new DataTable("#tablePublication", tableConfig);
+            tableInitialized.publication = true;
+            // Set up event listener for publication table
+            tablePublication.on("draw", function () {
+              if (currentTable === tablePublication) {
+                chart.series[0].setData(chartData(tablePublication));
+              }
+            });
+          }
+          if (publicationsSection) publicationsSection.style.display = "block";
+          currentTable = tablePublication;
+        }
+
+        // Update chart with current table data
+        if (currentTable && chart) {
+          chart.series[0].setData(chartData(currentTable));
+        }
+      }
+
+      // Function to switch carousel and table
+      function switchCarousel(type) {
+        // Hide all carousels
+        const carouselNewsEl = document.getElementById("carouselNews");
+        const carouselInfographicEl = document.getElementById("carouselInfographic");
+        const carouselPublicationEl = document.getElementById("carouselPublication");
+
+        carouselNewsEl.style.display = "none";
+        carouselInfographicEl.style.display = "none";
+        carouselPublicationEl.style.display = "none";
+
+        // Show selected carousel and initialize if needed
+        if (type === "news") {
+          carouselNewsEl.style.display = "block";
+          // Initialize or get carousel instance
+          let carouselNews = bootstrap.Carousel.getInstance(carouselNewsEl);
+          if (!carouselNews) {
+            carouselNews = new bootstrap.Carousel(carouselNewsEl, { ride: "carousel" });
+          }
+          carouselNews.to(0);
+        } else if (type === "infographic") {
+          carouselInfographicEl.style.display = "block";
+          // Initialize or get carousel instance
+          let carouselInfographic = bootstrap.Carousel.getInstance(carouselInfographicEl);
+          if (!carouselInfographic) {
+            carouselInfographic = new bootstrap.Carousel(carouselInfographicEl);
+          }
+          carouselInfographic.to(0);
+        } else if (type === "publication") {
+          carouselPublicationEl.style.display = "block";
+          // Initialize or get carousel instance
+          let carouselPublication = bootstrap.Carousel.getInstance(carouselPublicationEl);
+          if (!carouselPublication) {
+            carouselPublication = new bootstrap.Carousel(carouselPublicationEl);
+          }
+          carouselPublication.to(0);
+        }
+
+        // Also switch table
+        switchTable(type);
+      }
+
+      // Initialize only News table (default)
+      const tableConfig = {
+        paging: true,
+        scrollCollapse: true,
+        scrollY: 500,
+        scrollX: true,
+      };
+
+      tableNews = new DataTable("#tableNews", tableConfig);
+      tableInitialized.news = true;
+      currentTable = tableNews;
+
+      // Create chart with initial data
+      chart = Highcharts.chart("demo-output", {
+        chart: {
+          type: "pie",
+          styledMode: true,
+        },
+        title: {
+          text: "Distribusi",
+        },
+        series: [
+          {
+            data: chartData(currentTable),
+          },
+        ],
+      });
+
+      // Set up event listener for news table
+      tableNews.on("draw", function () {
+        if (currentTable === tableNews) {
+          chart.series[0].setData(chartData(tableNews));
+        }
+      });
+
+      function chartData(table) {
+        var counts = {};
+
+        // Count the number of entries for each position
+        // For news: column 2 is ID Category
+        // For infographic: column 0 is Title
+        // For publication: column 0 is Title
+        const columnIndex = table === tableNews ? 2 : 0;
+
+        table
+          .column(columnIndex, { search: "applied" })
+          .data()
+          .each(function (val) {
+            if (counts[val]) {
+              counts[val] += 1;
+            } else {
+              counts[val] = 1;
+            }
+          });
+
+        return Object.entries(counts).map((e) => ({
+          name: e[0],
+          y: e[1],
+        }));
+      }
+
+      // Publication, Infographic & News Modal Functionality
+      const publicationsData = [];
+      const infographicCardsData = [];
+      const newsCardsData = [];
+
+      // Load publication data from HTML attributes
+      document.addEventListener("DOMContentLoaded", function () {
+        const publicationElements = document.querySelectorAll(".publication-data");
+        publicationElements.forEach((el) => {
+          publicationsData.push({
+            title: el.dataset.title,
+            image: el.dataset.image,
+            date: el.dataset.date,
+            size: el.dataset.size,
+            pubId: el.dataset.pubId,
+            abstract: el.dataset.abstract,
+            download: el.dataset.download,
+          });
+        });
+
+        const infographicElements = document.querySelectorAll(".infographic-card-data");
+        infographicElements.forEach((el) => {
+          infographicCardsData.push({
+            title: el.dataset.title,
+            image: el.dataset.image,
+            download: el.dataset.download,
+          });
+        });
+
+        const newsCardElements = document.querySelectorAll(".news-card-data");
+        newsCardElements.forEach((el) => {
+          newsCardsData.push({
+            title: el.dataset.title,
+            category: el.dataset.category,
+            date: el.dataset.date,
+            image: el.dataset.image,
+            content: el.dataset.content,
+          });
+        });
+
+        // Lazy loading for publication images
+        const lazyImages = document.querySelectorAll("img.lazy-load");
+        if ("IntersectionObserver" in window) {
+          const imageObserver = new IntersectionObserver(
+            (entries, observer) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const img = entry.target;
+                  const src = img.dataset.src;
+
+                  const tempImg = new Image();
+                  tempImg.onload = function () {
+                    img.src = src;
+                    img.classList.remove("lazy-load");
+                  };
+                  tempImg.onerror = function () {
+                    img.src =
+                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200"%3E%3Crect fill="%23f0f0f0" width="150" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="14" font-family="Arial"%3ENo Image%3C/text%3E%3C/svg%3E';
+                  };
+                  tempImg.src = src;
+
+                  imageObserver.unobserve(img);
+                }
+              });
+            },
+            { rootMargin: "50px" }
+          );
+
+          lazyImages.forEach((img) => imageObserver.observe(img));
+        } else {
+          lazyImages.forEach((img) => {
+            img.src = img.dataset.src;
+          });
+        }
+      });
+
+      function showPublicationModal(index) {
+        const pub = publicationsData[index];
+        if (!pub) return;
+
+        document.getElementById("modalTitle").textContent = pub.title;
+        document.getElementById("modalImage").src = pub.image;
+        document.getElementById("modalDate").textContent = pub.date;
+        document.getElementById("modalSize").textContent = pub.size;
+        document.getElementById("modalPubId").textContent = pub.pubId;
+        document.getElementById("modalAbstract").textContent = pub.abstract;
+        document.getElementById("modalDownload").href = pub.download;
+
+        const modal = new bootstrap.Modal(document.getElementById("publicationModal"));
+        modal.show();
+      }
+
+      function showNewsCardModal(index) {
+        const news = newsCardsData[index];
+        if (!news) return;
+
+        const modalTitle = document.getElementById("newsModalTitle");
+        const modalCategory = document.getElementById("newsModalCategory");
+        const modalDate = document.getElementById("newsModalDate");
+        const modalContent = document.getElementById("newsModalContent");
+        const modalImageContainer = document.getElementById("newsModalImageContainer");
+
+        modalTitle.textContent = news.title;
+        modalCategory.textContent = news.category || "News";
+        modalDate.innerHTML = `<i class="bi bi-calendar"></i> ${news.date}`;
+        modalContent.innerHTML = news.content;
+
+        if (news.image) {
+          modalImageContainer.innerHTML = `<img src="${news.image}" class="img-fluid rounded mb-3" alt="${news.title}">`;
+        } else {
+          modalImageContainer.innerHTML = "";
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById("newsCardModal"));
+        modal.show();
+      }
+
+      function showInfographicModal(index) {
+        const info = infographicCardsData[index];
+        if (!info) return;
+
+        document.getElementById("infographicModalTitle").textContent = info.title;
+        document.getElementById("infographicModalImage").src = info.image;
+        document.getElementById("infographicModalDownload").href = info.download;
+
+        const modal = new bootstrap.Modal(document.getElementById("infographicModal"));
+        modal.show();
+      }
+    </script>
+
+    <style>
+      .hover-card {
+        transition: all 0.3s ease;
+      }
+
+      .hover-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .infographic-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(58, 87, 232, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .infographic-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(58, 87, 232, 0.15);
+      }
+
+      .infographic-thumb {
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .infographic-thumb img {
+        transition: transform 0.4s ease;
+      }
+
+      .infographic-card:hover .infographic-thumb img {
+        transform: scale(1.03);
+      }
+
+      #check {
+        display: none;
+      }
+
+      .chat-btn {
+        position: fixed;
+        right: 25px;
+        bottom: 25px;
+        cursor: pointer;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background-color: #0d6efd;
+        color: white;
+        font-size: 24px;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .chat-btn .close {
+        display: none;
+      }
+
+      #check:checked ~ .chat-btn .comment {
+        display: none;
+      }
+
+      #check:checked ~ .chat-btn .close {
+        display: block;
+      }
+
+      .wrapper {
+        position: fixed;
+        right: 25px;
+        bottom: 100px;
+        width: 300px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 999;
+        visibility: hidden;
+      }
+
+      #check:checked ~ .wrapper {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .wrapper .header {
+        padding: 15px;
+        background: #0d6efd;
+        border-radius: 10px 10px 0 0;
+        text-align: center;
+        color: white;
+        font-size: 1rem;
+      }
+
+      .wrapper .chat-area {
+        height: 250px;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-area .chat-message {
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 18px;
+        margin-bottom: 10px;
+        word-wrap: break-word;
+      }
+
+      .chat-area .incoming {
+        background: #f1f0f0;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-left-radius: 0;
+      }
+
+      .chat-area .outgoing {
+        background: #0d6efd;
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 0;
+      }
+
+      .wrapper .typing-area {
+        padding: 15px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .typing-area .form-control {
+        height: 45px;
+        border-radius: 25px;
+      }
+
+      .wrapper .chat-form {
+        padding: 15px;
+      }
+      .chat-form input,
+      .chat-form textarea {
+        margin-bottom: 10px;
+      }
+    </style>
+  </body>
+</html>

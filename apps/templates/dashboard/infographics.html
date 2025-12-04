@@ -1,0 +1,315 @@
+{% extends 'dashboard/dashboard.html' %} {% load static %} {% block dashboard_content %}
+<div class="infographics-page">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="font-weight-bold mb-2">Infografis BPS Kota Surabaya</h3>
+          <p class="text-muted mb-0">Total: <span class="badge bg-primary">{{ countInfographic }}</span> infografis</p>
+        </div>
+        <button class="btn btn-primary" onclick="refreshData()"><i class="bi bi-arrow-clockwise"></i> Refresh Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Search -->
+  <div class="row mb-4">
+    <div class="col-md-8 mb-3 mb-md-0">
+      <div class="input-group shadow-sm">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-start-0 ps-0" id="searchInput" placeholder="Cari infografis berdasarkan judul..." />
+      </div>
+    </div>
+    <div class="col-md-4 d-flex justify-content-end gap-2">
+      <div class="btn-group shadow-sm" role="group">
+        <button type="button" class="btn btn-outline-primary active" onclick="changeView('grid')"><i class="bi bi-grid-3x3"></i> <span class="d-none d-sm-inline">Grid</span></button>
+        <button type="button" class="btn btn-outline-primary" onclick="changeView('list')"><i class="bi bi-list"></i> <span class="d-none d-sm-inline">List</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gridView" class="row">
+    {% if dataInpographic %} {% for infographic in dataInpographic %}
+    <div class="col-md-4 col-lg-3 mb-4 infographic-item">
+      <div class="card h-100 hover-shadow">
+        <div class="card-img-wrapper" style="height: 200px; overflow: hidden; background: #f5f5f5">
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+            data-src="{{ infographic.image }}"
+            class="card-img-top lazy-load"
+            alt="{{ infographic.title }}"
+            style="height: 100%; width: 100%; object-fit: cover; cursor: pointer"
+            loading="lazy"
+            onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"
+          />
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title text-truncate" title="{{ infographic.title }}">{{ infographic.title|truncatewords:10 }}</h6>
+          <div class="mt-auto">
+            <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary w-100" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <div class="col-12">
+      <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> Belum ada data infografis.
+        <a href="{% url 'sync-bps-infographics' %}" class="alert-link">Sinkronkan data</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- List View (Hidden by default) -->
+  <div id="listView" class="d-none">
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 80px">Preview</th>
+                <th>Judul</th>
+                <th style="width: 150px">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for infographic in dataInpographic %}
+              <tr>
+                <td>
+                  <img
+                    src="{{ infographic.image }}"
+                    alt="{{ infographic.title }}"
+                    style="width: 60px; height: 60px; object-fit: cover; cursor: pointer"
+                    onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"
+                  />
+                </td>
+                <td class="align-middle">
+                  <strong>{{ infographic.title }}</strong>
+                </td>
+                <td class="align-middle">
+                  <button class="btn btn-sm btn-info" onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"><i class="bi bi-eye"></i> View</button>
+                  <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary" target="_blank" download>
+                    <i class="bi bi-download"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if dataInpographic.has_other_pages %}
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if dataInpographic.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ dataInpographic.previous_page_number }}"> <i class="bi bi-chevron-left"></i> Previous </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+      </li>
+      {% endif %} {% for num in dataInpographic.paginator.page_range %} {% if dataInpographic.number == num %}
+      <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num > dataInpographic.number|add:'-3' and num < dataInpographic.number|add:'3' %}
+      <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+      {% endif %} {% endfor %} {% if dataInpographic.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ dataInpographic.next_page_number }}"> Next <i class="bi bi-chevron-right"></i> </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+      </li>
+      {% endif %}
+    </ul>
+    <p class="text-center text-muted small">Showing {{ dataInpographic.start_index }} to {{ dataInpographic.end_index }} of {{ dataInpographic.paginator.count }} infographics</p>
+  </nav>
+  {% endif %}
+</div>
+
+<!-- Modal for Preview -->
+<div class="modal fade" id="infographicModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="modalImage" src="" alt="" class="img-fluid" style="max-height: 70vh" />
+      </div>
+      <div class="modal-footer">
+        <a id="modalDownload" href="" class="btn btn-primary" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+
+<style>
+  .hover-shadow {
+    transition: all 0.3s ease;
+  }
+
+  .hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-img-wrapper img:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+  }
+</style>
+
+<script>
+  const ctx = document.getElementById("chart").getContext("2d");
+  const myChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      datasets: [
+        {
+          label: "Last week",
+          backgroundColor: "rgba(161, 198, 247, 1)",
+          borderColor: "rgb(47, 128, 237)",
+          data: [3000, 4000, 2000, 5000, 8000, 9000, 2000],
+        },
+      ],
+    },
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
+    },
+  });
+  // Lazy loading for images
+  document.addEventListener("DOMContentLoaded", function () {
+    const lazyImages = document.querySelectorAll("img.lazy-load");
+
+    if ("IntersectionObserver" in window) {
+      const imageObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              const src = img.dataset.src;
+
+              // Load image
+              const tempImg = new Image();
+              tempImg.onload = function () {
+                img.src = src;
+                img.classList.remove("lazy-load");
+                img.classList.add("loaded");
+              };
+              tempImg.onerror = function () {
+                // If image fails to load, show placeholder
+                img.src =
+                  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="18" font-family="Arial"%3EImage Not Available%3C/text%3E%3C/svg%3E';
+              };
+              tempImg.src = src;
+
+              imageObserver.unobserve(img);
+            }
+          });
+        },
+        { rootMargin: "50px" }
+      );
+
+      lazyImages.forEach((img) => imageObserver.observe(img));
+    } else {
+      // Fallback
+      lazyImages.forEach((img) => {
+        img.src = img.dataset.src;
+      });
+    }
+  });
+
+  // Search functionality
+  document.getElementById("searchInput").addEventListener("input", function (e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll(".infographic-item");
+
+    items.forEach((item) => {
+      const title = item.querySelector(".card-title").textContent.toLowerCase();
+      if (title.includes(searchTerm)) {
+        item.style.display = "";
+      } else {
+        item.style.display = "none";
+      }
+    });
+  });
+
+  // View switcher
+  function changeView(view) {
+    const gridView = document.getElementById("gridView");
+    const listView = document.getElementById("listView");
+    const buttons = document.querySelectorAll(".btn-group button");
+
+    buttons.forEach((btn) => btn.classList.remove("active"));
+
+    if (view === "grid") {
+      gridView.classList.remove("d-none");
+      listView.classList.add("d-none");
+      buttons[0].classList.add("active");
+    } else {
+      gridView.classList.add("d-none");
+      listView.classList.remove("d-none");
+      buttons[1].classList.add("active");
+    }
+  }
+
+  // Modal functionality
+  function showModal(title, imageUrl, downloadUrl) {
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalImage").src = imageUrl;
+    document.getElementById("modalDownload").href = downloadUrl;
+
+    const modal = new bootstrap.Modal(document.getElementById("infographicModal"));
+    modal.show();
+  }
+
+  // Refresh data
+  async function refreshData() {
+    const btn = event.target.closest("button");
+    const originalContent = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Syncing...';
+
+    try {
+      const response = await fetch("{% url 'sync-bps-infographics' %}");
+      const data = await response.json();
+
+      if (data.status === "success") {
+        alert(`Sync berhasil! ${data.details.created} data baru, ${data.details.updated} data diperbarui.`);
+        location.reload();
+      } else {
+        alert("Sync gagal: " + data.message);
+      }
+    } catch (error) {
+      alert("Error saat sync data: " + error.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+    }
+  }
+</script>
+{% endblock %}
