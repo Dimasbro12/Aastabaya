@@ -1,5 +1,6 @@
 from multiprocessing import context
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect, reverse
+from .forms import ContactForm
 from .services.API_service import BPSInfographicService, BPSNewsService, BPSPublicationService, IPMService
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout, login as auth_login
@@ -12,8 +13,10 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import HumanDevelopmentIndexSerializer, UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
 from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.conf import settings
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
@@ -376,3 +379,38 @@ def news(request):
 def ipm(request):
     
     return render(request, 'dashboard/indikator/IPM.html')
+
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            try:
+                name = form.cleaned_data['name']
+                surname = form.cleaned_data['surname']
+                email = form.cleaned_data['email']
+                message = form.cleaned_data['message']
+                
+                subject = f"Pesan Baru dari {name} {surname} melalui Aastabaya"
+                email_message = (
+                    f"Anda menerima pesan baru dari formulir kontak Aastabaya:\n\n"
+                    f"Nama: {name} {surname}\n"
+                    f"Email: {email}\n\n"
+                    f"Pesan:\n{message}"
+                )
+
+                send_mail(
+                    subject,
+                    email_message,
+                    settings.EMAIL_HOST_USER,  # Alamat pengirim
+                    [settings.EMAIL_HOST_USER], # Alamat penerima
+                )
+                messages.success(request, 'Pesan Anda telah berhasil terkirim!')
+            except Exception as e:
+                messages.error(request, 'Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.')
+                print(f"Error sending email: {e}") # Log error ke konsol
+        else:
+            # Jika formulir tidak valid, beri tahu pengguna
+            messages.warning(request, 'Harap perbaiki kesalahan di bawah ini dan kirimkan formulir lagi.')
+            # Di masa mendatang, Anda bisa merender ulang formulir dengan error
+            
+    return redirect('index')

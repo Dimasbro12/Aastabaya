@@ -25,6 +25,9 @@ urlpatterns = [
     path('publications/', views.publications, name='publications'),
     path('news/', views.news, name='news'),
     path('ipm/', views.ipm, name='ipm'),
+    
+    # URL for contact form submission
+    path('contact-us/', views.contact_us, name='contact_us'),
 
     # API endpoints for authentication
     path('api/register/', views.register_user, name='api-register'),
