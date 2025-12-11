@@ -1025,15 +1025,59 @@
 
       // Reference to the chat display container
       const chatBox = document.getElementById("chat-box");
+      let isWaitingForResponse = false;
+
+      // Show loading indicator
+      function showLoadingIndicator() {
+        const loadingEl = document.createElement("div");
+        loadingEl.className = "chat-message incoming";
+        loadingEl.id = "loading-indicator";
+        loadingEl.innerHTML = `
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 8px; height: 8px; background: #999; border-radius: 50%; animation: pulse 1.4s infinite;"></span>
+            <span style="display: inline-block; width: 8px; height: 8px; background: #999; border-radius: 50%; animation: pulse 1.4s infinite 0.2s;"></span>
+            <span style="display: inline-block; width: 8px; height: 8px; background: #999; border-radius: 50%; animation: pulse 1.4s infinite 0.4s;"></span>
+            <span style="font-size: 14px; color: #666;">AI sedang menjawab...</span>
+          </span>
+          <style>
+            @keyframes pulse {
+              0%, 80%, 100% { opacity: 0.5; }
+              40% { opacity: 1; }
+            }
+          </style>
+        `;
+        chatBox.appendChild(loadingEl);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        isWaitingForResponse = true;
+      }
+
+      // Remove loading indicator
+      function removeLoadingIndicator() {
+        const loadingEl = document.getElementById("loading-indicator");
+        if (loadingEl) {
+          loadingEl.remove();
+        }
+        isWaitingForResponse = false;
+      }
 
       // Handle incoming WebSocket messages
       socket.onmessage = function (e) {
+        removeLoadingIndicator();
         const data = JSON.parse(e.data);
         const messageEl = document.createElement("div");
         messageEl.className = "chat-message incoming";
         messageEl.innerHTML = `<span>${data.message}</span>`;
         chatBox.appendChild(messageEl);
         chatBox.scrollTop = chatBox.scrollHeight;
+      };
+
+      // Handle WebSocket errors
+      socket.onerror = function (e) {
+        removeLoadingIndicator();
+        const errorEl = document.createElement("div");
+        errorEl.className = "chat-message incoming";
+        errorEl.innerHTML = `<span style="color: red;">❌ Koneksi error. Coba refresh halaman.</span>`;
+        chatBox.appendChild(errorEl);
       };
 
       // Send the user's message through WebSocket
@@ -1049,18 +1093,21 @@
 
         socket.send(JSON.stringify({ message: message }));
         input.value = "";
+        showLoadingIndicator(); // Show loading after sending
         chatBox.scrollTop = chatBox.scrollHeight;
       }
 
       // Handle form submission
       document.getElementById("chat-form").addEventListener("submit", function (e) {
         e.preventDefault();
-        sendMessage();
+        if (!isWaitingForResponse) {
+          sendMessage();
+        }
       });
 
       // Optional: Send message on Enter key press
       document.getElementById("message-input").addEventListener("keypress", function (e) {
-        if (e.key === "Enter" && !e.shiftKey) {
+        if (e.key === "Enter" && !e.shiftKey && !isWaitingForResponse) {
           e.preventDefault();
           sendMessage();
         }
