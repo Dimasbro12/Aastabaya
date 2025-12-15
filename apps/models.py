@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class User(AbstractUser):
     """
@@ -119,4 +121,28 @@ class HotelOccupancyYearly(models.Model):
     class Meta:
         verbose_name = "Tingkat Hunian Hotel (Year-to-Year)"
         verbose_name_plural = "Tingkat Hunian Hotel (Year-to-Year)"
-                
+
+class Bookmark(models.Model):
+    """
+    Model untuk menyimpan bookmark pengguna.
+    Menggunakan GenericForeignKey untuk bisa berelasi dengan
+    model Infographic, Publication, atau News.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
+
+    # Generic Relation Setup
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Pastikan setiap user hanya bisa bookmark satu item yang sama sekali.
+        unique_together = ('user', 'content_type', 'object_id')
+        ordering = ['-created_at']
+        verbose_name = "Bookmark"
+        verbose_name_plural = "Bookmarks"
+
+    def __str__(self):
+        return f'{self.user.username} bookmarked {self.content_object}'

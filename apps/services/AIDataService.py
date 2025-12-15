@@ -109,15 +109,36 @@ def fetch_all_sheets_data():
             # Tambahkan nama sheet sebagai label
             df_temp["Worksheet"] = ws.title
             df_list.append(df_temp)
+            print(f"   📊 Added to merge list - Total sheets queued: {len(df_list)}")
             
             # Add delay antar sheet (3-5 detik untuk respect rate limit)
             time.sleep(4)
 
-        # Gabungkan semua sheet jadi satu DataFrame
-        df_combined = pd.concat(df_list, ignore_index=True)
-        print(f"\n🎯 Successfully loaded total {len(df_combined)} combined rows.")
-
-        return df_combined
+        # Validasi sebelum concat
+        if not df_list:
+            print("❌ No valid data sheets found to combine.")
+            return pd.DataFrame()
+        
+        print(f"\n🔄 Combining {len(df_list)} sheets into single DataFrame...")
+        
+        # Gabungkan semua sheet jadi satu DataFrame dengan error handling
+        try:
+            df_combined = pd.concat(df_list, ignore_index=True, sort=False)
+            
+            # Hapus kolom duplikat yang mungkin ada
+            df_combined = df_combined.loc[:, ~df_combined.columns.duplicated()]
+            
+            # Konversi tipe data
+            df_combined = df_combined.fillna('')
+            
+            print(f"✅ Successfully combined all sheets!")
+            print(f"🎯 Total {len(df_combined)} rows, {len(df_combined.columns)} columns")
+            print(f"📋 Columns: {list(df_combined.columns)}")
+            
+            return df_combined
+        except Exception as e:
+            print(f"❌ Error during data combination: {e}")
+            return pd.DataFrame()
 
     except Exception as e:
         print(f"❌ Unexpected error during data fetching: {e}")

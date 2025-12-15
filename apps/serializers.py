@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication, HotelOccupancyCombined, HotelOccupancyYearly
+from .models import Bookmark, HumanDevelopmentIndex, User, Data, News, Infographic, Publication, HotelOccupancyCombined, HotelOccupancyYearly
 from django.db.models import fields
 
 
@@ -37,6 +37,30 @@ class PublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publication
         fields = ('pub_id','title','abstract','image','dl','date','size')
+
+class BookmarkSerializer(serializers.ModelSerializer):
+    """
+    Serializer untuk model Bookmark.
+    Ini secara dinamis menserialisasi `content_object` berdasarkan tipenya.
+    """
+    content_object = serializers.SerializerMethodField()
+    content_type_name = serializers.CharField(source='content_type.model', read_only=True)
+
+    class Meta:
+        model = Bookmark
+        fields = ['id', 'user', 'content_type_name', 'object_id', 'content_object', 'created_at']
+
+    def get_content_object(self, obj):
+        """
+        Menggunakan serializer yang sesuai berdasarkan instance dari content_object.
+        """
+        if isinstance(obj.content_object, News):
+            return NewsSerializer(obj.content_object, context=self.context).data
+        if isinstance(obj.content_object, Infographic):
+            return InfographicSerializer(obj.content_object, context=self.context).data
+        if isinstance(obj.content_object, Publication):
+            return PublicationSerializer(obj.content_object, context=self.context).data
+        return None
 
 class HumanDevelopmentIndexSerializer(serializers.ModelSerializer):
     class Meta:
