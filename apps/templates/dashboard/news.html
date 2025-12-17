@@ -111,11 +111,26 @@
                                     {{ news.content|truncatewords:50 }}
                                 </p>
                                 
-                                <button class="btn btn-sm btn-outline-primary" 
-                                        data-index="{{ forloop.counter0 }}"
-                                        onclick="showNewsModal(this.dataset.index)">
-                                    <i class="bi bi-book"></i> Baca Selengkapnya
-                                </button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-sm btn-outline-primary" 
+                                            data-index="{{ forloop.counter0 }}"
+                                            onclick="showNewsModal(this.dataset.index)">
+                                        <i class="bi bi-book"></i> Baca Selengkapnya
+                                    </button>
+                                    {% if user.is_authenticated %}
+                                    <button 
+                                        class="btn btn-sm btn-outline-secondary bookmark-btn {% if news.bookmark_id %}bookmarked{% endif %}"
+                                        data-content-type="news"
+                                        data-object-id="{{ news.news_id }}"
+                                        data-bookmark-id="{{ news.bookmark_id|default:'' }}"
+                                        onclick="toggleBookmark(this)">
+                                        <i class="bi {% if news.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+                                        <span class="d-none d-sm-inline">
+                                            {% if news.bookmark_id %}Tersimpan{% else %}Bookmark{% endif %}
+                                        </span>
+                                    </button>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -238,6 +253,22 @@
     bottom: 0;
     width: 2px;
     background: #e0e0e0;
+}
+
+.bookmark-btn .bi-bookmark-fill {
+    color: #0d6efd;
+}
+
+.bookmark-btn.bookmarked {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+}
+
+.bookmark-btn.bookmarked .bi-bookmark {
+    display: none;
+}
+.bookmark-btn:not(.bookmarked) .bi-bookmark-fill {
+    display: none;
 }
 </style>
 
@@ -470,6 +501,66 @@
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalContent;
+        }
+    }
+
+    // --- Bookmark Functionality ---
+    async function toggleBookmark(button) {
+        const contentType = button.dataset.contentType;
+        const objectId = button.dataset.objectId;
+        let bookmarkId = button.dataset.bookmarkId;
+        const isBookmarked = button.classList.contains('bookmarked');
+
+        const icon = button.querySelector('i');
+        const text = button.querySelector('span');
+
+        // Dapatkan CSRF token dari cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        if (isBookmarked) {
+            // --- Hapus Bookmark ---
+            const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+                method: 'DELETE',
+                headers: { 'X-CSRFToken': csrftoken },
+            });
+
+            if (response.ok) {
+                button.classList.remove('bookmarked');
+                icon.classList.remove('bi-bookmark-fill');
+                icon.classList.add('bi-bookmark');
+                if (text) text.textContent = 'Bookmark';
+                button.dataset.bookmarkId = '';
+            }
+        } else {
+            // --- Tambah Bookmark ---
+            const response = await fetch(`/api/bookmarks/add/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({ content_type_name: contentType, object_id: objectId }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                button.classList.add('bookmarked');
+                icon.classList.remove('bi-bookmark');
+                icon.classList.add('bi-bookmark-fill');
+                if (text) text.textContent = 'Tersimpan';
+                button.dataset.bookmarkId = data.id;
+            }
         }
     }
 </script>

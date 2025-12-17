@@ -48,8 +48,21 @@
         </div>
         <div class="card-body d-flex flex-column">
           <h6 class="card-title text-truncate" title="{{ infographic.title }}">{{ infographic.title|truncatewords:10 }}</h6>
-          <div class="mt-auto">
+          <div class="mt-auto d-flex gap-2">
             <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary w-100" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+            {% if user.is_authenticated %}
+            <button
+              class="btn btn-sm btn-outline-secondary bookmark-btn {% if infographic.bookmark_id %}bookmarked{% endif %}"
+              style="min-width: 40px"
+              data-content-type="infographic"
+              data-object-id="{{ infographic.id }}"
+              data-bookmark-id="{{ infographic.bookmark_id|default:'' }}"
+              onclick="toggleBookmark(this)"
+              title="Bookmark"
+            >
+              <i class="bi {% if infographic.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+            </button>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -92,10 +105,23 @@
                   <strong>{{ infographic.title }}</strong>
                 </td>
                 <td class="align-middle">
-                  <button class="btn btn-sm btn-info" onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"><i class="bi bi-eye"></i> View</button>
-                  <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary" target="_blank" download>
-                    <i class="bi bi-download"></i>
-                  </a>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-info" onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"><i class="bi bi-eye"></i> View</button>
+                    <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary" target="_blank" download>
+                      <i class="bi bi-download"></i>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <button
+                      class="btn btn-sm btn-outline-secondary bookmark-btn {% if infographic.bookmark_id %}bookmarked{% endif %}"
+                      data-content-type="infographic"
+                      data-object-id="{{ infographic.id }}"
+                      data-bookmark-id="{{ infographic.bookmark_id|default:'' }}"
+                      onclick="toggleBookmark(this)"
+                    >
+                      <i class="bi {% if infographic.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+                    </button>
+                    {% endif %}
+                  </div>
                 </td>
               </tr>
               {% endfor %}
@@ -170,6 +196,22 @@
   .card-img-wrapper img:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease;
+  }
+
+  .bookmark-btn .bi-bookmark-fill {
+    color: #0d6efd;
+  }
+
+  .bookmark-btn.bookmarked {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+  }
+
+  .bookmark-btn.bookmarked .bi-bookmark {
+    display: none;
+  }
+  .bookmark-btn:not(.bookmarked) .bi-bookmark-fill {
+    display: none;
   }
 </style>
 
@@ -309,6 +351,62 @@
     } finally {
       btn.disabled = false;
       btn.innerHTML = originalContent;
+    }
+  }
+
+  // --- Bookmark Functionality ---
+  async function toggleBookmark(button) {
+    const contentType = button.dataset.contentType;
+    const objectId = button.dataset.objectId;
+    let bookmarkId = button.dataset.bookmarkId;
+    const isBookmarked = button.classList.contains("bookmarked");
+
+    const icon = button.querySelector("i");
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie("csrftoken");
+
+    if (isBookmarked) {
+      // --- Hapus Bookmark ---
+      const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+        method: "DELETE",
+        headers: { "X-CSRFToken": csrftoken },
+      });
+
+      if (response.ok) {
+        button.classList.remove("bookmarked");
+        icon.classList.remove("bi-bookmark-fill");
+        icon.classList.add("bi-bookmark");
+        button.dataset.bookmarkId = "";
+      }
+    } else {
+      // --- Tambah Bookmark ---
+      const response = await fetch(`/api/bookmarks/add/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ content_type_name: contentType, object_id: objectId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        button.classList.add("bookmarked");
+        icon.classList.remove("bi-bookmark");
+        icon.classList.add("bi-bookmark-fill");
+        button.dataset.bookmarkId = data.id;
+      }
     }
   }
 </script>

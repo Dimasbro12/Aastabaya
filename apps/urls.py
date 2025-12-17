@@ -49,4 +49,9 @@ urlpatterns = [
     path('api/data/add/', views.add_data, name='add-data'),
     path('api/data/update/<int:pk>/', views.update_data, name='update-data'),
     path('api/data/delete/<int:pk>/', views.delete_data, name='delete-data'),
+
+    # API endpoints for bookmarks
+    path('api/bookmarks/', views.view_bookmarks, name='view-bookmarks'),
+    path('api/bookmarks/add/', views.add_bookmark, name='add-bookmark'),
+    path('api/bookmarks/delete/<int:pk>/', views.delete_bookmark, name='delete-bookmark'),
 ] 

@@ -10,18 +10,23 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import HumanDevelopmentIndexSerializer, UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer
-from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication
+from .serializers import HumanDevelopmentIndexSerializer, UserSerializer, DataSerializers, NewsSerializer, InfographicSerializer, PublicationSerializer, BookmarkSerializer
+from .models import HumanDevelopmentIndex, User, Data, News, Infographic, Publication, Bookmark
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
+from django.contrib.contenttypes.models import ContentType
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
+class BookmarkViewSet(viewsets.ModelViewSet):
+    queryset = Bookmark.objects.all()
+    serializer_class = BookmarkSerializer
+    
 
 class InpographicViewSet(viewsets.ModelViewSet):
     queryset = Infographic.objects.all()
@@ -34,6 +39,43 @@ class PublicationViewSet(viewsets.ModelViewSet):
 class HumanDevelopmentIndexViewSet(viewsets.ModelViewSet):
     queryset = HumanDevelopmentIndex.objects.all()
     serializer_class = HumanDevelopmentIndexSerializer
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_bookmark(request):
+    """
+    Menambahkan item ke bookmark pengguna.
+    Membutuhkan 'content_type_name' ('news', 'infographic', 'publication') dan 'object_id'.
+    """
+    serializer = BookmarkSerializer(data=request.data)
+    if serializer.is_valid():
+        # Memeriksa apakah bookmark sudah ada
+        content_type = serializer.validated_data['content_type']
+        object_id = serializer.validated_data['object_id']
+        if Bookmark.objects.filter(user=request.user, content_type=content_type, object_id=object_id).exists():
+            return Response({"error": "Item ini sudah ada di bookmark Anda."}, status=status.HTTP_409_CONFLICT)
+        
+        # Menyimpan bookmark dengan user yang sedang login
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_bookmarks(request):
+    """
+    Menampilkan semua bookmark milik pengguna yang sedang login.
+    """
+    bookmarks = Bookmark.objects.filter(user=request.user)
+    serializer = BookmarkSerializer(bookmarks, many=True, context={'request': request})
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_bookmark(request, pk):
+    bookmark = get_object_or_404(Bookmark, pk=pk, user=request.user)
+    bookmark.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def sync_bps_news(request):
@@ -132,7 +174,10 @@ def user_login(request):
 
     if user:
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key}, status=status.HTTP_200_OK)
+        # Lakukan login untuk membuat sesi Django
+        auth_login(request, user)
+        return Response({'token': token.key, 'message': 'Login successful'}, status=status.HTTP_200_OK)
+
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
@@ -201,6 +246,8 @@ def view_data (request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+
 @api_view(['POST'])
 def update_data (request, pk):
     datas = Data.objects.get(pk=pk)
@@ -242,6 +289,32 @@ def dashboard(request):
     dataPublication = Publication.objects.order_by('-date')[:5]
     dataPublications = Publication.objects.order_by('-date')
     dataPublicationsLatest = Publication.objects.order_by('-date')[:5]
+
+    # --- Logika untuk mengambil Bookmark ---
+    bookmarked_items = []
+    if request.user.is_authenticated:
+        # Ambil semua bookmark milik pengguna, dengan prefetch ke content_object
+        user_bookmarks = Bookmark.objects.filter(user=request.user).select_related('content_type')
+
+        for bookmark in user_bookmarks:
+            item = bookmark.content_object
+            if item:
+                item_url = '#' # URL default jika tidak ditemukan
+                # Tentukan URL berdasarkan tipe model
+                if isinstance(item, News):
+                    # Arahkan ke halaman daftar berita dengan anchor ke ID item
+                    item_url = reverse('news') + f'#news-{item.pk}'
+                elif isinstance(item, Infographic):
+                    item_url = reverse('infographics') + f'#infographic-{item.pk}'
+                elif isinstance(item, Publication):
+                    item_url = reverse('publications') + f'#publication-{item.pk}'
+                
+                bookmarked_items.append({
+                    'title': item.title,
+                    'url': item_url,
+                })
+    # --- Akhir dari logika Bookmark ---
+
     context = {
         'countNews':countNews,
         'dataNewss':dataNewss,
@@ -253,12 +326,28 @@ def dashboard(request):
         'dataPublications': dataPublications,
         'dataNewsLatest': dataNewsLatest,
         'dataPublicationsLatest': dataPublicationsLatest,
+        'bookmarked_items': bookmarked_items, # Tambahkan bookmark ke context
     }
     return render(request, 'dashboard/dashboard.html', context)
 
 def infographics(request):
+    
     """Merender halaman infografis."""
     infographics_list = Infographic.objects.all().order_by('-id')
+    
+    # --- Penambahan untuk Bookmark ---
+    if request.user.is_authenticated:
+        # Dapatkan ContentType untuk model Infographic
+        infographic_content_type = ContentType.objects.get_for_model(Infographic)
+        # Dapatkan semua bookmark pengguna untuk infografis
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user, 
+            content_type=infographic_content_type
+        ).values('object_id', 'id')
+        # Buat set berisi ID infografis yang sudah di-bookmark dan map ke ID bookmark
+        bookmarked_infographics = {item['object_id']: item['id'] for item in user_bookmarks}
+        for infographic in infographics_list:
+            infographic.bookmark_id = bookmarked_infographics.get(infographic.id)
 
     paginator = Paginator(infographics_list, 12)
     page = request.GET.get('page', 1)
@@ -288,6 +377,20 @@ def infographics(request):
 def publications(request):
     """Merender halaman publikasi."""
     publications_list = Publication.objects.all().order_by('-date')
+
+    # --- Penambahan untuk Bookmark ---
+    if request.user.is_authenticated:
+        # Dapatkan ContentType untuk model Publication
+        publication_content_type = ContentType.objects.get_for_model(Publication)
+        # Dapatkan semua bookmark pengguna untuk publikasi
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user, 
+            content_type=publication_content_type
+        ).values('object_id', 'id')
+        # Buat set berisi ID publikasi yang sudah di-bookmark dan map ke ID bookmark
+        bookmarked_publications = {int(item['object_id']): item['id'] for item in user_bookmarks}
+        for publication in publications_list:
+            publication.bookmark_id = bookmarked_publications.get(int(publication.pub_id))
 
     paginator = Paginator(publications_list, 10)
     page = request.GET.get('page', 1)
@@ -322,6 +425,20 @@ def news(request):
     
     # Start with all news
     news_list = News.objects.all()
+
+    # --- Penambahan untuk Bookmark ---
+    if request.user.is_authenticated:
+        # Dapatkan ContentType untuk model News
+        news_content_type = ContentType.objects.get_for_model(News)
+        # Dapatkan semua bookmark pengguna untuk berita
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user, 
+            content_type=news_content_type
+        ).values('object_id', 'id')
+        # Buat set berisi ID berita yang sudah di-bookmark dan map ke ID bookmark
+        bookmarked_news = {item['object_id']: item['id'] for item in user_bookmarks}
+        for news_item in news_list:
+            news_item.bookmark_id = bookmarked_news.get(news_item.news_id)
     
     # Apply search filter
     if search_query:

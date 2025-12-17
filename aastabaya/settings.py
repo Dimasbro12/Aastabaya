@@ -166,8 +166,16 @@ AUTH_USER_MODEL = 'apps.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 1. Prioritaskan SessionAuthentication untuk request dari browser
+        'rest_framework.authentication.SessionAuthentication',
+
+        # 2. TokenAuthentication sebagai fallback untuk API client lain
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # Memastikan semua endpoint API aman secara default
+        'rest_framework.permissions.IsAuthenticated',
+    ]
 }
 LOGIN_EXEMPT_URLS = [
     r'infographics$',
