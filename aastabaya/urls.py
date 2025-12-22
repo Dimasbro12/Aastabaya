@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from apps import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Custom Google OAuth callback - must be before allauth to intercept the callback
+    path('accounts/google/login/callback/', views.google_oauth_callback, name='google-oauth-callback'),
+    path('accounts/', include('allauth.urls')),
     path('', include('apps.urls')), 
 ]

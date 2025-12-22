@@ -70,10 +70,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # Required for allauth
+    'django.contrib.humanize',  # Untuk format angka dengan koma (1,000,000)
     'apps',  
     'rest_framework',
     'rest_framework.authtoken',
-    'channels'  
+    'channels',
+    # Django Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     ]
 
 MIDDLEWARE = [
@@ -84,6 +91,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'aastabaya.urls'
@@ -166,25 +174,53 @@ AUTH_USER_MODEL = 'apps.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 1. Prioritaskan SessionAuthentication untuk request dari browser
-        'rest_framework.authentication.SessionAuthentication',
-
-        # 2. TokenAuthentication sebagai fallback untuk API client lain
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        # Memastikan semua endpoint API aman secara default
-        'rest_framework.permissions.IsAuthenticated',
-    ]
 }
 LOGIN_EXEMPT_URLS = [
     r'infographics$',
     r'publications$',
 ]
 
+# Django Allauth Configuration
+SITE_ID = 1
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS =True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dwid35895@gmail.com'
-EMAIL_HOST_PASSWORD = 'uklm vgnf frqa uwbs'
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Allauth Settings
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' if you want email verification
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/dashboard/'
+ACCOUNT_LOGOUT_ON_GET = True
+
+# Session Configuration
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 86400 * 7  # 7 days
+
+# Google OAuth Configuration
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID', ''),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET', ''),
+            'key': ''
+        }
+    }
+}

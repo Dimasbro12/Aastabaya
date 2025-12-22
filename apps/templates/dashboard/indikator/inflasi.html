@@ -1,0 +1,1582 @@
+{% extends 'dashboard/dashboard.html' %} 
+{% load static %}
+{% block dashboard_content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<div class="container py-4">
+  <h3 class="font-weight-bold mb-4">Inflasi</h3>
+  
+  <!-- Summary Cards -->
+  <div class="row mb-4" style="display: flex; flex-wrap: wrap; gap: 15px;">
+    <!-- Inflasi Bulan ke Bulan (m-to-m) -->
+    <div class="col-12 col-md-4 mb-3" style="flex: 1; min-width: 250px;">
+      <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 25px; min-height: 180px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="position: relative; z-index: 2;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 13px; font-weight: 500; margin: 0 0 10px 0;">Inflasi Bulan ke Bulan</h6>
+          <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_inflasi and latest_inflasi.bulanan is not None %}
+              {{ latest_inflasi.bulanan|floatformat:2 }}%
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
+            {% if m_to_m_change is not None %}
+              {% if m_to_m_change > 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">+{{ m_to_m_change|floatformat:2 }}%</span>
+              {% elif m_to_m_change < 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">{{ m_to_m_change|floatformat:2 }}%</span>
+              {% else %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">-</span>
+              {% endif %}
+              {% if previous_month_inflasi %} 
+                <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari bulan {{ previous_month_inflasi.get_month_display|lower }}</span>
+              {% endif %}
+            {% endif %}
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 10px; display: block;">
+            {% if latest_inflasi %}
+              {{ latest_inflasi.get_month_display }} {{ latest_inflasi.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inflasi Tahun ke Tahun (y-on-y) -->
+    <div class="col-12 col-md-4 mb-3" style="flex: 1; min-width: 250px;">
+      <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 25px; min-height: 180px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="position: relative; z-index: 2;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 13px; font-weight: 500; margin: 0 0 10px 0;">Inflasi Tahun ke Tahun</h6>
+          <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_inflasi and latest_inflasi.yoy is not None %}
+              {{ latest_inflasi.yoy|floatformat:2 }}%
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
+            {% if y_on_y_change is not None %}
+              {% if y_on_y_change > 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">+{{ y_on_y_change|floatformat:2 }}%</span>
+              {% elif y_on_y_change < 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">{{ y_on_y_change|floatformat:2 }}%</span>
+              {% else %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">-</span>
+              {% endif %}
+              {% if previous_year_inflasi %} 
+                <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari bulan {{ previous_year_inflasi.get_month_display|lower }} {{ previous_year_inflasi.year }}</span>
+              {% endif %}
+            {% endif %}
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 10px; display: block;">
+            {% if latest_inflasi %}
+              {{ latest_inflasi.get_month_display }} {{ latest_inflasi.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inflasi Kumulatif -->
+    <div class="col-12 col-md-4 mb-3" style="flex: 1; min-width: 250px;">
+      <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 25px; min-height: 180px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="position: relative; z-index: 2;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 13px; font-weight: 500; margin: 0 0 10px 0;">Inflasi Kumulatif</h6>
+          <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_inflasi and latest_inflasi.kumulatif is not None %}
+              {{ latest_inflasi.kumulatif|floatformat:2 }}%
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 10px; display: block;">
+            {% if latest_inflasi %}
+              Januari - {{ latest_inflasi.get_month_display }} {{ latest_inflasi.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Tahun untuk Grafik -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 20px; position: relative; z-index: 1;">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <label for="filterYear" class="form-label mb-2" style="font-weight: 600; color: #333;">
+              <i class="fas fa-filter me-2"></i>Filter Tahun Grafik:
+            </label>
+          </div>
+          <div class="col-md-12">
+            <div class="custom-dropdown" style="position: relative; max-width: 300px; z-index: 9999;">
+              <div class="dropdown-toggle" id="filterYearToggle" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; background-color: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1;">
+                <span id="filterYearDisplay">Default</span>
+                <i class="fas fa-chevron-down" style="font-size: 12px; color: #666;"></i>
+              </div>
+              <div class="dropdown-menu" id="filterYearDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background-color: white; border: 1px solid #ddd; border-radius: 8px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 9999; max-height: 192px; overflow-y: auto; overflow-x: hidden;">
+                <div class="dropdown-item" data-value="{{ latest_year }}" style="padding: 8px 12px; cursor: pointer; background-color: #f0f0f0;" data-selected="true">Default</div>
+                {% for year in all_years|slice:":5" %}
+                  {% if year != latest_year %}
+                    <div class="dropdown-item" data-value="{{ year }}" style="padding: 8px 12px; cursor: pointer;">{{ year }}</div>
+                  {% endif %}
+                {% endfor %}
+                {% if all_years|length > 5 %}
+                  {% for year in all_years|slice:"5:" %}
+                    <div class="dropdown-item" data-value="{{ year }}" style="padding: 8px 12px; cursor: pointer;">{{ year }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+              <select id="filterYear" style="display: none;">
+                <option value="{{ latest_year }}" selected>Default</option>
+                {% for year in all_years|slice:":5" %}
+                  <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+                {% if all_years|length > 5 %}
+                  {% for year in all_years|slice:"5:" %}
+                    <option value="{{ year }}">{{ year }}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+            </div>
+            <small class="text-muted" style="font-size: 11px; display: block; margin-top: 5px;">
+              <i class="fas fa-info-circle"></i> Default menampilkan tahun terbaru ({{ latest_year }})
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grafik Perkembangan Inflasi -->
+  <div class="row mb-4">
+    <!-- Grafik Inflasi Bulan ke Bulan -->
+    <div class="col-md-6 mb-3">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h5 class="mb-0">Perkembangan Inflasi Bulan ke Bulan (%)</h5>
+          <div style="display: flex; gap: 8px;">
+            <button id="downloadMtoMExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
+              <i class="fas fa-file-excel"></i> <span>Excel</span>
+            </button>
+            <button id="downloadMtoMPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
+              <i class="fas fa-image"></i> <span>PNG</span>
+            </button>
+          </div>
+        </div>
+        <div id="inflasiMtoMChart" style="width: 100%; height: 400px;"></div>
+      </div>
+    </div>
+
+    <!-- Grafik Inflasi Tahun ke Tahun -->
+    <div class="col-md-6 mb-3">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h5 class="mb-0">Perkembangan Inflasi Tahun ke Tahun (%)</h5>
+          <div style="display: flex; gap: 8px;">
+            <button id="downloadYonYExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
+              <i class="fas fa-file-excel"></i> <span>Excel</span>
+            </button>
+            <button id="downloadYonYPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
+              <i class="fas fa-image"></i> <span>PNG</span>
+            </button>
+          </div>
+        </div>
+        <div id="inflasiYonYChart" style="width: 100%; height: 400px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Komoditas (Bertahap) -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px;">
+        <h5 class="mb-4">
+          <i class="fas fa-search me-2"></i>Filter Inflasi Per Komoditas
+        </h5>
+        <p class="text-muted mb-4" style="font-size: 14px;">
+          Pilih filter secara bertahap untuk melihat inflasi per komoditas. Mulai dari pilih tahun, kemudian komoditas umum, sub komoditas, dan terakhir komoditas spesifik.
+        </p>
+        
+        <div class="row g-3">
+          <!-- Step 1: Pilih Tahun -->
+          <div class="col-md-3">
+            <label for="filterKomoditasTahun" class="form-label" style="font-weight: 600;">
+              <span class="badge bg-primary me-2">1</span>Tahun
+            </label>
+            <select id="filterKomoditasTahun" class="form-select" style="padding: 12px; border-radius: 8px;">
+              <option value="">-- Pilih Tahun --</option>
+              {% for year in komoditas_years %}
+                <option value="{{ year }}">{{ year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Step 2: Pilih Komoditas Umum (Flag 1) -->
+          <div class="col-md-3">
+            <label for="filterKomoditasUmum" class="form-label" style="font-weight: 600;">
+              <span class="badge bg-success me-2">2</span>Komoditas Umum
+            </label>
+            <select id="filterKomoditasUmum" class="form-select" style="padding: 12px; border-radius: 8px;" disabled>
+              <option value="">-- Pilih Tahun Dulu --</option>
+            </select>
+          </div>
+
+          <!-- Step 3: Pilih Sub Komoditas (Flag 2) -->
+          <div class="col-md-3">
+            <label for="filterSubKomoditas" class="form-label" style="font-weight: 600;">
+              <span class="badge bg-warning me-2">3</span>Sub Komoditas
+            </label>
+            <select id="filterSubKomoditas" class="form-select" style="padding: 12px; border-radius: 8px;" disabled>
+              <option value="">-- Pilih Komoditas Umum Dulu --</option>
+            </select>
+          </div>
+
+          <!-- Step 4: Pilih Komoditas Spesifik (Flag 3) -->
+          <div class="col-md-3">
+            <label for="filterKomoditasSpesifik" class="form-label" style="font-weight: 600;">
+              <span class="badge bg-info me-2">4</span>Komoditas Spesifik
+            </label>
+            <select id="filterKomoditasSpesifik" class="form-select" style="padding: 12px; border-radius: 8px;" disabled>
+              <option value="">-- Pilih Sub Komoditas Dulu --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <button id="btnCariKomoditas" class="btn btn-primary btn-lg w-100" style="padding: 12px; border-radius: 8px;" disabled>
+              <i class="fas fa-search me-2"></i>Cari Data Inflasi
+            </button>
+          </div>
+        </div>
+
+        <div id="selectedKomoditasInfo" style="display: none; margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #3b82f6;">
+          <h6 class="mb-2">
+            <i class="fas fa-info-circle me-2"></i>Komoditas Terpilih:
+          </h6>
+          <p id="selectedKomoditasText" class="mb-2" style="font-size: 14px;"></p>
+          <button id="btnClearKomoditas" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-times me-1"></i>Hapus Pilihan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grafik Inflasi Per Komoditas -->
+  <div class="row mb-4" id="komoditasChartSection" style="display: none;">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h5 class="mb-0" id="komoditasChartTitle">Inflasi Per Komoditas</h5>
+          <div style="display: flex; gap: 8px;">
+            <button id="downloadKomoditasExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
+              <i class="fas fa-file-excel"></i> <span>Excel</span>
+            </button>
+            <button id="downloadKomoditasPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
+              <i class="fas fa-image"></i> <span>PNG</span>
+            </button>
+          </div>
+        </div>
+        <div id="inflasiPerKomoditasChart" style="width: 100%; height: 450px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Penjelasan Komoditas -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: #f8f9fa; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px;">
+        <h5 class="mb-4">
+          <i class="fas fa-book me-2"></i>Penjelasan Komoditas Umum
+        </h5>
+        <p class="text-muted mb-4" style="font-size: 14px;">
+          Berikut adalah penjelasan mengenai komoditas umum dan sub komoditas yang digunakan dalam perhitungan inflasi. Informasi ini membantu Anda memahami struktur komoditas yang tersedia.
+        </p>
+        <div id="komoditasExplanation" style="font-size: 14px;">
+          <!-- Will be populated by JavaScript -->
+          <div class="text-center text-muted">
+            <i class="fas fa-spinner fa-spin me-2"></i>Memuat penjelasan komoditas...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Month mapping for display
+const monthNames = {
+  'JANUARI': 'Jan', 'FEBRUARI': 'Feb', 'MARET': 'Mar', 'APRIL': 'Apr',
+  'MEI': 'Mei', 'JUNI': 'Jun', 'JULI': 'Jul', 'AGUSTUS': 'Agu',
+  'SEPTEMBER': 'Sep', 'OKTOBER': 'Okt', 'NOPEMBER': 'Nov', 'DESEMBER': 'Des'
+};
+
+// Month order for sorting
+const monthOrder = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 
+                    'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER'];
+
+// Global variables
+let allInflasiData = [];
+let selectedYear = '{{ latest_year }}' || null; // Default to latest year
+let selectedKomoditas = {
+  tahun: null,
+  umum: null,
+  sub: null,
+  spesifik: null
+};
+
+// Initialize charts (will be initialized after DOM is ready)
+let mtoMChart = null;
+let yonYChart = null;
+let perKomoditasChart = null;
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize charts only after DOM is ready
+  const mtoMChartElement = document.getElementById('inflasiMtoMChart');
+  const yonYChartElement = document.getElementById('inflasiYonYChart');
+  const perKomoditasChartElement = document.getElementById('inflasiPerKomoditasChart');
+  
+  if (mtoMChartElement) {
+    mtoMChart = echarts.init(mtoMChartElement);
+  }
+  if (yonYChartElement) {
+    yonYChart = echarts.init(yonYChartElement);
+  }
+  if (perKomoditasChartElement) {
+    perKomoditasChart = echarts.init(perKomoditasChartElement);
+  }
+  
+  // Update chart instances reference for export functions
+  updateChartInstances();
+  
+  // Load data first, then setup filters
+  loadInflasiData();
+  setupYearFilter();
+  setupKomoditasFilter();
+  loadKomoditasExplanation();
+
+  // Handle window resize for all charts
+  window.addEventListener('resize', function() {
+    if (mtoMChart) mtoMChart.resize();
+    if (yonYChart) yonYChart.resize();
+    if (perKomoditasChart) perKomoditasChart.resize();
+  });
+});
+
+// Load inflasi general data
+function loadInflasiData() {
+  fetch('/api/inflasi/')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.status === 'success' && data.data && data.data.length > 0) {
+        allInflasiData = data.data;
+        updateChartData();
+        // Render charts after data is loaded
+        if (mtoMChart) {
+          renderMtoMChart();
+        }
+        if (yonYChart) {
+          renderYonYChart();
+        }
+      } else {
+        console.warn('No inflasi data available');
+        // Show empty charts
+        if (mtoMChart) {
+          mtoMChart.setOption({
+            title: {
+              text: 'Data tidak tersedia',
+              left: 'center',
+              top: 'center',
+              textStyle: { color: '#999', fontSize: 14 }
+            }
+          });
+        }
+        if (yonYChart) {
+          yonYChart.setOption({
+            title: {
+              text: 'Data tidak tersedia',
+              left: 'center',
+              top: 'center',
+              textStyle: { color: '#999', fontSize: 14 }
+            }
+          });
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error loading inflasi data:', error);
+      // Show error message in charts
+      if (mtoMChart) {
+        mtoMChart.setOption({
+          title: {
+            text: 'Error memuat data',
+            left: 'center',
+            top: 'center',
+            textStyle: { color: '#dc3545', fontSize: 14 }
+          }
+        });
+      }
+      if (yonYChart) {
+        yonYChart.setOption({
+          title: {
+            text: 'Error memuat data',
+            left: 'center',
+            top: 'center',
+            textStyle: { color: '#dc3545', fontSize: 14 }
+          }
+        });
+      }
+    });
+}
+
+// Setup year filter
+function setupYearFilter() {
+  const filterYear = document.getElementById('filterYear');
+  const filterYearToggle = document.getElementById('filterYearToggle');
+  const filterYearDropdown = document.getElementById('filterYearDropdown');
+  const filterYearDisplay = document.getElementById('filterYearDisplay');
+  const dropdownItems = document.querySelectorAll('#filterYearDropdown .dropdown-item');
+
+  // Set default selected year (latest year)
+  if (selectedYear) {
+    filterYear.value = selectedYear;
+  }
+
+  // Toggle dropdown
+  filterYearToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isOpen = filterYearDropdown.style.display === 'block';
+    filterYearDropdown.style.display = isOpen ? 'none' : 'block';
+    
+    // Rotate chevron icon
+    const chevron = filterYearToggle.querySelector('i');
+    if (chevron) {
+      chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+      chevron.style.transition = 'transform 0.3s ease';
+    }
+  });
+
+  // Handle item selection
+  dropdownItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const value = this.getAttribute('data-value');
+      const text = this.textContent.trim();
+      
+      // Update hidden select
+      filterYear.value = value;
+      selectedYear = value;
+      
+      // Update display
+      filterYearDisplay.textContent = text;
+      
+      // Update selected state - remove selection from all items first
+      dropdownItems.forEach(i => {
+        const wasSelected = i.getAttribute('data-selected') === 'true';
+        if (wasSelected) {
+          i.style.setProperty('background-color', '', 'important');
+          i.setAttribute('data-selected', 'false');
+        }
+      });
+      // Set new selection
+      this.style.setProperty('background-color', '#f0f0f0', 'important');
+      this.setAttribute('data-selected', 'true');
+      
+      // Close dropdown
+      filterYearDropdown.style.display = 'none';
+      const chevron = filterYearToggle.querySelector('i');
+      if (chevron) {
+        chevron.style.transform = 'rotate(0deg)';
+      }
+      
+      // Update charts
+      updateChartData();
+      renderMtoMChart();
+      renderYonYChart();
+    });
+
+    // Hover effect
+    item.addEventListener('mouseenter', function() {
+      const isSelected = this.getAttribute('data-selected') === 'true';
+      // Only apply hover effect if item is not selected
+      if (!isSelected) {
+        this.style.setProperty('background-color', '#e9ecef', 'important');
+      }
+    });
+    
+    item.addEventListener('mouseleave', function() {
+      const isSelected = this.getAttribute('data-selected') === 'true';
+      // Only change background if not selected - use !important to override any inline styles
+      if (!isSelected) {
+        this.style.setProperty('background-color', '', 'important');
+      } else {
+        this.style.setProperty('background-color', '#f0f0f0', 'important');
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!filterYearToggle.contains(e.target) && !filterYearDropdown.contains(e.target)) {
+      filterYearDropdown.style.display = 'none';
+      const chevron = filterYearToggle.querySelector('i');
+      if (chevron) {
+        chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+  });
+
+  // Also handle change on hidden select for compatibility
+  filterYear.addEventListener('change', function() {
+    selectedYear = this.value || '{{ latest_year }}';
+    updateChartData();
+    renderMtoMChart();
+    renderYonYChart();
+  });
+}
+
+// Render Month-to-Month Chart
+function renderMtoMChart() {
+  if (!mtoMChart) {
+    console.error('mtoMChart is not initialized');
+    return;
+  }
+  
+  // Check if data is available
+  if (!allInflasiData || allInflasiData.length === 0) {
+    console.warn('No data available for MtoM chart');
+    return;
+  }
+  
+  // Always filter by selectedYear (default is latest year)
+  const yearToFilter = selectedYear || '{{ latest_year }}';
+  let filteredData = allInflasiData.filter(d => d.year == yearToFilter);
+  
+  if (filteredData.length === 0) {
+    console.warn('No data available for selected year:', yearToFilter);
+    mtoMChart.setOption({
+      title: {
+        text: 'Data tidak tersedia untuk tahun ' + yearToFilter,
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#999', fontSize: 14 }
+      }
+    });
+    return;
+  }
+
+  const sortedData = filteredData.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+  });
+
+  const labels = sortedData.map(d => `${monthNames[d.month]} ${d.year}`);
+  const values = sortedData.map(d => d.bulanan ? parseFloat(d.bulanan) : null);
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        const param = params[0];
+        return `${param.axisValue}<br/>${param.seriesName}: ${param.value !== null ? param.value.toFixed(2) + '%' : '-'}`;
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLabel: {
+        rotate: labels.length > 6 ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        formatter: function(value) {
+          // Show only month abbreviation since we always filter by year
+          return value.split(' ')[0]; // Only month
+        }
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      axisLabel: {
+        formatter: '{value}%'
+      }
+    },
+    series: [{
+      name: 'Inflasi Bulanan',
+      type: 'line',
+      smooth: false,
+      data: values,
+      itemStyle: {
+        color: '#3b82f6'
+      },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0, color: 'rgba(59, 130, 246, 0.3)'
+          }, {
+            offset: 1, color: 'rgba(59, 130, 246, 0.05)'
+          }]
+        }
+      }
+    }]
+  };
+
+  mtoMChart.setOption(option, true); // Use notMerge=true to replace existing option
+  updateChartData(); // Update data for export
+  
+  // Resize chart to ensure proper rendering
+  setTimeout(() => {
+    if (mtoMChart) {
+      mtoMChart.resize();
+    }
+  }, 100);
+}
+
+// Render Year-on-Year Chart
+function renderYonYChart() {
+  if (!yonYChart) {
+    console.error('yonYChart is not initialized');
+    return;
+  }
+  
+  // Check if data is available
+  if (!allInflasiData || allInflasiData.length === 0) {
+    console.warn('No data available for YoY chart');
+    return;
+  }
+  
+  // Always filter by selectedYear (default is latest year)
+  const yearToFilter = selectedYear || '{{ latest_year }}';
+  let filteredData = allInflasiData.filter(d => d.year == yearToFilter);
+  
+  if (filteredData.length === 0) {
+    console.warn('No data available for selected year:', yearToFilter);
+    yonYChart.setOption({
+      title: {
+        text: 'Data tidak tersedia untuk tahun ' + yearToFilter,
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#999', fontSize: 14 }
+      }
+    });
+    return;
+  }
+
+  const sortedData = filteredData.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+  });
+
+  const labels = sortedData.map(d => `${monthNames[d.month]} ${d.year}`);
+  const values = sortedData.map(d => d.yoy ? parseFloat(d.yoy) : null);
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        const param = params[0];
+        return `${param.axisValue}<br/>${param.seriesName}: ${param.value !== null ? param.value.toFixed(2) + '%' : '-'}`;
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLabel: {
+        rotate: labels.length > 6 ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        formatter: function(value) {
+          // Show only month abbreviation since we always filter by year
+          return value.split(' ')[0]; // Only month
+        }
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      axisLabel: {
+        formatter: '{value}%'
+      }
+    },
+    series: [{
+      name: 'Inflasi YoY',
+      type: 'line',
+      smooth: false,
+      data: values,
+      itemStyle: {
+        color: '#10b981'
+      },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0, color: 'rgba(16, 185, 129, 0.3)'
+          }, {
+            offset: 1, color: 'rgba(16, 185, 129, 0.05)'
+          }]
+        }
+      }
+    }]
+  };
+
+  yonYChart.setOption(option, true); // Use notMerge=true to replace existing option
+  updateChartData(); // Update data for export
+  
+  // Resize chart to ensure proper rendering
+  setTimeout(() => {
+    if (yonYChart) {
+      yonYChart.resize();
+    }
+  }, 100);
+}
+
+// Setup komoditas filter (bertahap)
+function setupKomoditasFilter() {
+  const filterTahun = document.getElementById('filterKomoditasTahun');
+  const filterUmum = document.getElementById('filterKomoditasUmum');
+  const filterSub = document.getElementById('filterSubKomoditas');
+  const filterSpesifik = document.getElementById('filterKomoditasSpesifik');
+  const btnCari = document.getElementById('btnCariKomoditas');
+  const btnClear = document.getElementById('btnClearKomoditas');
+
+  // Step 1: Tahun selected -> load Flag 1 (Komoditas Umum)
+  filterTahun.addEventListener('change', function() {
+    const tahun = this.value;
+    selectedKomoditas.tahun = tahun;
+    
+    if (tahun) {
+      filterUmum.disabled = false;
+      filterUmum.innerHTML = '<option value="">-- Memuat... --</option>';
+      
+      fetch(`/api/komoditas-by-flag/?flag=1&year=${tahun}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            filterUmum.innerHTML = '<option value="">-- Pilih Komoditas Umum --</option>';
+            data.data.forEach(k => {
+              filterUmum.innerHTML += `<option value="${k.commodity_code}" data-name="${k.commodity_name}">${k.commodity_name}</option>`;
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error loading komoditas umum:', error);
+          filterUmum.innerHTML = '<option value="">-- Error memuat data --</option>';
+        });
+    } else {
+      filterUmum.disabled = true;
+      filterUmum.innerHTML = '<option value="">-- Pilih Tahun Dulu --</option>';
+    }
+    
+    // Reset downstream filters
+    filterSub.disabled = true;
+    filterSub.innerHTML = '<option value="">-- Pilih Komoditas Umum Dulu --</option>';
+    filterSpesifik.disabled = true;
+    filterSpesifik.innerHTML = '<option value="">-- Pilih Sub Komoditas Dulu --</option>';
+    btnCari.disabled = true;
+    selectedKomoditas.umum = null;
+    selectedKomoditas.sub = null;
+    selectedKomoditas.spesifik = null;
+  });
+
+  // Step 2: Komoditas Umum selected -> load Flag 2 (Sub Komoditas)
+  filterUmum.addEventListener('change', function() {
+    const umumCode = this.value;
+    const umumName = this.options[this.selectedIndex]?.dataset.name;
+    selectedKomoditas.umum = { code: umumCode, name: umumName };
+    
+    if (umumCode && selectedKomoditas.tahun) {
+      filterSub.disabled = false;
+      filterSub.innerHTML = '<option value="">-- Memuat... --</option>';
+      
+      // Use API endpoint with parent_code parameter for hierarchical filtering
+      const apiUrl = `/api/komoditas-by-flag/?flag=2&year=${selectedKomoditas.tahun}&parent_code=${umumCode}`;
+      console.log('Loading sub komoditas for parent_code:', umumCode, 'year:', selectedKomoditas.tahun, 'URL:', apiUrl);
+      
+      fetch(apiUrl)
+        .then(response => {
+          console.log('Response status:', response.status);
+          return response.json();
+        })
+        .then(data => {
+          console.log('API Response:', data);
+          console.log('Data count:', data.count);
+          console.log('Data items:', data.data);
+          
+          if (data.status === 'success' && data.data.length > 0) {
+            filterSub.innerHTML = '<option value="">-- Pilih Sub Komoditas --</option>';
+            // Sort by commodity code to maintain hierarchy order
+            data.data.sort((a, b) => a.commodity_code.localeCompare(b.commodity_code)).forEach(k => {
+              console.log('Adding sub komoditas:', k.commodity_code, k.commodity_name, 'flag:', k.flag);
+              filterSub.innerHTML += `<option value="${k.commodity_code}" data-name="${k.commodity_name}">${k.commodity_name}</option>`;
+            });
+          } else {
+            console.warn('No sub komoditas found or empty response');
+            filterSub.innerHTML = '<option value="">-- Tidak ada sub komoditas --</option>';
+            filterSub.disabled = true;
+          }
+        })
+        .catch(error => {
+          console.error('Error loading sub komoditas:', error);
+          filterSub.innerHTML = '<option value="">-- Error memuat data --</option>';
+        });
+    } else {
+      filterSub.disabled = true;
+      filterSub.innerHTML = '<option value="">-- Pilih Komoditas Umum Dulu --</option>';
+    }
+    
+    // Reset downstream filters
+    filterSpesifik.disabled = true;
+    filterSpesifik.innerHTML = '<option value="">-- Pilih Sub Komoditas Dulu --</option>';
+    btnCari.disabled = true;
+    selectedKomoditas.sub = null;
+    selectedKomoditas.spesifik = null;
+  });
+
+  // Step 3: Sub Komoditas selected -> load Flag 3 (Komoditas Spesifik)
+  filterSub.addEventListener('change', function() {
+    const subCode = this.value;
+    const subName = this.options[this.selectedIndex]?.dataset.name;
+    selectedKomoditas.sub = { code: subCode, name: subName };
+    
+    if (subCode && selectedKomoditas.tahun) {
+      filterSpesifik.disabled = false;
+      filterSpesifik.innerHTML = '<option value="">-- Memuat... --</option>';
+      
+      // Use API endpoint with parent_code parameter for hierarchical filtering
+      fetch(`/api/komoditas-by-flag/?flag=3&year=${selectedKomoditas.tahun}&parent_code=${subCode}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success' && data.data.length > 0) {
+            filterSpesifik.innerHTML = '<option value="">-- Pilih Komoditas Spesifik --</option>';
+            // Sort by commodity code to maintain hierarchy order
+            data.data.sort((a, b) => a.commodity_code.localeCompare(b.commodity_code)).forEach(k => {
+              filterSpesifik.innerHTML += `<option value="${k.commodity_code}" data-name="${k.commodity_name}">${k.commodity_name}</option>`;
+            });
+          } else {
+            filterSpesifik.innerHTML = '<option value="">-- Tidak ada komoditas spesifik --</option>';
+            filterSpesifik.disabled = true;
+          }
+        })
+        .catch(error => {
+          console.error('Error loading komoditas spesifik:', error);
+          filterSpesifik.innerHTML = '<option value="">-- Error memuat data --</option>';
+        });
+    } else {
+      filterSpesifik.disabled = true;
+      filterSpesifik.innerHTML = '<option value="">-- Pilih Sub Komoditas Dulu --</option>';
+    }
+    
+    btnCari.disabled = true;
+    selectedKomoditas.spesifik = null;
+  });
+
+  // Step 4: Komoditas Spesifik selected -> enable search button
+  filterSpesifik.addEventListener('change', function() {
+    const spesifikCode = this.value;
+    const spesifikName = this.options[this.selectedIndex]?.dataset.name;
+    selectedKomoditas.spesifik = { code: spesifikCode, name: spesifikName };
+    
+    if (spesifikCode) {
+      btnCari.disabled = false;
+    } else {
+      btnCari.disabled = true;
+    }
+  });
+
+  // Search button
+  btnCari.addEventListener('click', function() {
+    if (selectedKomoditas.spesifik && selectedKomoditas.spesifik.code) {
+      loadKomoditasChart(selectedKomoditas.spesifik.code, selectedKomoditas.spesifik.name, selectedKomoditas.tahun);
+      showSelectedKomoditasInfo();
+    } else if (selectedKomoditas.sub && selectedKomoditas.sub.code) {
+      // If no spesifik, use sub komoditas
+      loadKomoditasChart(selectedKomoditas.sub.code, selectedKomoditas.sub.name, selectedKomoditas.tahun);
+      showSelectedKomoditasInfo();
+    } else if (selectedKomoditas.umum && selectedKomoditas.umum.code) {
+      // If no sub, use umum
+      loadKomoditasChart(selectedKomoditas.umum.code, selectedKomoditas.umum.name, selectedKomoditas.tahun);
+      showSelectedKomoditasInfo();
+    }
+  });
+
+  // Clear button
+  btnClear.addEventListener('click', function() {
+    filterTahun.value = '';
+    filterUmum.value = '';
+    filterSub.value = '';
+    filterSpesifik.value = '';
+    filterUmum.disabled = true;
+    filterSub.disabled = true;
+    filterSpesifik.disabled = true;
+    btnCari.disabled = true;
+    selectedKomoditas = { tahun: null, umum: null, sub: null, spesifik: null };
+    document.getElementById('selectedKomoditasInfo').style.display = 'none';
+    document.getElementById('komoditasChartSection').style.display = 'none';
+  });
+
+  function showSelectedKomoditasInfo() {
+    let text = '';
+    if (selectedKomoditas.tahun) text += `Tahun: ${selectedKomoditas.tahun}`;
+    if (selectedKomoditas.umum) text += ` | Komoditas Umum: ${selectedKomoditas.umum.name}`;
+    if (selectedKomoditas.sub) text += ` | Sub Komoditas: ${selectedKomoditas.sub.name}`;
+    if (selectedKomoditas.spesifik) text += ` | Komoditas Spesifik: ${selectedKomoditas.spesifik.name}`;
+    
+    document.getElementById('selectedKomoditasText').textContent = text;
+    document.getElementById('selectedKomoditasInfo').style.display = 'block';
+  }
+}
+
+// Load komoditas chart
+function loadKomoditasChart(commodityCode, commodityName, year) {
+  let url = `/api/inflasi-perkomoditas/?commodity_code=${commodityCode}`;
+  if (year) {
+    url += `&year=${year}`;
+  }
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success' && data.data.length > 0) {
+        renderKomoditasChart(data.data, commodityName);
+        document.getElementById('komoditasChartSection').style.display = 'block';
+      } else {
+        alert('Data untuk komoditas ini tidak tersedia.');
+      }
+    })
+    .catch(error => {
+      console.error('Error loading komoditas chart:', error);
+      alert('Terjadi kesalahan saat memuat data.');
+    });
+}
+
+// Render Komoditas Chart
+function renderKomoditasChart(data, komoditasName) {
+  if (!perKomoditasChart) {
+    console.error('perKomoditasChart is not initialized');
+    return;
+  }
+  
+  if (!data || data.length === 0) {
+    console.warn('No data available for komoditas chart');
+    return;
+  }
+  
+  const sortedData = data.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+  });
+
+  // Check if data is from single year
+  const uniqueYears = [...new Set(sortedData.map(d => d.year))];
+  const isSingleYear = uniqueYears.length === 1;
+
+  const labels = sortedData.map(d => `${monthNames[d.month]} ${d.year}`);
+  const values = sortedData.map(d => d.value ? parseFloat(d.value) : null);
+
+  // Store data for export
+  window.chartData.komoditas = {
+    data: sortedData,
+    name: komoditasName,
+    year: uniqueYears.length > 0 ? uniqueYears[0] : null
+  };
+
+  document.getElementById('komoditasChartTitle').textContent = `Inflasi ${komoditasName}`;
+
+  // Calculate dynamic bottom padding based on label rotation
+  const needsRotation = labels.length > 6;
+  const bottomPadding = needsRotation ? '15%' : '10%';
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(50, 50, 50, 0.9)',
+      borderColor: '#8b5cf6',
+      borderWidth: 1,
+      textStyle: {
+        color: '#fff',
+        fontSize: 12
+      },
+      formatter: function(params) {
+        const param = params[0];
+        const monthFull = sortedData[param.dataIndex] ? sortedData[param.dataIndex].month : '';
+        const year = sortedData[param.dataIndex] ? sortedData[param.dataIndex].year : '';
+        return `<strong>${monthFull} ${year}</strong><br/>${param.seriesName}: ${param.value !== null ? param.value.toFixed(2) + '%' : '-'}`;
+      }
+    },
+    grid: {
+      left: '8%',
+      right: '4%',
+      top: '10%',
+      bottom: bottomPadding,
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLine: {
+        lineStyle: {
+          color: '#e0e0e0'
+        }
+      },
+      axisLabel: {
+        rotate: needsRotation ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        fontSize: 11,
+        color: '#666',
+        formatter: function(value) {
+          // Show only month abbreviation if single year, or month + year if multiple years
+          if (isSingleYear) {
+            return value.split(' ')[0]; // Only month
+          }
+          return value;
+        },
+        margin: needsRotation ? 15 : 8
+      },
+      splitLine: {
+        show: false
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      nameLocation: 'middle',
+      nameGap: 50,
+      nameTextStyle: {
+        fontSize: 12,
+        color: '#666'
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#e0e0e0'
+        }
+      },
+      axisLabel: {
+        formatter: '{value}%',
+        fontSize: 11,
+        color: '#666'
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#f0f0f0',
+          type: 'dashed'
+        }
+      }
+    },
+    series: [{
+      name: `Inflasi ${komoditasName}`,
+      type: 'line',
+      smooth: false,
+      data: values,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: {
+        width: 2,
+        color: '#8b5cf6'
+      },
+      itemStyle: {
+        color: '#8b5cf6',
+        borderWidth: 2,
+        borderColor: '#fff'
+      },
+      emphasis: {
+        itemStyle: {
+          color: '#7c3aed',
+          borderColor: '#8b5cf6',
+          borderWidth: 3,
+          shadowBlur: 10,
+          shadowColor: 'rgba(139, 92, 246, 0.5)'
+        },
+        lineStyle: {
+          width: 3
+        }
+      },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0, color: 'rgba(139, 92, 246, 0.3)'
+          }, {
+            offset: 1, color: 'rgba(139, 92, 246, 0.05)'
+          }]
+        }
+      }
+    }]
+  };
+
+  // Resize chart to ensure proper rendering
+  setTimeout(() => {
+    if (perKomoditasChart) {
+      perKomoditasChart.resize();
+      perKomoditasChart.setOption(option, true);
+    }
+  }, 100);
+}
+
+// Load komoditas explanation
+function loadKomoditasExplanation() {
+  // Get all unique komoditas umum (flag 1) from all years
+  fetch('/api/inflasi-perkomoditas/?flag=1')
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success' && data.data.length > 0) {
+        // Get unique komoditas umum and sort by code
+        const uniqueUmum = {};
+        data.data.forEach(k => {
+          if (!uniqueUmum[k.commodity_code]) {
+            uniqueUmum[k.commodity_code] = {
+              code: k.commodity_code,
+              name: k.commodity_name
+            };
+          }
+        });
+        
+        // Sort komoditas umum by code (numeric sort)
+        const komoditasUmumList = Object.values(uniqueUmum).sort((a, b) => {
+          const codeA = parseInt(a.code) || a.code;
+          const codeB = parseInt(b.code) || b.code;
+          return codeA - codeB;
+        });
+        
+        // Get latest year for filtering sub komoditas
+        const latestYear = Math.max(...data.data.map(k => k.year));
+        
+        // For each komoditas umum, get its sub komoditas (flag 2) using the correct API
+        Promise.all(komoditasUmumList.map(k => {
+          return fetch(`/api/komoditas-by-flag/?flag=2&year=${latestYear}&parent_code=${k.code}`)
+            .then(res => res.json())
+            .then(subData => {
+              // Get unique sub komoditas and sort by name
+              const uniqueSub = {};
+              if (subData.status === 'success' && subData.data.length > 0) {
+                subData.data.forEach(s => {
+                  if (!uniqueSub[s.commodity_code]) {
+                    uniqueSub[s.commodity_code] = s.commodity_name;
+                  }
+                });
+              }
+              
+              // Convert to array and sort by name
+              const subList = Object.values(uniqueSub).sort((a, b) => a.localeCompare(b));
+              
+              return {
+                umum: k,
+                sub: subList
+              };
+            })
+            .catch(error => {
+              console.error(`Error loading sub komoditas for ${k.code}:`, error);
+              return {
+                umum: k,
+                sub: []
+              };
+            });
+        })).then(results => {
+          let html = '<div class="row">';
+          
+          results.forEach((result, index) => {
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
+            const colorIndex = index % colors.length;
+            const borderColor = colors[colorIndex];
+            
+            html += `
+              <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm" style="border-left: 4px solid ${borderColor}; border-radius: 8px; transition: transform 0.2s, box-shadow 0.2s;" 
+                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.15)';" 
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+                  <div class="card-body" style="padding: 20px;">
+                    <h6 style="color: ${borderColor}; font-weight: 600; margin-bottom: 15px; font-size: 15px; line-height: 1.4;">
+                      <i class="fas fa-box me-2" style="font-size: 14px;"></i>${result.umum.name}
+                    </h6>
+                    ${result.sub.length > 0 ? `
+                      <div style="margin-bottom: 12px;">
+                        <span style="font-size: 12px; color: #666; font-weight: 500; background: #f8f9fa; padding: 4px 10px; border-radius: 12px; display: inline-block;">
+                          <i class="fas fa-list me-1"></i>${result.sub.length} Sub Komoditas
+                        </span>
+                      </div>
+                      <div style="max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                        <ul style="font-size: 13px; color: #555; margin-left: 20px; margin-bottom: 0; line-height: 1.8;">
+                          ${result.sub.map(s => `<li style="margin-bottom: 4px;">${s}</li>`).join('')}
+                        </ul>
+                      </div>
+                    ` : `
+                      <p style="font-size: 12px; color: #999; margin-bottom: 0; font-style: italic;">
+                        <i class="fas fa-info-circle me-1"></i>Tidak ada sub komoditas
+                      </p>
+                    `}
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          html += '</div>';
+          document.getElementById('komoditasExplanation').innerHTML = html || 
+            '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia.</div>';
+        }).catch(error => {
+          console.error('Error loading sub komoditas:', error);
+          document.getElementById('komoditasExplanation').innerHTML = 
+            '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
+        });
+      } else {
+        document.getElementById('komoditasExplanation').innerHTML = 
+          '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia. Silakan sinkronisasi data terlebih dahulu.</div>';
+      }
+    })
+    .catch(error => {
+      console.error('Error loading komoditas explanation:', error);
+      document.getElementById('komoditasExplanation').innerHTML = 
+        '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
+    });
+}
+
+// ========== Export Functions ==========
+
+// Store chart instances and data globally for export functions
+window.chartInstances = {
+  mtoM: null,
+  yonY: null,
+  komoditas: null
+};
+
+window.chartData = {
+  mtoM: [],
+  yonY: [],
+  komoditas: { data: [], name: '', year: null }
+};
+
+// Update chart data when charts are rendered
+function updateChartData() {
+  if (allInflasiData && allInflasiData.length > 0) {
+    const yearToFilter = selectedYear || '{{ latest_year }}';
+    const filteredData = allInflasiData.filter(d => d.year == yearToFilter);
+    const sortedData = filteredData.sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+    });
+    
+    window.chartData.mtoM = sortedData.map(d => ({
+      year: d.year,
+      month: d.month,
+      value: d.bulanan ? parseFloat(d.bulanan) : null
+    }));
+    
+    window.chartData.yonY = sortedData.map(d => ({
+      year: d.year,
+      month: d.month,
+      value: d.yoy ? parseFloat(d.yoy) : null
+    }));
+  }
+}
+
+// Update chart instances reference after initialization
+function updateChartInstances() {
+  if (window.chartInstances) {
+    window.chartInstances.mtoM = mtoMChart;
+    window.chartInstances.yonY = yonYChart;
+    window.chartInstances.komoditas = perKomoditasChart;
+  }
+}
+
+// Export MtoM Chart to Excel
+function exportMtoMToExcel() {
+  if (!window.chartData.mtoM || window.chartData.mtoM.length === 0) {
+    alert('Data belum tersedia. Silakan tunggu hingga grafik dimuat.');
+    return;
+  }
+  
+  const exportData = [['Bulan', 'Tahun', 'Inflasi Bulan ke Bulan (%)']];
+  const monthNamesFull = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  
+  window.chartData.mtoM.forEach(item => {
+    const monthName = monthNamesFull[item.month] || item.month;
+    const value = item.value !== null ? item.value.toFixed(2) : 'Data tidak tersedia';
+    exportData.push([monthName, item.year.toString(), value]);
+  });
+  
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(exportData);
+  ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi MtoM');
+  XLSX.writeFile(wb, `Inflasi_Bulan_ke_Bulan_${selectedYear || '{{ latest_year }}'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// Export YoY Chart to Excel
+function exportYonYToExcel() {
+  if (!window.chartData.yonY || window.chartData.yonY.length === 0) {
+    alert('Data belum tersedia. Silakan tunggu hingga grafik dimuat.');
+    return;
+  }
+  
+  const exportData = [['Bulan', 'Tahun', 'Inflasi Tahun ke Tahun (%)']];
+  const monthNamesFull = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  
+  window.chartData.yonY.forEach(item => {
+    const monthName = monthNamesFull[item.month] || item.month;
+    const value = item.value !== null ? item.value.toFixed(2) : 'Data tidak tersedia';
+    exportData.push([monthName, item.year.toString(), value]);
+  });
+  
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(exportData);
+  ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi YoY');
+  XLSX.writeFile(wb, `Inflasi_Tahun_ke_Tahun_${selectedYear || '{{ latest_year }}'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// Export Komoditas Chart to Excel
+function exportKomoditasToExcel() {
+  if (!window.chartData.komoditas || !window.chartData.komoditas.data || window.chartData.komoditas.data.length === 0) {
+    alert('Data belum tersedia. Silakan pilih komoditas terlebih dahulu.');
+    return;
+  }
+  
+  const exportData = [['Bulan', 'Tahun', `Inflasi ${window.chartData.komoditas.name} (%)`]];
+  const monthNamesFull = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  
+  window.chartData.komoditas.data.forEach(item => {
+    const monthName = monthNamesFull[item.month] || item.month;
+    const value = item.value !== null ? parseFloat(item.value).toFixed(2) : 'Data tidak tersedia';
+    exportData.push([monthName, item.year.toString(), value]);
+  });
+  
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(exportData);
+  ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 30 }];
+  const safeName = window.chartData.komoditas.name.replace(/[^a-zA-Z0-9]/g, '_');
+  XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi Komoditas');
+  XLSX.writeFile(wb, `Inflasi_${safeName}_${window.chartData.komoditas.year || ''}_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// Export chart to PNG
+function exportChartToPNG(chartInstance, filename) {
+  if (!chartInstance) {
+    alert('Grafik belum tersedia. Silakan tunggu hingga grafik dimuat.');
+    return;
+  }
+  const url = chartInstance.getDataURL({
+    type: 'png',
+    pixelRatio: 2,
+    backgroundColor: '#fff'
+  });
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = url;
+  link.click();
+}
+
+// Add event listeners for download buttons
+document.addEventListener('DOMContentLoaded', function() {
+  // MtoM Chart
+  document.getElementById('downloadMtoMExcel')?.addEventListener('click', exportMtoMToExcel);
+  document.getElementById('downloadMtoMPNG')?.addEventListener('click', () => {
+    exportChartToPNG(window.chartInstances.mtoM, `Inflasi_Bulan_ke_Bulan_${selectedYear || '{{ latest_year }}'}_${new Date().toISOString().split('T')[0]}.png`);
+  });
+  
+  // YoY Chart
+  document.getElementById('downloadYonYExcel')?.addEventListener('click', exportYonYToExcel);
+  document.getElementById('downloadYonYPNG')?.addEventListener('click', () => {
+    exportChartToPNG(window.chartInstances.yonY, `Inflasi_Tahun_ke_Tahun_${selectedYear || '{{ latest_year }}'}_${new Date().toISOString().split('T')[0]}.png`);
+  });
+  
+  // Komoditas Chart
+  document.getElementById('downloadKomoditasExcel')?.addEventListener('click', exportKomoditasToExcel);
+  document.getElementById('downloadKomoditasPNG')?.addEventListener('click', () => {
+    const safeName = window.chartData.komoditas.name ? window.chartData.komoditas.name.replace(/[^a-zA-Z0-9]/g, '_') : 'Komoditas';
+    exportChartToPNG(window.chartInstances.komoditas, `Inflasi_${safeName}_${window.chartData.komoditas.year || ''}_${new Date().toISOString().split('T')[0]}.png`);
+  });
+});
+</script>
+
+<style>
+.dashboard-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+/* Ensure chart containers don't overlap dropdown */
+.dashboard-card #inflasiMtoMChart,
+.dashboard-card #inflasiYonYChart {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.form-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* Download button responsive */
+@media (max-width: 768px) {
+  #downloadMtoMExcel, #downloadMtoMPNG,
+  #downloadYonYExcel, #downloadYonYPNG,
+  #downloadKomoditasExcel, #downloadKomoditasPNG {
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+  }
+  
+  #downloadMtoMExcel i, #downloadMtoMPNG i,
+  #downloadYonYExcel i, #downloadYonYPNG i,
+  #downloadKomoditasExcel i, #downloadKomoditasPNG i {
+    font-size: 10px !important;
+  }
+  
+  #downloadMtoMExcel span, #downloadMtoMPNG span,
+  #downloadYonYExcel span, #downloadYonYPNG span,
+  #downloadKomoditasExcel span, #downloadKomoditasPNG span {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  #downloadMtoMExcel, #downloadMtoMPNG,
+  #downloadYonYExcel, #downloadYonYPNG,
+  #downloadKomoditasExcel, #downloadKomoditasPNG {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+  
+  #downloadMtoMExcel i, #downloadMtoMPNG i,
+  #downloadYonYExcel i, #downloadYonYPNG i,
+  #downloadKomoditasExcel i, #downloadKomoditasPNG i {
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+  position: relative;
+  z-index: 9999;
+}
+
+.custom-dropdown .dropdown-toggle:hover {
+  border-color: #999;
+}
+
+.custom-dropdown .dropdown-menu {
+  max-height: 192px; /* 6 items * 32px (8px padding * 2 + 16px line height) */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute !important;
+  z-index: 9999 !important;
+}
+
+.custom-dropdown .dropdown-item {
+  line-height: 1.5;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: background-color 0.2s ease;
+  z-index: 1;
+}
+
+.custom-dropdown .dropdown-item:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.custom-dropdown .dropdown-item:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.custom-dropdown .dropdown-item[data-selected="true"] {
+  background-color: #f0f0f0 !important;
+  font-weight: 500;
+}
+
+.custom-dropdown .dropdown-item[data-selected="true"]:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Scrollbar styling for dropdown */
+.custom-dropdown .dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+</style>
+
+{% endblock %}
