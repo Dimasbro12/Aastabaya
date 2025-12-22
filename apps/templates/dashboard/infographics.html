@@ -31,26 +31,33 @@
     </div>
   </div>
 
+  <!-- Grid View -->
   <div id="gridView" class="row">
     {% if dataInpographic %} {% for infographic in dataInpographic %}
-    <div class="col-md-4 col-lg-3 mb-4 infographic-item">
-      <div class="card h-100 hover-shadow">
-        <div class="card-img-wrapper" style="height: 200px; overflow: hidden; background: #f5f5f5">
+    <div class="col-6 col-md-4 col-lg-3 mb-4 infographic-item" data-infographic-id="{{ infographic.id }}">
+      <div class="card infographic-card h-100 hover-shadow" onclick="showInfographicDetail({{ infographic.id }})">
+        <div class="card-img-wrapper" style="background: #e9ecef; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; height: 280px;">
           <img
             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
             data-src="{{ infographic.image }}"
             class="card-img-top lazy-load"
             alt="{{ infographic.title }}"
-            style="height: 100%; width: 100%; object-fit: cover; cursor: pointer"
+            style="width: 100%; max-height: 100%; object-fit: contain; cursor: pointer; transition: transform 0.3s ease; display: block;"
             loading="lazy"
-            onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"
           />
+          <div class="card-overlay"></div>
         </div>
-        <div class="card-body d-flex flex-column">
-          <h6 class="card-title text-truncate" title="{{ infographic.title }}">{{ infographic.title|truncatewords:10 }}</h6>
-          <div class="mt-auto d-flex gap-2">
-            <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary w-100" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+        <div class="card-body d-flex flex-column p-3">
+          <h6 class="card-title mb-3" style="font-size: 0.9rem; line-height: 1.4; font-weight: 500;" title="{{ infographic.title }}">{{ infographic.title }}</h6>
+        </div>
+        <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 px-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">BPS Kota Surabaya</small>
             {% if user.is_authenticated %}
+            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); showInfographicDetail({{ infographic.id }})">
+              <i class="bi bi-eye"></i> Lihat
+            </button>
+            
             <button
               class="btn btn-sm btn-outline-secondary bookmark-btn {% if infographic.bookmark_id %}bookmarked{% endif %}"
               style="min-width: 40px"
@@ -87,6 +94,7 @@
               <tr>
                 <th style="width: 80px">Preview</th>
                 <th>Judul</th>
+                <th style="width: 150px">Tanggal</th>
                 <th style="width: 150px">Aksi</th>
               </tr>
             </thead>
@@ -97,31 +105,21 @@
                   <img
                     src="{{ infographic.image }}"
                     alt="{{ infographic.title }}"
-                    style="width: 60px; height: 60px; object-fit: cover; cursor: pointer"
-                    onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"
+                    style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 4px;"
+                    onclick="showInfographicDetail({{ infographic.id }})"
                   />
                 </td>
                 <td class="align-middle">
                   <strong>{{ infographic.title }}</strong>
                 </td>
                 <td class="align-middle">
-                  <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-info" onclick="showModal('{{ infographic.title|escapejs }}', '{{ infographic.image|escapejs }}', '{{ infographic.dl|escapejs }}')"><i class="bi bi-eye"></i> View</button>
-                    <a href="{{ infographic.dl }}" class="btn btn-sm btn-primary" target="_blank" download>
-                      <i class="bi bi-download"></i>
-                    </a>
-                    {% if user.is_authenticated %}
-                    <button
-                      class="btn btn-sm btn-outline-secondary bookmark-btn {% if infographic.bookmark_id %}bookmarked{% endif %}"
-                      data-content-type="infographic"
-                      data-object-id="{{ infographic.id }}"
-                      data-bookmark-id="{{ infographic.bookmark_id|default:'' }}"
-                      onclick="toggleBookmark(this)"
-                    >
-                      <i class="bi {% if infographic.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
-                    </button>
-                    {% endif %}
-                  </div>
+                  <small class="text-muted">-</small>
+                </td>
+                <td class="align-middle">
+                  <button class="btn btn-sm btn-info" onclick="showInfographicDetail({{ infographic.id }})"><i class="bi bi-eye"></i> View</button>
+                  <a href="{% url 'download-infographic' infographic.id %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-download"></i>
+                  </a>
                 </td>
               </tr>
               {% endfor %}
@@ -163,87 +161,385 @@
   {% endif %}
 </div>
 
-<!-- Modal for Preview -->
-<div class="modal fade" id="infographicModal" tabindex="-1">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+<!-- Modal for Detail -->
+<div class="modal fade" id="infographicDetailModal" tabindex="-1" aria-labelledby="infographicDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title" id="infographicDetailModalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body text-center">
-        <img id="modalImage" src="" alt="" class="img-fluid" style="max-height: 70vh" />
-      </div>
-      <div class="modal-footer">
-        <a id="modalDownload" href="" class="btn btn-primary" target="_blank" download> <i class="bi bi-download"></i> Download </a>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-body p-0">
+        <div class="row g-0 h-100">
+          <!-- Main Infographic -->
+          <div class="col-lg-8 border-end">
+            <div class="text-center" style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden; flex: 1; min-height: 0; padding: 1rem 0;">
+              <img id="detailModalImage" src="" alt="" class="img-fluid" style="max-width: 100%; max-height: calc(100vh - 280px); width: auto; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+            </div>
+            <div class="p-3 border-top bg-white" style="flex-shrink: 0;">
+              <div class="d-flex justify-content-end align-items-center">
+                <a id="detailModalDownload" href="" class="btn btn-primary btn-sm download-infographic-btn" data-infographic-id="" data-infographic-title="">
+                  <i class="bi bi-download"></i> Unduh
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Related Infographics -->
+          <div class="col-lg-4">
+            <div class="p-3">
+              <h6 class="fw-bold mb-3">Terkait</h6>
+              <div id="relatedInfographics" class="d-flex flex-column gap-3" style="overflow: visible; padding-right: 10px;">
+                <!-- Related items will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+
+<!-- Hidden data container for all infographics -->
+<div id="allInfographicsData" style="display: none;">
+  {% for infographic in allInfographics %}
+  <div class="infographic-data-item" 
+       data-id="{{ infographic.id }}"
+       data-title="{{ infographic.title|escapejs }}"
+       data-image="{% if infographic.image %}{{ infographic.image }}{% else %}''{% endif %}"
+       data-date="{{ infographic.created_at|date:'d F Y'|default:'-' }}"
+       data-download="{% url 'download-infographic' infographic.id %}">
+  </div>
+  {% endfor %}
+</div>
 
 <style>
-  .hover-shadow {
+  .infographic-card {
     transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
   }
 
-  .hover-shadow:hover {
+  .infographic-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+    border-color: #1F4068;
   }
 
-  .card-img-wrapper img:hover {
+  .card-img-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    height: 280px;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .card-img-wrapper img {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    object-position: center;
+  }
+  
+  .infographic-card {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .infographic-card .card-body {
+    flex-grow: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .card-img-wrapper {
+      height: 240px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .card-img-wrapper {
+      height: 200px;
+    }
+  }
+
+  .card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .infographic-card:hover .card-overlay {
+    opacity: 1;
+  }
+
+  .infographic-card:hover .card-img-top {
     transform: scale(1.05);
+  }
+
+  .card-img-wrapper img {
     transition: transform 0.3s ease;
   }
 
-  .bookmark-btn .bi-bookmark-fill {
-    color: #0d6efd;
+  /* Search Input Border Radius */
+  .input-group {
+    border-radius: 25rem !important;
+    overflow: hidden;
   }
 
-  .bookmark-btn.bookmarked {
-    background-color: #e7f1ff;
-    border-color: #0d6efd;
+  .input-group .input-group-text {
+    border-radius: 25rem 0 0 25rem !important;
+    border-right: none;
+    height: 47px;
+    padding: 0.375rem 0.75rem;
   }
 
-  .bookmark-btn.bookmarked .bi-bookmark {
-    display: none;
+  .input-group #searchInput {
+    border-radius: 0 25rem 25rem 0 !important;
+    border-left: none;
+    height: 47px;
+    padding: 0.375rem 0.75rem;
   }
-  .bookmark-btn:not(.bookmarked) .bi-bookmark-fill {
-    display: none;
+
+  .input-group #searchInput:focus {
+    border-radius: 0 25rem 25rem 0 !important;
+    border-left: none;
+    box-shadow: none !important;
+    border-color: #ced4da !important;
+    outline: none !important;
+  }
+
+  .input-group:focus-within {
+    box-shadow: none !important;
+  }
+
+  /* View Switcher Button Group */
+  .btn-group {
+    border-radius: 25rem !important;
+    overflow: hidden;
+  }
+
+  .btn-group button:first-child {
+    border-top-left-radius: 25rem !important;
+    border-bottom-left-radius: 25rem !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  .btn-group button:last-child {
+    border-top-right-radius: 25rem !important;
+    border-bottom-right-radius: 25rem !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+
+  /* View Switcher Button Active State */
+  .btn-group button.active {
+    background-color: #1F4068 !important;
+    border-color: #1F4068 !important;
+    color: white !important;
+  }
+
+  .btn-group button.active i {
+    color: white !important;
+  }
+
+  .btn-group button.active:hover {
+    background-color: #1a3554 !important;
+    border-color: #1a3554 !important;
+    color: white !important;
+  }
+
+  .btn-group button:not(.active) {
+    background-color: white !important;
+    border-color: #ced4da !important;
+    color: #1F4068 !important;
+  }
+
+  .btn-group button:not(.active) i {
+    color: #1F4068 !important;
+  }
+
+  .btn-group button:not(.active):hover {
+    background-color: #f8f9fa !important;
+    border-color: #ced4da !important;
+    color: #1F4068 !important;
+  }
+
+  /* Related Infographic Item */
+  .related-infographic-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .related-infographic-item:hover {
+    background-color: #f8f9fa;
+    border-color: #1F4068;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .related-infographic-item img {
+    width: 80px;
+    height: auto;
+    max-height: 80px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .related-infographic-item .content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .related-infographic-item .title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+
+
+  /* Modal Styles */
+  #infographicDetailModal .modal-dialog {
+    max-height: 95vh;
+    margin: 5rem auto 1.75rem auto;
+  }
+  
+  #infographicDetailModal .modal-content {
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  #infographicDetailModal .modal-header {
+    flex-shrink: 0;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  #infographicDetailModal .modal-body {
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 0;
+  }
+  
+  #infographicDetailModal .row.g-0 {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    flex: 1;
+    min-height: 0;
+  }
+  
+  #infographicDetailModal .col-lg-8 {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    height: 100%;
+  }
+  
+  #infographicDetailModal .col-lg-8 > div:first-child {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    max-height: 100%;
+  }
+  
+  #infographicDetailModal .col-lg-8 > div:last-child {
+    flex-shrink: 0;
+    z-index: 10;
+    position: relative;
+    background: white;
+  }
+  
+  #infographicDetailModal .col-lg-4 {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    height: 100%;
+  }
+  
+  #infographicDetailModal .col-lg-4 > div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: visible;
+    padding-right: 10px;
+  }
+  
+  #infographicDetailModal #relatedInfographics {
+    overflow: visible !important;
+  }
+
+  @media (max-width: 991.98px) {
+    .col-lg-8.border-end {
+      border-right: none !important;
+      border-bottom: 1px solid #dee2e6;
+    }
   }
 </style>
 
 <script>
-  const ctx = document.getElementById("chart").getContext("2d");
-  const myChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      datasets: [
-        {
-          label: "Last week",
-          backgroundColor: "rgba(161, 198, 247, 1)",
-          borderColor: "rgb(47, 128, 237)",
-          data: [3000, 4000, 2000, 5000, 8000, 9000, 2000],
-        },
-      ],
-    },
-    options: {
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-            },
-          },
-        ],
-      },
-    },
-  });
-  // Lazy loading for images
+  // Store all infographics data
+  let allInfographicsData = [];
+  
+  // Initialize infographics data
   document.addEventListener("DOMContentLoaded", function () {
+    const dataContainer = document.getElementById("allInfographicsData");
+    const items = dataContainer.querySelectorAll(".infographic-data-item");
+    
+    items.forEach((item) => {
+      let imageUrl = item.dataset.image || '';
+      // Remove quotes if present
+      if (imageUrl && (imageUrl.startsWith("'") && imageUrl.endsWith("'"))) {
+        imageUrl = imageUrl.slice(1, -1);
+      }
+      if (imageUrl && (imageUrl.startsWith('"') && imageUrl.endsWith('"'))) {
+        imageUrl = imageUrl.slice(1, -1);
+      }
+      
+      allInfographicsData.push({
+        id: parseInt(item.dataset.id),
+        title: item.dataset.title,
+        image: imageUrl,
+        date: item.dataset.date,
+        download: item.dataset.download
+      });
+    });
+
+    // Lazy loading for images
     const lazyImages = document.querySelectorAll("img.lazy-load");
 
     if ("IntersectionObserver" in window) {
@@ -262,7 +558,6 @@
                 img.classList.add("loaded");
               };
               tempImg.onerror = function () {
-                // If image fails to load, show placeholder
                 img.src =
                   'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="18" font-family="Arial"%3EImage Not Available%3C/text%3E%3C/svg%3E';
               };
@@ -277,7 +572,6 @@
 
       lazyImages.forEach((img) => imageObserver.observe(img));
     } else {
-      // Fallback
       lazyImages.forEach((img) => {
         img.src = img.dataset.src;
       });
@@ -318,15 +612,191 @@
     }
   }
 
-  // Modal functionality
-  function showModal(title, imageUrl, downloadUrl) {
-    document.getElementById("modalTitle").textContent = title;
-    document.getElementById("modalImage").src = imageUrl;
-    document.getElementById("modalDownload").href = downloadUrl;
+  // Show infographic detail modal
+  function showInfographicDetail(infographicId) {
+    const infographic = allInfographicsData.find(item => item.id === infographicId);
+    
+    if (!infographic) {
+      alert("Infografis tidak ditemukan");
+      return;
+    }
 
-    const modal = new bootstrap.Modal(document.getElementById("infographicModal"));
+    // Set main infographic details
+    document.getElementById("infographicDetailModalTitle").textContent = infographic.title;
+    
+    // Get and process image URL
+    let imageUrl = infographic.image || '';
+    
+    // Debug: log the image URL
+    console.log('Original image URL:', imageUrl);
+    
+    // Clean and decode image URL
+    if (imageUrl) {
+      // Remove any HTML entities that might have been escaped
+      imageUrl = imageUrl.replace(/&amp;/g, '&');
+      imageUrl = imageUrl.replace(/&lt;/g, '<');
+      imageUrl = imageUrl.replace(/&gt;/g, '>');
+      imageUrl = imageUrl.replace(/&quot;/g, '"');
+      imageUrl = imageUrl.replace(/&#39;/g, "'");
+      
+      // Try to decode if it's URL encoded
+      try {
+        // Check if URL is encoded
+        if (imageUrl.includes('%')) {
+          // Try decoding multiple times in case of double encoding
+          let decoded = imageUrl;
+          for (let i = 0; i < 3; i++) {
+            try {
+              decoded = decodeURIComponent(decoded);
+            } catch (e) {
+              break;
+            }
+          }
+          imageUrl = decoded;
+        }
+      } catch (e) {
+        console.log('Error decoding URL:', e);
+        // If decoding fails, use original
+        imageUrl = infographic.image;
+      }
+    }
+    
+    console.log('Processed image URL:', imageUrl);
+    
+    const modalImage = document.getElementById("detailModalImage");
+    const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"%3E%3Crect fill="%23f0f0f0" width="400" height="400"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="16" font-family="Arial"%3EImage not available%3C/text%3E%3C/svg%3E';
+    
+    // Show loading state
+    modalImage.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"%3E%3Crect fill="%23f5f5f5" width="400" height="400"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="16" font-family="Arial"%3ELoading...%3C/text%3E%3C/svg%3E';
+    modalImage.alt = infographic.title;
+    modalImage.style.display = 'block';
+    
+    // Preload image to check if it's valid
+    if (imageUrl && imageUrl.trim() !== '' && imageUrl !== 'null' && imageUrl !== 'undefined') {
+      // Remove any existing error handlers first
+      modalImage.onerror = null;
+      
+      // Try to load the image directly first
+      const img = new Image();
+      
+      img.onload = function() {
+        console.log('Image loaded successfully:', imageUrl);
+        // Image loaded successfully
+        modalImage.src = imageUrl;
+        modalImage.style.display = 'block';
+        modalImage.onerror = function() {
+          console.log('Image error after load');
+          this.src = placeholderImg;
+          this.style.display = 'block';
+        };
+      };
+      
+      img.onerror = function() {
+        console.log('Image failed to load:', imageUrl);
+        // Try one more time with the original URL from data
+        const originalUrl = infographic.image || '';
+        if (originalUrl && originalUrl !== imageUrl) {
+          const retryImg = new Image();
+          retryImg.onload = function() {
+            console.log('Image loaded on retry:', originalUrl);
+            modalImage.src = originalUrl;
+            modalImage.style.display = 'block';
+          };
+          retryImg.onerror = function() {
+            console.log('Image failed on retry');
+            modalImage.src = placeholderImg;
+            modalImage.style.display = 'block';
+          };
+          retryImg.src = originalUrl;
+        } else {
+          // Image failed to load, show placeholder
+          modalImage.src = placeholderImg;
+          modalImage.style.display = 'block';
+        }
+      };
+      
+      // Set src to trigger load
+      img.src = imageUrl;
+    } else {
+      console.log('No valid image URL provided');
+      // No image URL provided
+      modalImage.src = placeholderImg;
+      modalImage.style.display = 'block';
+    }
+    
+    // Also set onerror handler as backup
+    modalImage.onerror = function() {
+      console.log('Modal image error handler triggered');
+      this.src = placeholderImg;
+      this.style.display = 'block';
+    };
+    
+    const detailModalDownloadBtn = document.getElementById("detailModalDownload");
+    detailModalDownloadBtn.setAttribute('data-infographic-id', infographic.id || '');
+    detailModalDownloadBtn.setAttribute('data-infographic-title', infographic.title || 'infografis');
+    detailModalDownloadBtn.href = infographic.download || '#';
+
+    // Get related infographics (exclude current one, get 3 related)
+    const related = allInfographicsData
+      .filter(item => item.id !== infographicId)
+      .slice(0, 3);
+
+    // Populate related infographics
+    const relatedContainer = document.getElementById("relatedInfographics");
+    relatedContainer.innerHTML = '';
+
+    if (related.length === 0) {
+      relatedContainer.innerHTML = '<p class="text-muted small">Tidak ada infografis terkait</p>';
+    } else {
+      related.forEach((item) => {
+        let itemImageUrl = item.image || '';
+        if (itemImageUrl) {
+          try {
+            itemImageUrl = decodeURIComponent(itemImageUrl);
+          } catch (e) {
+            itemImageUrl = item.image;
+          }
+        }
+
+        const relatedItem = document.createElement("div");
+        relatedItem.className = "related-infographic-item";
+        relatedItem.onclick = () => {
+          const modal = bootstrap.Modal.getInstance(document.getElementById("infographicDetailModal"));
+          modal.hide();
+          setTimeout(() => showInfographicDetail(item.id), 300);
+        };
+        
+        const relatedImg = document.createElement('img');
+        relatedImg.src = itemImageUrl || '';
+        relatedImg.alt = item.title;
+        relatedImg.style.objectFit = 'contain';
+        relatedImg.style.width = '80px';
+        relatedImg.style.height = 'auto';
+        relatedImg.style.maxHeight = '80px';
+        relatedImg.onerror = function() {
+          this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="18" font-family="Arial"%3EImage Not Available%3C/text%3E%3C/svg%3E';
+        };
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'title';
+        titleDiv.textContent = item.title;
+        
+        contentDiv.appendChild(titleDiv);
+        relatedItem.appendChild(relatedImg);
+        relatedItem.appendChild(contentDiv);
+        
+        relatedContainer.appendChild(relatedItem);
+      });
+    }
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById("infographicDetailModal"));
     modal.show();
   }
+
 
   // Refresh data
   async function refreshData() {
@@ -353,6 +823,28 @@
       btn.innerHTML = originalContent;
     }
   }
+
+  // Handle download clicks with login check
+  document.addEventListener('DOMContentLoaded', function() {
+    const downloadButtons = document.querySelectorAll('.download-infographic-btn');
+    downloadButtons.forEach(btn => {
+      btn.addEventListener('click', async function(e) {
+        {% if not user.is_authenticated %}
+        e.preventDefault();
+        const infographicTitle = this.getAttribute('data-infographic-title') || 'infografis';
+        // Redirect to login page
+        if (typeof showLoginRequiredModal === 'function') {
+          showLoginRequiredModal(infographicTitle);
+        } else {
+          // Fallback: show alert and open login modal
+          alert('Ingin mengunduh ' + infographicTitle + ' ini? Silakan login terlebih dahulu.');
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          loginModal.show();
+        }
+        {% endif %}
+      });
+    });
+  });
 
   // --- Bookmark Functionality ---
   async function toggleBookmark(button) {

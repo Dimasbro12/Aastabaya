@@ -1,55 +1,188 @@
 <!DOCTYPE html>
 {% load static %}
+{% load humanize %}
 <html lang="en">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Aastabaya</title>
-    <!-- Core CSS from template -->
+    <!-- plugins:css -->
     <link rel="stylesheet" href="{% static 'src/assets/vendors/feather/feather.css' %}" />
     <link rel="stylesheet" href="{% static 'src/assets/vendors/ti-icons/css/themify-icons.css' %}" />
     <link rel="stylesheet" href="{% static 'src/assets/vendors/css/vendor.bundle.base.css' %}" />
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/font-awesome/css/font-awesome.min.css'%}" />
     <link rel="stylesheet" href="{% static 'src/assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
-    <!-- Plugin CSS -->
-    <link rel="stylesheet" href="{% static 'src/assets/vendors/datatables.net-bs5/dataTables.bootstrap5.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'src/assets/vendors/js/select.dataTables.min.css' %}" />
-    <!-- External CSS from CDN -->
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{% static 'src/assets/vendors/ti-icons/css/themify-icons.css' %}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <!-- Custom CSS -->
+
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
     <link rel="stylesheet" href="{% static 'src/assets/css/style.css' %}" />
-    <link rel="shortcut icon" href="{% static 'src/assets/images/favicon.png' %}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'icon/Aastabaya-favicon.png' %}" />
+    <style>
+      /* Default Modal Backdrop - Hitam Semi-transparan (untuk modal infografis, publikasi, dll) */
+      .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: none !important;
+      }
+      
+      /* Default Modal Content - Putih (untuk modal infografis, publikasi, dll) */
+      .modal-content {
+        background-color: #ffffff !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+      
+      /* Modal Background Overlay - Hanya untuk Login/Register Modal */
+      body.login-register-modal-open .modal-backdrop {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{% static 'img/background-login-register.jpg' %}") no-repeat center center !important;
+        background-size: cover !important;
+        background-position: center !important;
+        backdrop-filter: blur(5px);
+      }
+      
+      /* Body background when login/register modal is open */
+      body.login-register-modal-open {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{% static 'img/background-login-register.jpg' %}") no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      }
+      
+      /* Input Placeholder Color - Hanya untuk Login/Register Modal */
+      #loginModal .modal-content input::placeholder,
+      #registerModal .modal-content input::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+      }
+      
+      #loginModal .modal-content input:focus,
+      #registerModal .modal-content input:focus {
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Google Sign-In Button Container */
+      #g_id_onload, #g_id_onload_register {
+        display: none;
+      }
+      
+      /* Modal Content Background - Hanya untuk Login/Register Modal */
+      #loginModal .modal-content,
+      #registerModal .modal-content {
+        background: rgba(225, 224, 224, 0.08) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+      }
+      
+      /* Ensure modal backdrop shows background image - Hanya untuk Login/Register */
+      #loginModal.show .modal-backdrop,
+      #registerModal.show .modal-backdrop {
+        opacity: 1;
+      }
+      
+      @media (max-width: 767.98px) {
+        .summary-card-responsive {
+          padding: 12px !important;
+          min-height: 140px !important;
+          position: relative !important;
+        }
+        .summary-card-responsive > div {
+          height: 100% !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+        }
+        .summary-card-responsive > div > div {
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          align-items: flex-start !important;
+        }
+        .summary-card-responsive h6 {
+          font-size: 10px !important;
+          margin: 0 !important;
+        }
+        .summary-card-responsive h3 {
+          font-size: 14px !important;
+          margin: 0 !important;
+        }
+        .summary-card-responsive p {
+          font-size: 10px !important;
+          margin: 0 !important;
+        }
+        .summary-card-responsive .icon-mobile {
+          font-size: 50px !important;
+          height: 50px !important;
+          line-height: 50px !important;
+          position: absolute !important;
+          top: 50% !important;
+          right: 12px !important;
+          transform: translateY(-50%) !important;
+          z-index: 1 !important;
+        }
+        .summary-card-responsive .header-row {
+          margin-bottom: 3px !important;
+          position: relative !important;
+        }
+        .summary-card-responsive .change-indicator {
+          margin-top: 3px !important;
+        }
+        .summary-card-responsive .change-indicator span {
+          font-size: 10px !important;
+        }
+      }
+      @media (min-width: 768px) {
+        .summary-card-responsive {
+          padding: 20px !important;
+          min-height: 200px !important;
+        }
+        .summary-card-responsive h6 {
+          font-size: 12px !important;
+        }
+        .summary-card-responsive h3 {
+          font-size: 18px !important;
+        }
+        .summary-card-responsive p {
+          font-size: 12px !important;
+          margin-top: 5px !important;
+        }
+        .summary-card-responsive .header-row {
+          margin-bottom: 10px !important;
+        }
+        .summary-card-responsive .change-indicator {
+          margin-top: 8px !important;
+        }
+        .summary-card-responsive .change-indicator span {
+          font-size: 12px !important;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="container-scroller">
-      <div class="row p-0 m-0 proBanner" id="proBanner">
-        <div class="col-md-12 p-0 m-0">
-          <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between" style="background-color: #00d0ff">
-            <div>
-              <div class="d-flex align-items-center justify-content-between">
-                <p class="mb-0 font-weight-medium me-3 buy-now-text">Berhati hatilah dalam menggunakan web Aastabaya ini!</p>
-                <a href="#" target="_blank" class="btn me-2 buy-now-btn border-0" style="color: #47bfef">Lihat Panduan</a>
-              </div>
-            </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <button id="bannerClose" class="btn border-0 p-0">
-                <i class="ti-close text-white"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <!-- partial:partials/_navbar.html -->
       <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-          <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><img src="{% static 'icon/A-removebg-preview.png' %}" width="150" height="45" alt="logo" /></a>
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-between">
+          <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><img src="{% static 'icon/Aastabaya-logo.png' %}" width="150" height="45" alt="logo" /></a>
           <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}"><img src="{% static 'icon/LogoAstabaya-removebg-preview.png' %}" width="50" height="50" alt="logo" /></a>
-        </div>
-        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Toggle sidebar">
             <span class="icon-menu"></span>
           </button>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+          <!-- Logo akan dipindahkan ke sini ketika sidebar collapsed -->
+          <div class="navbar-brand-moved d-none">
+            <a class="navbar-brand brand-logo-moved" href="{% url 'dashboard' %}"><img src="{% static 'icon/Aastabaya-logo.png' %}" width="150" height="45" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini-moved" href="{% url 'dashboard' %}"><img src="{% static 'icon/LogoAstabaya-removebg-preview.png' %}" width="50" height="50" alt="logo" /></a>
+          </div>
           <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown">
               <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
@@ -74,18 +207,35 @@
                 {% endfor %}
               </div>
             </li>
+            {% if user.is_authenticated %}
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-                <img src="{% static 'src/assets/images/faces/face28.jpg' %}" alt="profile" />
+                {% if user.username|length >= 2 %}
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px; text-transform: uppercase;">
+                  {{ user.username|slice:":2" }}
+                </div>
+                {% else %}
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px; text-transform: uppercase;">
+                  {{ user.username|first|upper }}
+                </div>
+                {% endif %}
               </a>
               <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                 <a class="dropdown-item"> <i class="ti-settings text-primary"></i> Settings </a>
-                <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0">
+                <form method="post" action="{% url 'logout' %}" class="dropdown-item-form">
                   {% csrf_token %}
-                  <button type="submit" class="dropdown-item btn btn-link" style="padding: 0; color: inherit; text-align: left"><i class="ti-power-off text-primary"></i> Logout</button>
+                  <button type="submit" class="dropdown-item-button" style="background: none; border: none; width: 100%; text-align: left; padding: 8px 16px;"><i class="ti-power-off text-primary"></i> Logout</button>
                 </form>
               </div>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <div class="d-flex gap-2 align-items-center">
+                <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary" style="white-space: nowrap;">Masuk</a>
+                <a href="{% url 'signup' %}" class="btn btn-sm btn-primary" style="white-space: nowrap;">Daftar</a>
+              </div>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </nav>
@@ -101,89 +251,49 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'publications' %}">
-                <i class="icon-book menu-icon"></i>
-                <span class="menu-title">Publikasi</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'infographics' %}">
-                <i class="bi bi-bar-chart-line menu-icon"></i>
-                <span class="menu-title">Infografis</span>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'news' %}">
-                <i class="bi bi-file-earmark-text menu-icon"></i>
-                <span class="menu-title">Berita</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#inflasi" aria-expanded="false" aria-controls="inflasi">
-                <i class="bi bi-cash-coin menu-icon"></i>
+              <a class="nav-link" href="{% url 'inflasi' %}">
+                <i class="bi bi-graph-up-arrow menu-icon"></i>
                 <span class="menu-title">Inflasi</span>
-                <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="inflasi">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Inflasi (Y-on-Y)</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Inflasi (M-to-M)</a></li>
-                </ul>
-              </div>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#PDRB" aria-expanded="false" aria-controls="PDRB">
-                <i class="bi bi-cash-coin menu-icon"></i>
+                <i class="bi bi-cash-stack menu-icon"></i>
                 <span class="menu-title">PDRB</span>
                 <i class="menu-arrow"></i>
               </a>
               <div class="collapse" id="PDRB">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">PDRB ADHK</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">PDRB ADHB</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'pdrb-pengeluaran' %}">PDRB Pengeluaran</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'pdrb-lapangan-usaha' %}">PDRB Lapangan Usaha</a></li>
                 </ul>
               </div>
+
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#kemiskinan" aria-expanded="false" aria-controls="kemiskinan">
-                <i class="bi bi-people menu-icon"></i>
+              <a class="nav-link" href="{% url 'kemiskinan' %}">
+                <i class="bi bi-heart-pulse menu-icon"></i>
                 <span class="menu-title">Kemiskinan</span>
-                <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="kemiskinan">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Jumlah Penduduk Miskin</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Persentase Penduduk Miskin</a></li>
-                </ul>
-              </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#ketenagakerjaan" aria-expanded="false" aria-controls="ketenagakerjaan">
+              <a class="nav-link" href="{% url 'kependudukan' %}">
                 <i class="bi bi-people menu-icon"></i>
-                <span class="menu-title">Ketenagakerjaan</span>
-                <i class="menu-arrow"></i>
+                <span class="menu-title">Kependudukan</span>
               </a>
-              <div class="collapse" id="ketenagakerjaan">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Pengangguran</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Partisipasi</a></li>
-                </ul>
-              </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#TingkatHunianHotel" aria-expanded="false" aria-controls="TingkatHunianHotel">
+              <a class="nav-link" href="{% url 'ketenagakerjaan' %}">
+                <i class="bi bi-briefcase menu-icon"></i>
+                <span class="menu-title">Ketenagakerjaan</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'hotel-occupancy' %}" >
                 <i class="bi bi-luggage menu-icon"></i>
                 <span class="menu-title">Tingkat Hunian Hotel</span>
-                <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="TingkatHunianHotel">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Tingkat Hunian Hotel</a></li>
-                </ul>
-              </div>
             </li>
-
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="false" aria-controls="pembangunan-manusia">
                 <i class="bi bi-buildings menu-icon"></i>
@@ -192,104 +302,44 @@
               </a>
               <div class="collapse" id="pembangunan-manusia">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm' %}">IPM</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'indeks-pembangunan-manusia' %}">IPM</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-uhh-sp' %}">UHH SP</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-hls' %}">HLS</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-rls' %}">RLS</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-pengeluaran-per-kapita' %}">Pengeluaran per Kapita</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-indeks-kesehatan' %}">Indeks Kesehatan</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-indeks-hidup-layak' %}">Indeks Hidup Layak</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'ipm-indeks-pendidikan' %}">Indeks Pendidikan</a></li>
                 </ul>
               </div>
             </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'gini-ratio' %}">
+                  <i class="bi bi-percent menu-icon"></i>
+                  <span class="menu-title">Gini ratio</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'publications' %}">
+                  <i class="icon-book menu-icon"></i>
+                  <span class="menu-title">Publikasi</span>
+                </a>
+            </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#giniratio" aria-expanded="false" aria-controls="giniratio">
-                <i class="bi bi-buildings menu-icon"></i>
-                <span class="menu-title">Gini Ratio</span>
-                <i class="menu-arrow"></i>
+              <a class="nav-link" href="{% url 'infographics' %}">
+                <i class="bi bi-bar-chart-line menu-icon"></i>
+                <span class="menu-title">Infografis</span>
               </a>
-              <div class="collapse" id="giniratio">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Gini Ratio</a></li>
-                </ul>
-              </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
-                <i class="icon-columns menu-icon"></i>
-                <span class="menu-title">Form elements</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="form-elements">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Basic Elements</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
-                <i class="icon-bar-graph menu-icon"></i>
-                <span class="menu-title">Charts</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="charts">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">ChartJs</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
-                <i class="icon-grid-2 menu-icon"></i>
-                <span class="menu-title">Tables</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="tables">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Basic table</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
-                <i class="icon-contract menu-icon"></i>
-                <span class="menu-title">Icons</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="icons">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#">Mdi icons</a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                <i class="icon-head menu-icon"></i>
-                <span class="menu-title">User Pages</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="auth">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#"> Login </a></li>
-                  <li class="nav-item"><a class="nav-link" href="#"> Register </a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
-                <i class="icon-ban menu-icon"></i>
-                <span class="menu-title">Error pages</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="error">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="#"> 404 </a></li>
-                  <li class="nav-item"><a class="nav-link" href="#"> 500 </a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">Documentation</span>
+              <a class="nav-link" href="{% url 'news' %}">
+                <i class="bi bi-file-earmark-text menu-icon"></i>
+                <span class="menu-title">Berita</span>
               </a>
             </li>
           </ul>
         </nav>
+
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -298,20 +348,146 @@
               <div class="col-md-12 grid-margin">
                 <div class="row">
                   <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                    <h3 class="font-weight-bold">Selamat Datang Pengguna!</h3>
+                    <h3 class="font-weight-bold">Selamat Datang {% if user.is_authenticated %}{{ user.username }}{% else %}Pengguna{% endif %}!</h3>
                     <h6 class="font-weight-normal mb-0">Aastabaya <span class="text-primary">Website untuk melihat indikator strategis!</span></h6>
                   </div>
-                  <div class="col-12 col-xl-4">
-                    <div class="justify-content-end d-flex">
-                      <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
-                        <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                          <i class="mdi mdi-calendar"></i> Today (10 Jan 2021)
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
-                          <a class="dropdown-item" href="#">January - March</a>
-                          <a class="dropdown-item" href="#">March - June</a>
-                          <a class="dropdown-item" href="#">June - August</a>
-                          <a class="dropdown-item" href="#">August - November</a>
+                </div>
+              </div>
+            </div>
+            <!-- Indicator Carousel -->
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-body" style="padding: 20px">
+                    <div class="indicator-carousel-wrapper" style="position: relative; overflow: hidden; padding: 10px 0">
+                      <div class="indicator-carousel-track" id="indicatorCarousel" style="display: flex; gap: 20px; will-change: transform">
+                        <!-- Indicator Cards - Original Set -->
+                        <div class="indicator-carousel-content">
+                          {% for indicator in indicator_carousel_data %}
+                          <div class="indicator-card" style="min-width: 280px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); flex-shrink: 0">
+                            <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500">{{ indicator.name }} - Surabaya</h6>
+                            <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px">
+                              {% if indicator.value %}
+                                {% if indicator.is_currency %}
+                                  <span class="currency-value" data-value="{{ indicator.value|floatformat:0 }}">
+                                    Rp <span class="formatted-number">{{ indicator.value|floatformat:0|intcomma }}</span>
+                                  </span>
+                                {% elif indicator.unit == '%' %}
+                                  {{ indicator.value|floatformat:2|default:"-" }}%
+                                {% else %}
+                                  {% if indicator.value >= 1000 %}
+                                    <span class="formatted-number">{{ indicator.value|floatformat:0|intcomma }}</span>
+                                  {% else %}
+                                    {{ indicator.value|floatformat:2|default:"-" }}
+                                  {% endif %}
+                                  {% if indicator.unit %} {{ indicator.unit }}{% endif %}
+                                {% endif %}
+                              {% else %}
+                                -
+                              {% endif %}
+                            </h3>
+                            <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap">
+                              {% if indicator.change_percent is not None %}
+                                {% if indicator.change_percent >= 0 %}
+                                <span style="color: #28a745; font-size: 14px">▲</span>
+                                <span style="color: #28a745; font-size: 14px; font-weight: 600">
+                                  {% if indicator.change_type == 'm-to-m' %}
+                                    {{ indicator.change_percent|floatformat:2 }}%p
+                                  {% else %}
+                                    {{ indicator.change_percent|floatformat:2 }}%
+                                  {% endif %}
+                                </span>
+                                {% else %}
+                                <span style="color: #dc3545; font-size: 14px">▼</span>
+                                <span style="color: #dc3545; font-size: 14px; font-weight: 600">
+                                  {% if indicator.change_type == 'm-to-m' %}
+                                    {{ indicator.change_percent|floatformat:2 }}%p
+                                  {% else %}
+                                    {{ indicator.change_percent|floatformat:2 }}%
+                                  {% endif %}
+                                </span>
+                                {% endif %}
+                                <span style="color: #666; font-size: 12px">
+                                  {% if indicator.change_type == 'm-to-m' %}m-to-m{% elif indicator.change_type == 'q-to-q' %}q-to-q{% elif indicator.change_type == 'c-to-c' %}c-to-c{% else %}y-on-y{% endif %}
+                                </span>
+                              {% else %}
+                                <span style="color: #666; font-size: 14px">-</span>
+                              {% endif %}
+                            </div>
+                            <small style="color: #999; font-size: 11px">
+                              {{ indicator.period }}{% if indicator.previous_period %} - dari {{ indicator.previous_period }}{% endif %}
+                            </small>
+                          </div>
+                          {% empty %}
+                          <div class="indicator-card" style="min-width: 280px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); flex-shrink: 0">
+                            <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500">Tidak ada data</h6>
+                            <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px">-</h3>
+                          </div>
+                          {% endfor %}
+                        </div>
+                        <!-- Indicator Cards - Duplicate Set for Seamless Loop -->
+                        <div class="indicator-carousel-content" aria-hidden="true">
+                          {% for indicator in indicator_carousel_data %}
+                          <div class="indicator-card" style="min-width: 280px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); flex-shrink: 0">
+                            <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500">{{ indicator.name }} - Surabaya</h6>
+                            <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px">
+                              {% if indicator.value %}
+                                {% if indicator.is_currency %}
+                                  <span class="currency-value" data-value="{{ indicator.value|floatformat:0 }}">
+                                    Rp <span class="formatted-number">{{ indicator.value|floatformat:0|intcomma }}</span>
+                                  </span>
+                                {% elif indicator.unit == '%' %}
+                                  {{ indicator.value|floatformat:2|default:"-" }}%
+                                {% else %}
+                                  {% if indicator.value >= 1000 %}
+                                    <span class="formatted-number">{{ indicator.value|floatformat:0|intcomma }}</span>
+                                  {% else %}
+                                    {{ indicator.value|floatformat:2|default:"-" }}
+                                  {% endif %}
+                                  {% if indicator.unit %} {{ indicator.unit }}{% endif %}
+                                {% endif %}
+                              {% else %}
+                                -
+                              {% endif %}
+                            </h3>
+                            <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap">
+                              {% if indicator.change_percent is not None %}
+                                {% if indicator.change_percent >= 0 %}
+                                <span style="color: #28a745; font-size: 14px">▲</span>
+                                <span style="color: #28a745; font-size: 14px; font-weight: 600">
+                                  {% if indicator.change_type == 'm-to-m' %}
+                                    {{ indicator.change_percent|floatformat:2 }}%p
+                                  {% else %}
+                                    {{ indicator.change_percent|floatformat:2 }}%
+                                  {% endif %}
+                                </span>
+                                {% else %}
+                                <span style="color: #dc3545; font-size: 14px">▼</span>
+                                <span style="color: #dc3545; font-size: 14px; font-weight: 600">
+                                  {% if indicator.change_type == 'm-to-m' %}
+                                    {{ indicator.change_percent|floatformat:2 }}%p
+                                  {% else %}
+                                    {{ indicator.change_percent|floatformat:2 }}%
+                                  {% endif %}
+                                </span>
+                                {% endif %}
+                                <span style="color: #666; font-size: 12px">
+                                  {% if indicator.change_type == 'm-to-m' %}m-to-m{% elif indicator.change_type == 'q-to-q' %}q-to-q{% elif indicator.change_type == 'c-to-c' %}c-to-c{% else %}y-on-y{% endif %}
+                                </span>
+                              {% else %}
+                                <span style="color: #666; font-size: 14px">-</span>
+                              {% endif %}
+                            </div>
+                            <small style="color: #999; font-size: 11px">
+                              {{ indicator.period }}{% if indicator.previous_period %} - dari {{ indicator.previous_period }}{% endif %}
+                            </small>
+                          </div>
+                          {% empty %}
+                          <div class="indicator-card" style="min-width: 280px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); flex-shrink: 0">
+                            <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500">Tidak ada data</h6>
+                            <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px">-</h3>
+                          </div>
+                          {% endfor %}
                         </div>
                       </div>
                     </div>
@@ -319,9 +495,9 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6 grid-margin stretch-card transparent">
-                <div class="card">
+            <div class="row" id="carouselAndCardsRow">
+              <div class="col-md-6 grid-margin stretch-card transparent" id="carouselContainer">
+                <div class="card" id="carouselNewsContainer">
                   <!-- Carousel News (Default) -->
                   <div id="carouselNews" class="carousel carousel-dark slide h-100" data-bs-ride="carousel" style="border-radius: 20px">
                     <div class="carousel-indicators">
@@ -443,9 +619,9 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6 grid-margin transparent">
-                <div class="row">
-                  <div class="col-md-17 mb-4 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('infographic')">
+              <div class="col-md-6 grid-margin transparent" id="cardsContainer">
+                <div class="row mb-3">
+                  <div class="col-md-17 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('infographic')">
                     <div class="card card-tale h-100">
                       <div class="card-body d-flex flex-column justify-content-between">
                         <div>
@@ -457,8 +633,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-12 mb-4 mb-lg-0 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('publication')">
+                <div class="row mb-3">
+                  <div class="col-md-12 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('publication')">
                     <div class="card card-light-blue h-100">
                       <div class="card-body d-flex flex-column justify-content-between">
                         <div>
@@ -470,13 +646,13 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-12 mb-4 mb-lg-0 stretch-card transparent pt-4" style="cursor: pointer" onclick="switchCarousel('news')">
+                <div class="row mb-3">
+                  <div class="col-md-12 stretch-card transparent" style="cursor: pointer" onclick="switchCarousel('news')">
                     <div class="card card-tale h-100">
                       <div class="card-body d-flex flex-column justify-content-between">
                         <div>
                           <p class="mb-4">Berita</p>
-                          <i class="bi bi-journal fs-30 mb-2"></i>
+                          <i class="bi bi-newspaper fs-30 mb-2"></i>
                         </div>
                         <p>Berita dari Kota Surabaya</p>
                       </div>
@@ -565,73 +741,179 @@
                 </div>
               </div>
             </div> -->
-            <div id="demo-output" style="margin-bottom: 1em" class="chart-display"></div>
 
-            <!-- Table News (Default) -->
-            <div id="tableNewsContainer">
-              <table id="tableNews" class="display table-striped table-bordered" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Content</th>
-                    <th>ID Category</th>
-                    <th>Name Category</th>
-                    <th>Release Date</th>
-                    <th>Picture URL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for new in dataNewss %}
-                  <tr>
-                    <td>{{ new.title }}</td>
-                    <td>{{ new.content }}</td>
-                    <td>{{ new.category_id }}</td>
-                    <td>{{ new.category_name }}</td>
-                    <td>{{ new.release_date }}</td>
-                    <td>{{ new.picture_url }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>Title</th>
-                    <th>Content</th>
-                    <th>ID Category</th>
-                    <th>Name Category</th>
-                    <th>Release Date</th>
-                    <th>Picture URL</th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-
-            <!-- Table Infographic -->
-            <div id="tableInfographicContainer" style="display: none">
-              <table id="tableInfographic" class="display table-striped table-bordered" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Image</th>
-                    <th>Download Link</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for infographic in dataInfographics %}
-                  <tr>
-                    <td>{{ infographic.title }}</td>
-                    <td>{{ infographic.image }}</td>
-                    <td><a href="{{ infographic.dl }}" target="_blank">{{ infographic.dl }}</a></td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>Title</th>
-                    <th>Image</th>
-                    <th>Download Link</th>
-                  </tr>
-                </tfoot>
-              </table>
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <h4 class="mb-1" style="font-weight: 600">Indikator Strategis</h4>
+                        <p class="text-muted mb-0" style="font-size: 14px">Kota Surabaya</p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <!-- IPM Main -->
+                      <div class="col-md-2 col-6 mb-3">
+                        <div
+                          class="summary-card summary-card-responsive"
+                          style="background: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                        >
+                          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between">
+                            <div>
+                              <div class="header-row" style="display: flex; justify-content: space-between; align-items: center">
+                                <h6 style="color: rgba(0, 0, 0, 0.9); font-weight: 500; margin: 0">IPM</h6>
+                              </div>
+                              <i class="bi bi-graph-up-arrow d-md-none icon-mobile" style="color: #000; opacity: 0.2"></i>
+                              <i class="bi bi-graph-up-arrow d-none d-md-block" style="font-size: 60px; color: #000; opacity: 0.2; margin: 0 0 10px 0; display: block; height: 60px; line-height: 60px"></i>
+                              <h3 style="font-weight: 700; line-height: 1.2; margin: 0; color: #000">{% if latest_ipm and latest_ipm.ipm_value %} {{ latest_ipm.ipm_value|floatformat:2 }} {% else %} - {% endif %}</h3>
+                              {% if latest_ipm %}
+                              <p style="color: rgba(0, 0, 0, 0.9); margin: 0">Tahun {{ latest_ipm.year }}</p>
+                              {% endif %} {% if ipm_change_percent %}
+                              <div class="change-indicator" style="display: flex; align-items: center; gap: 5px">
+                                {% if ipm_change_percent >= 0 %}
+                                <span style="color: #28a745">▲</span>
+                                <span style="color: rgba(0, 0, 0, 0.9)">{{ ipm_change_percent|floatformat:2 }}%</span>
+                                {% else %}
+                                <span style="color: #dc3545">▼</span>
+                                <span style="color: rgba(0, 0, 0, 0.9)">{{ ipm_change_percent|floatformat:2 }}%</span>
+                                {% endif %}
+                              </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Gini Ratio -->
+                      <div class="col-md-2 col-6 mb-3">
+                        <div
+                          class="summary-card summary-card-responsive"
+                          style="background: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                        >
+                          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between">
+                            <div>
+                              <div class="header-row" style="display: flex; justify-content: space-between; align-items: center">
+                                <h6 style="color: rgba(0, 0, 0, 0.9); font-weight: 500; margin: 0">GINI RATIO</h6>
+                              </div>
+                              <i class="bi bi-pie-chart d-md-none icon-mobile" style="color: #000; opacity: 0.2"></i>
+                              <i class="bi bi-pie-chart d-none d-md-block" style="font-size: 60px; color: #000; opacity: 0.2; margin: 0 0 10px 0; display: block; height: 60px; line-height: 60px"></i>
+                              <h3 style="font-weight: 700; line-height: 1.2; margin: 0; color: #000">
+                                {% if latest_gini and latest_gini.gini_ratio_value %} {{ latest_gini.gini_ratio_value|floatformat:3 }} {% else %} - {% endif %}
+                              </h3>
+                              {% if latest_gini %}
+                              <p style="color: rgba(0, 0, 0, 0.9); margin: 0">Tahun {{ latest_gini.year }}</p>
+                              {% endif %} {% if gini_change_percent %}
+                              <div class="change-indicator" style="display: flex; align-items: center; gap: 5px">
+                                {% if gini_change_percent >= 0 %}
+                                <span style="color: #28a745">▲</span>
+                                <span style="color: rgba(0, 0, 0, 0.9)">{{ gini_change_percent|floatformat:2 }}%</span>
+                                {% else %}
+                                <span style="color: #dc3545">▼</span>
+                                <span style="color: rgba(0, 0, 0, 0.9)">{{ gini_change_percent|floatformat:2 }}%</span>
+                                {% endif %}
+                              </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Hotel Occupancy TPK -->
+                      <div class="col-md-2 col-6 mb-3">
+                        <div
+                          class="summary-card summary-card-responsive"
+                          style="background: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                        >
+                          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between">
+                            <div>
+                              <div class="header-row" style="display: flex; justify-content: space-between; align-items: center">
+                                <h6 style="color: rgba(0, 0, 0, 0.9); font-weight: 500; margin: 0">TPK</h6>
+                              </div>
+                              <i class="bi bi-bar-chart d-md-none icon-mobile" style="color: #000; opacity: 0.2"></i>
+                              <i class="bi bi-bar-chart d-none d-md-block" style="font-size: 60px; color: #000; opacity: 0.2; margin: 0 0 10px 0; display: block; height: 60px; line-height: 60px"></i>
+                              <h3 style="font-weight: 700; line-height: 1.2; margin: 0; color: #000">
+                                {% if latest_hotel_yearly and latest_hotel_yearly.tpk %} {{ latest_hotel_yearly.tpk|floatformat:2 }}% {% else %} - {% endif %}
+                              </h3>
+                              {% if latest_hotel_yearly %}
+                              <p style="color: rgba(0, 0, 0, 0.9); margin: 0">Tahun {{ latest_hotel_yearly.year }}</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Hotel Occupancy RLMTA -->
+                      <div class="col-md-2 col-6 mb-3">
+                        <div
+                          class="summary-card summary-card-responsive"
+                          style="background: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                        >
+                          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between">
+                            <div>
+                              <div class="header-row" style="display: flex; justify-content: space-between; align-items: center">
+                                <h6 style="color: rgba(0, 0, 0, 0.9); font-weight: 500; margin: 0">RLMTA</h6>
+                              </div>
+                              <i class="bi bi-building d-md-none icon-mobile" style="color: #000; opacity: 0.2"></i>
+                              <i class="bi bi-building d-none d-md-block" style="font-size: 60px; color: #000; opacity: 0.2; margin: 0 0 10px 0; display: block; height: 60px; line-height: 60px"></i>
+                              <h3 style="font-weight: 700; line-height: 1.2; margin: 0; color: #000">
+                                {% if latest_hotel_yearly and latest_hotel_yearly.rlmta %} {{ latest_hotel_yearly.rlmta|floatformat:2 }}% {% else %} - {% endif %}
+                              </h3>
+                              {% if latest_hotel_yearly %}
+                              <p style="color: rgba(0, 0, 0, 0.9); margin: 0">Tahun {{ latest_hotel_yearly.year }}</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Hotel Occupancy RLMTNUS -->
+                      <div class="col-md-2 col-6 mb-3">
+                        <div
+                          class="summary-card summary-card-responsive"
+                          style="background: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                        >
+                          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between">
+                            <div>
+                              <div class="header-row" style="display: flex; justify-content: space-between; align-items: center">
+                                <h6 style="color: rgba(0, 0, 0, 0.9); font-weight: 500; margin: 0">RLMTNUS</h6>
+                              </div>
+                              <i class="bi bi-map d-md-none icon-mobile" style="color: #000; opacity: 0.2"></i>
+                              <i class="bi bi-map d-none d-md-block" style="font-size: 60px; color: #000; opacity: 0.2; margin: 0 0 10px 0; display: block; height: 60px; line-height: 60px"></i>
+                              <h3 style="font-weight: 700; line-height: 1.2; margin: 0; color: #000">
+                                {% if latest_hotel_yearly and latest_hotel_yearly.rlmtnus %} {{ latest_hotel_yearly.rlmtnus|floatformat:2 }}% {% else %} - {% endif %}
+                              </h3>
+                              {% if latest_hotel_yearly %}
+                              <p style="color: rgba(0, 0, 0, 0.9); margin: 0">Tahun {{ latest_hotel_yearly.year }}</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Hotel Occupancy RLMTGAB -->
+                      <div class="col-md-2 col-6 mb-3">
+                        <div
+                          class="summary-card summary-card-responsive"
+                          style="background: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                        >
+                          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between">
+                            <div>
+                              <div class="header-row" style="display: flex; justify-content: space-between; align-items: center">
+                                <h6 style="color: rgba(0, 0, 0, 0.9); font-weight: 500; margin: 0">RLMTGAB</h6>
+                              </div>
+                              <i class="bi bi-house-door d-md-none icon-mobile" style="color: #000; opacity: 0.2"></i>
+                              <i class="bi bi-house-door d-none d-md-block" style="font-size: 60px; color: #000; opacity: 0.2; margin: 0 0 10px 0; display: block; height: 60px; line-height: 60px"></i>
+                              <h3 style="font-weight: 700; line-height: 1.2; margin: 0; color: #000">
+                                {% if latest_hotel_yearly and latest_hotel_yearly.rlmtgab %} {{ latest_hotel_yearly.rlmtgab|floatformat:2 }}% {% else %} - {% endif %}
+                              </h3>
+                              {% if latest_hotel_yearly %}
+                              <p style="color: rgba(0, 0, 0, 0.9); margin: 0">Tahun {{ latest_hotel_yearly.year }}</p>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Infographics Section (shown when infographic is clicked) -->
@@ -640,23 +922,23 @@
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="font-weight-bold mb-0">Infographic</h3>
-                    <a href="{% url 'infographics' %}" class="btn btn-link text-primary text-decoration-none">Lihat Semuanya <i class="bi bi-arrow-right"></i></a>
+                    <h3 class="font-weight-bold mb-0">Infografis</h3>
+                    <a href="{% url 'infographics' %}" class="btn btn-link text-primary text-decoration-none p-0 fw-bold">Lihat Selengkapnya <i class="bi bi-arrow-right"></i></a>
                   </div>
                 </div>
               </div>
 
-              <div class="row g-4">
-                {% for infographic in dataInfographicLatest %}
-                <div class="col-sm-6 col-lg-3">
-                  <div class="card infographic-card h-100">
+              <div class="row g-3 g-md-4">
+                {% for infographic in dataInfographicLatest|slice:":4" %}
+                <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                  <div class="card infographic-card h-100 border-0 shadow-sm">
                     <div class="infographic-thumb">
                       <img
                         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect fill='%23f0f0f0' width='400' height='400'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
                         data-src="{{ infographic.image }}"
                         alt="{{ infographic.title }}"
                         class="img-fluid rounded lazy-load"
-                        style="width: 100%; height: 220px; object-fit: cover"
+                        style="width: 100%; height: 220px; object-fit: cover; cursor: pointer"
                         loading="lazy"
                         data-index="{{ forloop.counter0 }}"
                         onclick="showInfographicModal(this.dataset.index)"
@@ -665,8 +947,8 @@
                     <div class="card-body text-center">
                       <h6 class="fw-bold text-truncate mb-3" title="{{ infographic.title }}">{{ infographic.title }}</h6>
                       <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary btn-sm" data-index="{{ forloop.counter0 }}" onclick="showInfographicModal(this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
-                        <a href="{{ infographic.dl }}" class="btn btn-primary btn-sm" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+                        <button class="btn btn-outline-primary btn-sm" data-index="{{ forloop.counter0 }}" onclick="showInfographicModal(this.dataset.index)"><i class="bi bi-eye me-1"></i> Detail</button>
+                        <a href="{% url 'download-infographic' infographic.id %}" class="btn btn-primary btn-sm"> <i class="bi bi-download me-1"></i> Download </a>
                       </div>
                     </div>
                   </div>
@@ -676,61 +958,23 @@
             </div>
             {% endif %}
 
-            <!-- Table Publication -->
-            <div id="tablePublicationContainer" style="display: none">
-              <table id="tablePublication" class="display table-striped table-bordered" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Abstract</th>
-                    <th>Image</th>
-                    <th>Date</th>
-                    <th>Size</th>
-                    <th>Download Link</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for publication in dataPublications %}
-                  <tr>
-                    <td>{{ publication.title }}</td>
-                    <td>{{ publication.abstract }}</td>
-                    <td>{{ publication.image }}</td>
-                    <td>{{ publication.date }}</td>
-                    <td>{{ publication.size }}</td>
-                    <td><a href="{{ publication.dl }}" target="_blank">{{ publication.dl }}</a></td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>Title</th>
-                    <th>Abstract</th>
-                    <th>Image</th>
-                    <th>Date</th>
-                    <th>Size</th>
-                    <th>Download Link</th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-
             <!-- News Section (shown when news is clicked) -->
             {% if dataNewsLatest %}
-            <div id="newsSection" style="display: none; margin-top: 2rem">
+            <div id="newsSection" style="display: block; margin-top: 2rem">
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="font-weight-bold mb-0">News</h3>
-                    <a href="{% url 'news' %}" class="btn btn-link text-primary text-decoration-none">Lihat Semuanya <i class="bi bi-arrow-right"></i></a>
+                    <h3 class="font-weight-bold mb-0">Berita</h3>
+                    <a href="{% url 'news' %}" class="btn btn-link text-primary text-decoration-none p-0 fw-bold">Lihat Selengkapnya <i class="bi bi-arrow-right"></i></a>
                   </div>
                 </div>
               </div>
 
               <div class="row">
-                {% for news in dataNewsLatest %}
+                {% for news in dataNewsLatest|slice:":5" %}
                 <div class="col-12 mb-4">
-                  <div class="card hover-card">
-                    <div class="card-body">
+                  <div class="card hover-card border-0 shadow-sm">
+                    <div class="card-body p-4">
                       <div class="row">
                         <div class="col-md-3">
                           {% if news.picture_url %}
@@ -739,7 +983,7 @@
                             data-src="{{ news.picture_url }}"
                             alt="{{ news.title }}"
                             class="img-fluid rounded shadow-sm lazy-load"
-                            style="width: 100%; height: 200px; object-fit: cover"
+                            style="width: 100%; height: 200px; object-fit: cover; cursor: pointer"
                             loading="lazy"
                             data-index="{{ forloop.counter0 }}"
                             onclick="showNewsCardModal(this.dataset.index)"
@@ -752,19 +996,20 @@
                         </div>
                         <div class="col-md-9">
                           <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div>
-                              <h5 class="card-title mb-2">{{ news.title }}</h5>
-                              <div class="mb-2">
+                            <div class="flex-grow-1">
+                              <h5 class="card-title mb-2 fw-bold">{{ news.title }}</h5>
+                              <div class="mb-2 d-flex align-items-center flex-wrap gap-2">
                                 {% if news.category_name %}
-                                <span class="badge bg-primary me-2">{{ news.category_name }}</span>
-                                {% endif %} {% if news.release_date %}
-                                <span class="text-muted small"><i class="bi bi-calendar"></i> {{ news.release_date|date:"d M Y" }}</span>
+                                <span class="badge bg-primary">{{ news.category_name }}</span>
+                                {% endif %} 
+                                {% if news.release_date %}
+                                <span class="text-muted small d-flex align-items-center"> <i class="bi bi-calendar3 me-1"></i> {{ news.release_date|date:"d M Y" }} </span>
                                 {% endif %}
                               </div>
                             </div>
                           </div>
-                          <p class="card-text text-muted mb-3">{{ news.content|striptags|truncatewords:40 }}</p>
-                          <button class="btn btn-outline-primary btn-sm" data-index="{{ forloop.counter0 }}" onclick="showNewsCardModal(this.dataset.index)"><i class="bi bi-book"></i> Baca Selengkapnya</button>
+                          <p class="card-text text-muted mb-3" style="line-height: 1.6">{{ news.content|striptags|truncatewords:50 }}</p>
+                          <button class="btn btn-outline-primary btn-sm" data-index="{{ forloop.counter0 }}" onclick="showNewsCardModal(this.dataset.index)"><i class="bi bi-book me-1"></i> Baca Selengkapnya</button>
                         </div>
                       </div>
                     </div>
@@ -810,7 +1055,7 @@
                     <img id="infographicModalImage" src="" alt="" class="img-fluid rounded shadow mb-3" />
                   </div>
                   <div class="modal-footer">
-                    <a id="infographicModalDownload" href="" class="btn btn-primary" target="_blank" download> <i class="bi bi-download"></i> Download </a>
+                    <a id="infographicModalDownload" href="" class="btn btn-primary"> <i class="bi bi-download"></i> Download </a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   </div>
                 </div>
@@ -822,51 +1067,52 @@
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="font-weight-bold mb-0">Publication</h3>
-                    <a href="{% url 'publications' %}" class="btn btn-link text-primary text-decoration-none"> Lihat Semuanya <i class="bi bi-arrow-right"></i> </a>
+                    <h3 class="font-weight-bold mb-0">Publikasi</h3>
+                    <a href="{% url 'publications' %}" class="btn btn-link text-primary text-decoration-none p-0 fw-bold">Lihat Selengkapnya <i class="bi bi-arrow-right"></i></a>
                   </div>
                 </div>
               </div>
 
-              <div class="row">
-                {% for publication in dataPublicationsLatest %}
-                <div class="col-12 mb-4">
-                  <div class="card hover-card">
-                    <div class="card-body">
-                      <div class="row">
+              <div class="row g-3">
+                {% for publication in dataPublicationsLatest|slice:":5" %}
+                <div class="col-12 mb-3">
+                  <div class="card hover-card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                      <div class="row g-3 align-items-center">
                         <!-- Cover Image -->
-                        <div class="col-md-2 text-center">
+                        <div class="col-auto">
                           <img
-                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 200'%3E%3Crect fill='%23f0f0f0' width='150' height='200'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='14' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 160'%3E%3Crect fill='%23f0f0f0' width='120' height='160'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='12' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
                             data-src="{{ publication.image }}"
                             alt="{{ publication.title }}"
-                            class="img-fluid rounded shadow-sm lazy-load"
-                            style="max-height: 150px; cursor: pointer"
+                            class="rounded shadow-sm lazy-load"
+                            style="width: 120px; height: 160px; object-fit: cover; cursor: pointer"
                             loading="lazy"
+                            data-pub-id="{{ publication.pub_id|escapejs }}"
                             data-index="{{ forloop.counter0 }}"
-                            onclick="showPublicationModal(this.dataset.index)"
+                            onclick="showPublicationModal(this.dataset.pubId, this.dataset.index)"
                           />
                         </div>
 
                         <!-- Publication Info -->
-                        <div class="col-md-7">
-                          <h5 class="card-title mb-2">{{ publication.title }}</h5>
+                        <div class="col">
+                          <h5 class="card-title mb-3 fw-bold">{{ publication.title }}</h5>
 
-                          <div class="mb-2">
+                          <div class="mb-3 d-flex flex-wrap gap-2">
                             {% if publication.date %}
-                            <span class="badge bg-info me-2"> <i class="bi bi-calendar"></i> {{ publication.date|date:"d M Y" }} </span>
+                            <span class="badge bg-info d-flex align-items-center"> <i class="bi bi-calendar3 me-1"></i> {{ publication.date|date:"d M Y" }} </span>
                             {% endif %} {% if publication.size %}
-                            <span class="badge bg-secondary"> <i class="bi bi-file-earmark-pdf"></i> {{ publication.size }} </span>
+                            <span class="badge bg-secondary d-flex align-items-center"> <i class="bi bi-file-earmark-pdf me-1"></i> {{ publication.size }} </span>
                             {% endif %}
                           </div>
 
-                          <p class="card-text text-muted mb-0">{{ publication.abstract|truncatewords:30 }}</p>
-                        </div>
+                          <p class="card-text text-muted mb-3" style="line-height: 1.6">{{ publication.abstract|truncatewords:50 }}</p>
 
-                        <!-- Actions -->
-                        <div class="col-md-3 d-flex flex-column justify-content-center">
-                          <button class="btn btn-outline-primary btn-sm mb-2" data-index="{{ forloop.counter0 }}" onclick="showPublicationModal(this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
-                          <a href="{{ publication.dl }}" class="btn btn-primary btn-sm" target="_blank" download> <i class="bi bi-download"></i> Download PDF </a>
+                          <!-- Actions -->
+                          <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm" data-pub-id="{{ publication.pub_id|escapejs }}" data-index="{{ forloop.counter0 }}" onclick="showPublicationModal(this.dataset.pubId, this.dataset.index)"><i class="bi bi-eye me-1"></i> Detail</button>
+                            <a href="{{ publication.dl }}" class="btn btn-primary btn-sm" target="_blank" download> <i class="bi bi-download me-1"></i> Download PDF </a>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -878,7 +1124,7 @@
 
             <!-- Modal for Publication Detail -->
             <div class="modal fade" id="publicationModal" tabindex="-1">
-              <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle"></h5>
@@ -887,7 +1133,7 @@
                   <div class="modal-body">
                     <div class="row">
                       <div class="col-md-4 text-center mb-3">
-                        <img id="modalImage" src="" alt="" class="img-fluid rounded shadow" />
+                        <img id="modalImage" src="" alt="" class="img-fluid rounded shadow" style="max-height: 400px; width: auto;" />
                       </div>
                       <div class="col-md-8">
                         <div class="mb-3">
@@ -903,7 +1149,7 @@
                           <span id="modalPubId"></span>
                         </div>
                         <hr />
-                        <div>
+                        <div class="abstract-container">
                           <strong>Abstrak:</strong>
                           <p id="modalAbstract" class="mt-2 text-muted"></p>
                         </div>
@@ -937,7 +1183,7 @@
             <!-- Hidden data container for infographics -->
             <div id="infographicsDataContainer" style="display: none">
               {% for infographic in dataInfographicLatest %}
-              <div class="infographic-card-data" data-title="{{ infographic.title|escapejs }}" data-image="{{ infographic.image|escapejs }}" data-download="{{ infographic.dl|escapejs }}"></div>
+              <div class="infographic-card-data" data-title="{{ infographic.title|escapejs }}" data-image="{{ infographic.image|escapejs }}" data-download="{% url 'download-infographic' infographic.id %}"></div>
               {% endfor %}
             </div>
 
@@ -986,9 +1232,6 @@
     <script src="{% static 'src/assets/vendors/js/vendor.bundle.base.js' %}"></script>
     <!-- Plugin JS -->
     <script src="{% static 'src/assets/vendors/chart.js/chart.umd.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/datatables.net/jquery.dataTables.js' %}"></script>
-    <script src="{% static 'src/assets/vendors/datatables.net-bs5/dataTables.bootstrap5.js' %}"></script>
-    <script src="{% static 'src/assets/js/dataTables.select.min.js' %}"></script>
     <!-- Custom JS for template -->
     <script src="{% static 'src/assets/js/off-canvas.js' %}"></script>
     <script src="{% static 'src/assets/js/template.js' %}"></script>
@@ -998,180 +1241,104 @@
     <script src="{% static 'src/assets/js/dashboard.js' %}"></script>
     <!-- External JS from CDN -->
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      // Establish a secure WebSocket connection
-      const socketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const socket = new WebSocket(`${socketProtocol}//${window.location.host}/ws/chat/`);
+      // WebSocket connection (only if chat-box exists)
+      try {
+        const chatBox = document.getElementById("chat-box");
+        if (chatBox) {
+          // Establish a secure WebSocket connection
+          const socketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+          const socket = new WebSocket(`${socketProtocol}//${window.location.host}/ws/chat/`);
 
-      // Reference to the chat display container
-      const chatBox = document.getElementById("chat-box");
-      let isWaitingForResponse = false;
+          // Handle incoming WebSocket messages
+          socket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            const messageEl = document.createElement("div");
+            messageEl.className = "chat-message incoming";
+            messageEl.innerHTML = `<span>${data.message}</span>`;
+            chatBox.appendChild(messageEl);
+            chatBox.scrollTop = chatBox.scrollHeight;
+          };
 
-      // Show loading indicator
-      function showLoadingIndicator() {
-        const loadingEl = document.createElement("div");
-        loadingEl.className = "chat-message incoming";
-        loadingEl.id = "loading-indicator";
-        loadingEl.innerHTML = `
-          <span style="display: flex; align-items: center; gap: 8px;">
-            <span style="display: inline-block; width: 8px; height: 8px; background: #999; border-radius: 50%; animation: pulse 1.4s infinite;"></span>
-            <span style="display: inline-block; width: 8px; height: 8px; background: #999; border-radius: 50%; animation: pulse 1.4s infinite 0.2s;"></span>
-            <span style="display: inline-block; width: 8px; height: 8px; background: #999; border-radius: 50%; animation: pulse 1.4s infinite 0.4s;"></span>
-            <span style="font-size: 14px; color: #666;">AI sedang menjawab...</span>
-          </span>
-          <style>
-            @keyframes pulse {
-              0%, 80%, 100% { opacity: 0.5; }
-              40% { opacity: 1; }
-            }
-          </style>
-        `;
-        chatBox.appendChild(loadingEl);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        isWaitingForResponse = true;
-      }
+          // Send the user's message through WebSocket
+          function sendMessage() {
+            const input = document.getElementById("message-input");
+            const message = input.value;
+            if (message.trim() === "") return;
 
-      // Remove loading indicator
-      function removeLoadingIndicator() {
-        const loadingEl = document.getElementById("loading-indicator");
-        if (loadingEl) {
-          loadingEl.remove();
+            const messageEl = document.createElement("div");
+            messageEl.className = "chat-message outgoing";
+            messageEl.innerHTML = `<span>${message}</span>`;
+            chatBox.appendChild(messageEl);
+
+            socket.send(JSON.stringify({ message: message }));
+            input.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+          }
+
+          // Handle form submission
+          const chatForm = document.getElementById("chat-form");
+          if (chatForm) {
+            chatForm.addEventListener("submit", function (e) {
+              e.preventDefault();
+              sendMessage();
+            });
+          }
+
+          // Optional: Send message on Enter key press
+          const messageInput = document.getElementById("message-input");
+          if (messageInput) {
+            messageInput.addEventListener("keypress", function (e) {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            });
+          }
         }
-        isWaitingForResponse = false;
+      } catch (error) {
+        // WebSocket or chat feature not available - silently ignore
+        console.log("WebSocket chat feature not available");
       }
-
-      // Handle incoming WebSocket messages
-      socket.onmessage = function (e) {
-        removeLoadingIndicator();
-        const data = JSON.parse(e.data);
-        const messageEl = document.createElement("div");
-        messageEl.className = "chat-message incoming";
-        messageEl.innerHTML = `<span>${data.message}</span>`;
-        chatBox.appendChild(messageEl);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      };
-
-      // Handle WebSocket errors
-      socket.onerror = function (e) {
-        removeLoadingIndicator();
-        const errorEl = document.createElement("div");
-        errorEl.className = "chat-message incoming";
-        errorEl.innerHTML = `<span style="color: red;">❌ Koneksi error. Coba refresh halaman.</span>`;
-        chatBox.appendChild(errorEl);
-      };
-
-      // Send the user's message through WebSocket
-      function sendMessage() {
-        const input = document.getElementById("message-input");
-        const message = input.value;
-        if (message.trim() === "") return;
-
-        const messageEl = document.createElement("div");
-        messageEl.className = "chat-message outgoing";
-        messageEl.innerHTML = `<span>${message}</span>`;
-        chatBox.appendChild(messageEl);
-
-        socket.send(JSON.stringify({ message: message }));
-        input.value = "";
-        showLoadingIndicator(); // Show loading after sending
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
-
-      // Handle form submission
-      document.getElementById("chat-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        if (!isWaitingForResponse) {
-          sendMessage();
-        }
-      });
-
-      // Optional: Send message on Enter key press
-      document.getElementById("message-input").addEventListener("keypress", function (e) {
-        if (e.key === "Enter" && !e.shiftKey && !isWaitingForResponse) {
-          e.preventDefault();
-          sendMessage();
-        }
-      });
-      // Global variables for tables and chart
-      let tableNews, tableInfographic, tablePublication, chart;
-      let currentTable = null;
-      let tableInitialized = {
-        news: false,
-        infographic: false,
-        publication: false,
-      };
-
-      // Function to switch table
+      // Function to switch section
       function switchTable(type) {
-        // Hide all table containers (this will hide the entire DataTable including wrapper)
-        const tableNewsContainer = document.getElementById("tableNewsContainer");
-        const tableInfographicContainer = document.getElementById("tableInfographicContainer");
-        const tablePublicationContainer = document.getElementById("tablePublicationContainer");
+        // Hide all sections
         const publicationsSection = document.getElementById("publicationsSection");
         const newsSection = document.getElementById("newsSection");
         const infographicsSection = document.getElementById("infographicsSection");
 
-        if (tableNewsContainer) tableNewsContainer.style.display = "none";
-        if (tableInfographicContainer) tableInfographicContainer.style.display = "none";
-        if (tablePublicationContainer) tablePublicationContainer.style.display = "none";
         if (publicationsSection) publicationsSection.style.display = "none";
         if (newsSection) newsSection.style.display = "none";
         if (infographicsSection) infographicsSection.style.display = "none";
 
-        // Initialize and show selected table
-        const tableConfig = {
-          paging: true,
-          scrollCollapse: true,
-          scrollY: 500,
-          scrollX: true,
-        };
-
+        // Show selected section
         if (type === "news") {
-          if (!tableInitialized.news) {
-            tableNews = new DataTable("#tableNews", tableConfig);
-            tableInitialized.news = true;
-            // Set up event listener for news table
-            tableNews.on("draw", function () {
-              if (currentTable === tableNews) {
-                chart.series[0].setData(chartData(tableNews));
-              }
-            });
+          if (newsSection) {
+            newsSection.style.display = "block";
+            // Scroll to section
+            setTimeout(() => {
+              newsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
           }
-          if (tableNewsContainer) tableNewsContainer.style.display = "none";
-          if (newsSection) newsSection.style.display = "block";
-          currentTable = tableNews;
         } else if (type === "infographic") {
-          if (!tableInitialized.infographic) {
-            tableInfographic = new DataTable("#tableInfographic", tableConfig);
-            tableInitialized.infographic = true;
-            // Set up event listener for infographic table
-            tableInfographic.on("draw", function () {
-              if (currentTable === tableInfographic) {
-                chart.series[0].setData(chartData(tableInfographic));
-              }
-            });
+          if (infographicsSection) {
+            infographicsSection.style.display = "block";
+            // Scroll to section
+            setTimeout(() => {
+              infographicsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
           }
-          if (infographicsSection) infographicsSection.style.display = "block";
-          currentTable = tableInfographic;
         } else if (type === "publication") {
-          if (!tableInitialized.publication) {
-            tablePublication = new DataTable("#tablePublication", tableConfig);
-            tableInitialized.publication = true;
-            // Set up event listener for publication table
-            tablePublication.on("draw", function () {
-              if (currentTable === tablePublication) {
-                chart.series[0].setData(chartData(tablePublication));
-              }
-            });
+          if (publicationsSection) {
+            publicationsSection.style.display = "block";
+            // Scroll to section
+            setTimeout(() => {
+              publicationsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
           }
-          if (publicationsSection) publicationsSection.style.display = "block";
-          currentTable = tablePublication;
-        }
-
-        // Update chart with current table data
-        if (currentTable && chart) {
-          chart.series[0].setData(chartData(currentTable));
         }
       }
 
@@ -1182,13 +1349,14 @@
         const carouselInfographicEl = document.getElementById("carouselInfographic");
         const carouselPublicationEl = document.getElementById("carouselPublication");
 
-        carouselNewsEl.style.display = "none";
-        carouselInfographicEl.style.display = "none";
-        carouselPublicationEl.style.display = "none";
+        // Hide all carousels first
+        if (carouselNewsEl) carouselNewsEl.style.display = "none";
+        if (carouselInfographicEl) carouselInfographicEl.style.display = "none";
+        if (carouselPublicationEl) carouselPublicationEl.style.display = "none";
 
         // Show selected carousel and initialize if needed
         if (type === "news") {
-          carouselNewsEl.style.display = "block";
+          if (carouselNewsEl) carouselNewsEl.style.display = "block";
           // Initialize or get carousel instance
           let carouselNews = bootstrap.Carousel.getInstance(carouselNewsEl);
           if (!carouselNews) {
@@ -1196,7 +1364,7 @@
           }
           carouselNews.to(0);
         } else if (type === "infographic") {
-          carouselInfographicEl.style.display = "block";
+          if (carouselInfographicEl) carouselInfographicEl.style.display = "block";
           // Initialize or get carousel instance
           let carouselInfographic = bootstrap.Carousel.getInstance(carouselInfographicEl);
           if (!carouselInfographic) {
@@ -1204,7 +1372,7 @@
           }
           carouselInfographic.to(0);
         } else if (type === "publication") {
-          carouselPublicationEl.style.display = "block";
+          if (carouselPublicationEl) carouselPublicationEl.style.display = "block";
           // Initialize or get carousel instance
           let carouselPublication = bootstrap.Carousel.getInstance(carouselPublicationEl);
           if (!carouselPublication) {
@@ -1217,66 +1385,23 @@
         switchTable(type);
       }
 
-      // Initialize only News table (default)
-      const tableConfig = {
-        paging: true,
-        scrollCollapse: true,
-        scrollY: 500,
-        scrollX: true,
-      };
+      // Initialize on page load - show news section by default
+      document.addEventListener("DOMContentLoaded", function () {
+        const publicationsSection = document.getElementById("publicationsSection");
+        const newsSection = document.getElementById("newsSection");
+        const infographicsSection = document.getElementById("infographicsSection");
 
-      tableNews = new DataTable("#tableNews", tableConfig);
-      tableInitialized.news = true;
-      currentTable = tableNews;
+        // Hide other sections
+        if (publicationsSection) publicationsSection.style.display = "none";
+        if (infographicsSection) infographicsSection.style.display = "none";
 
-      // Create chart with initial data
-      chart = Highcharts.chart("demo-output", {
-        chart: {
-          type: "pie",
-          styledMode: true,
-        },
-        title: {
-          text: "Distribusi",
-        },
-        series: [
-          {
-            data: chartData(currentTable),
-          },
-        ],
-      });
-
-      // Set up event listener for news table
-      tableNews.on("draw", function () {
-        if (currentTable === tableNews) {
-          chart.series[0].setData(chartData(tableNews));
+        // News section is shown by default (display: block in HTML)
+        // Ensure carousel news is visible
+        const carouselNewsEl = document.getElementById("carouselNews");
+        if (carouselNewsEl) {
+          carouselNewsEl.style.display = "block";
         }
       });
-
-      function chartData(table) {
-        var counts = {};
-
-        // Count the number of entries for each position
-        // For news: column 2 is ID Category
-        // For infographic: column 0 is Title
-        // For publication: column 0 is Title
-        const columnIndex = table === tableNews ? 2 : 0;
-
-        table
-          .column(columnIndex, { search: "applied" })
-          .data()
-          .each(function (val) {
-            if (counts[val]) {
-              counts[val] += 1;
-            } else {
-              counts[val] = 1;
-            }
-          });
-
-        return Object.entries(counts).map((e) => ({
-          name: e[0],
-          y: e[1],
-        }));
-      }
 
       // Publication, Infographic & News Modal Functionality
       const publicationsData = [];
@@ -1287,36 +1412,124 @@
       document.addEventListener("DOMContentLoaded", function () {
         const publicationElements = document.querySelectorAll(".publication-data");
         publicationElements.forEach((el) => {
+          // Get image URL - try to decode if needed
+          let imageUrl = el.dataset.image || '';
+          // Ensure image URL is properly decoded
+          if (imageUrl) {
+            try {
+              imageUrl = decodeURIComponent(imageUrl);
+            } catch (e) {
+              // If decoding fails, use original
+              imageUrl = el.dataset.image;
+            }
+          }
+          
           publicationsData.push({
-            title: el.dataset.title,
-            image: el.dataset.image,
-            date: el.dataset.date,
-            size: el.dataset.size,
-            pubId: el.dataset.pubId,
-            abstract: el.dataset.abstract,
-            download: el.dataset.download,
+            title: el.dataset.title || '',
+            image: imageUrl,
+            date: el.dataset.date || 'N/A',
+            size: el.dataset.size || 'N/A',
+            pubId: el.dataset.pubId || '',
+            abstract: el.dataset.abstract || '',
+            download: el.dataset.download || '',
           });
+          
+          // Also create a map by pubId for faster lookup
+          if (!window.publicationsDataMap) {
+            window.publicationsDataMap = {};
+          }
+          if (el.dataset.pubId) {
+            window.publicationsDataMap[el.dataset.pubId] = publicationsData[publicationsData.length - 1];
+          }
         });
 
         const infographicElements = document.querySelectorAll(".infographic-card-data");
         infographicElements.forEach((el) => {
+          // Get image URL - try to decode if needed
+          let imageUrl = el.dataset.image || '';
+          // Ensure image URL is properly decoded
+          if (imageUrl) {
+            try {
+              imageUrl = decodeURIComponent(imageUrl);
+            } catch (e) {
+              // If decoding fails, use original
+              imageUrl = el.dataset.image;
+            }
+          }
+          
           infographicCardsData.push({
-            title: el.dataset.title,
-            image: el.dataset.image,
-            download: el.dataset.download,
+            title: el.dataset.title || '',
+            image: imageUrl,
+            download: el.dataset.download || '',
           });
         });
 
         const newsCardElements = document.querySelectorAll(".news-card-data");
         newsCardElements.forEach((el) => {
+          // Get image URL - try to decode if needed
+          let imageUrl = el.dataset.image || '';
+          // Ensure image URL is properly decoded
+          if (imageUrl) {
+            try {
+              imageUrl = decodeURIComponent(imageUrl);
+            } catch (e) {
+              // If decoding fails, use original
+              imageUrl = el.dataset.image;
+            }
+          }
+          
           newsCardsData.push({
-            title: el.dataset.title,
-            category: el.dataset.category,
-            date: el.dataset.date,
-            image: el.dataset.image,
-            content: el.dataset.content,
+            title: el.dataset.title || '',
+            category: el.dataset.category || 'Umum',
+            date: el.dataset.date || 'N/A',
+            image: imageUrl,
+            content: el.dataset.content || '',
           });
         });
+
+        // Clean news content in listing
+        function cleanNewsListingContent() {
+          // Clean content in news cards on dashboard
+          const newsContentElements = document.querySelectorAll('#newsSection .card-text');
+          newsContentElements.forEach(function(el) {
+            if (el.textContent) {
+              let content = el.textContent;
+              
+              // Decode Unicode escape sequences first
+              try {
+                content = content.replace(/\\u([0-9a-fA-F]{4})/g, function(match, hex) {
+                  return String.fromCharCode(parseInt(hex, 16));
+                });
+              } catch (e) {
+                // Continue if decoding fails
+              }
+              
+              // Remove HTML tags and style attributes
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = content;
+              content = tempDiv.textContent || tempDiv.innerText || '';
+              
+              // Remove style attributes patterns that might remain
+              content = content.replace(/style\s*=\s*["'][^"']*["']/gi, '');
+              content = content.replace(/<[^>]+>/g, '');
+              
+              // Clean control characters and HTML entities
+              content = content.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+              content = content.replace(/&nbsp;/gi, ' ').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>');
+              content = content.replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#39;/gi, "'");
+              content = content.replace(/&apos;/gi, "'");
+              
+              // Normalize whitespace
+              content = content.replace(/[\s\t]+/g, ' ').trim();
+              
+              // Update the element
+              el.textContent = content;
+            }
+          });
+        }
+
+        // Clean news content on page load
+        cleanNewsListingContent();
 
         // Lazy loading for publication images
         const lazyImages = document.querySelectorAll("img.lazy-load");
@@ -1354,17 +1567,115 @@
         }
       });
 
-      function showPublicationModal(index) {
-        const pub = publicationsData[index];
-        if (!pub) return;
+      function showPublicationModal(pubId, index) {
+        // Try to find publication by pubId first (more reliable)
+        let pub = null;
+        if (pubId && window.publicationsDataMap && window.publicationsDataMap[pubId]) {
+          pub = window.publicationsDataMap[pubId];
+        } else if (index !== undefined && publicationsData[index]) {
+          // Fallback to index if pubId not found
+          pub = publicationsData[index];
+        } else {
+          console.error('Publication not found', { pubId, index });
+          alert('Error: Publication data not found');
+          return;
+        }
 
         document.getElementById("modalTitle").textContent = pub.title;
-        document.getElementById("modalImage").src = pub.image;
+        
+        // Set image with error handling
+        const modalImage = document.getElementById("modalImage");
+        const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200"%3E%3Crect fill="%23f0f0f0" width="150" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="14" font-family="Arial"%3ENo Image%3C/text%3E%3C/svg%3E';
+        
+        // Try to get image from already loaded thumbnail first (find by pubId)
+        let thumbnailSrc = null;
+        if (pubId) {
+          const thumbnailImages = document.querySelectorAll('.lazy-load');
+          thumbnailImages.forEach(function(thumbImg) {
+            if (thumbImg.dataset.pubId === pubId) {
+              // Check if thumbnail has been loaded (not the placeholder)
+              if (thumbImg.src && !thumbImg.src.includes('data:image/svg+xml') && thumbImg.src !== placeholderImg) {
+                thumbnailSrc = thumbImg.src;
+              }
+              // Also check data-src if src is still placeholder
+              else if (thumbImg.dataset.src) {
+                thumbnailSrc = thumbImg.dataset.src;
+              }
+            }
+          });
+        }
+        
+        // Set image source - prefer thumbnail if available, otherwise use pub.image
+        const imageToLoad = thumbnailSrc || pub.image;
+        
+        if (imageToLoad && imageToLoad.trim() !== '') {
+          modalImage.src = imageToLoad;
+          modalImage.alt = pub.title || 'Publication image';
+          modalImage.style.display = 'block';
+          modalImage.onerror = function() {
+            // If image fails to load, try the other source or show placeholder
+            if (this.src === thumbnailSrc && pub.image && pub.image.trim() !== '' && pub.image !== imageToLoad) {
+              // Try the original pub.image if thumbnail failed
+              this.src = pub.image;
+            } else {
+              // Both failed, show placeholder
+              this.src = placeholderImg;
+            }
+          };
+          modalImage.onload = function() {
+            this.style.display = 'block';
+          };
+        } else {
+          // If no image URL, show placeholder
+          modalImage.src = placeholderImg;
+          modalImage.alt = 'No image available';
+          modalImage.style.display = 'block';
+        }
+        
         document.getElementById("modalDate").textContent = pub.date;
         document.getElementById("modalSize").textContent = pub.size;
         document.getElementById("modalPubId").textContent = pub.pubId;
-        document.getElementById("modalAbstract").textContent = pub.abstract;
-        document.getElementById("modalDownload").href = pub.download;
+        
+        // Clean abstract from special characters like \u000D\u000A (carriage return and line feed)
+        let cleanAbstract = pub.abstract || '';
+        
+        // First, handle literal escape sequences like "\u000D\u000A" (backslash-u-000D-000A)
+        // These are Unicode escape sequences stored as literal strings
+        cleanAbstract = cleanAbstract.replace(/\\u000D\\u000A/gi, ' ');
+        cleanAbstract = cleanAbstract.replace(/\\u000D/gi, ' ');
+        cleanAbstract = cleanAbstract.replace(/\\u000A/gi, ' ');
+        cleanAbstract = cleanAbstract.replace(/\\u0009/gi, ' '); // tab
+        cleanAbstract = cleanAbstract.replace(/\\u000B/gi, ' '); // vertical tab
+        cleanAbstract = cleanAbstract.replace(/\\u000C/gi, ' '); // form feed
+        
+        // Handle other common escape sequences
+        cleanAbstract = cleanAbstract.replace(/\\r\\n/gi, ' ');
+        cleanAbstract = cleanAbstract.replace(/\\n/gi, ' ');
+        cleanAbstract = cleanAbstract.replace(/\\r/gi, ' ');
+        cleanAbstract = cleanAbstract.replace(/\\t/gi, ' ');
+        
+        // Try to decode Unicode escape sequences if they exist as literal strings
+        try {
+          // Replace literal \uXXXX patterns with actual characters, then clean them
+          cleanAbstract = cleanAbstract.replace(/\\u([0-9a-fA-F]{4})/g, function(match, hex) {
+            return String.fromCharCode(parseInt(hex, 16));
+          });
+        } catch (e) {
+          // If decoding fails, continue with original string
+        }
+        
+        // Remove actual carriage return (\r) and line feed (\n) characters
+        cleanAbstract = cleanAbstract.replace(/\r\n/g, ' ').replace(/\n/g, ' ').replace(/\r/g, ' ');
+        
+        // Remove Unicode control characters (including \u000D and \u000A)
+        cleanAbstract = cleanAbstract.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+        
+        // Replace multiple spaces/tabs with single space
+        cleanAbstract = cleanAbstract.replace(/[\s\t]+/g, ' ').trim();
+        
+        document.getElementById("modalAbstract").textContent = cleanAbstract;
+        
+        document.getElementById("modalDownload").href = pub.download || '#';
 
         const modal = new bootstrap.Modal(document.getElementById("publicationModal"));
         modal.show();
@@ -1383,12 +1694,113 @@
         modalTitle.textContent = news.title;
         modalCategory.textContent = news.category || "News";
         modalDate.innerHTML = `<i class="bi bi-calendar"></i> ${news.date}`;
-        modalContent.innerHTML = news.content;
+        
+        // Clean content from HTML tags and special characters
+        let cleanContent = news.content || '';
+        
+        // First, decode all Unicode escape sequences (\uXXXX) to their actual characters
+        try {
+            cleanContent = cleanContent.replace(/\\u([0-9a-fA-F]{4})/g, function(match, hex) {
+                return String.fromCharCode(parseInt(hex, 16));
+            });
+        } catch (e) {
+            // If decoding fails, continue with original string
+        }
+        
+        // Now that Unicode escapes are decoded, remove HTML tags and their attributes
+        // Remove style attributes and their content first
+        cleanContent = cleanContent.replace(/style\s*=\s*["'][^"']*["']/gi, '');
+        cleanContent = cleanContent.replace(/style\s*=\s*[^\s>]*/gi, '');
+        
+        // Remove all HTML tags
+        cleanContent = cleanContent.replace(/<[^>]+>/g, '');
+        
+        // Remove HTML tags but preserve text content (redundant but safe)
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cleanContent;
+        cleanContent = tempDiv.textContent || tempDiv.innerText || '';
+        
+        // Remove actual control characters
+        cleanContent = cleanContent.replace(/[\r\n]+/g, ' ');
+        cleanContent = cleanContent.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+        
+        // Remove HTML entities if any remain
+        cleanContent = cleanContent.replace(/&nbsp;/gi, ' ');
+        cleanContent = cleanContent.replace(/&lt;/gi, '<');
+        cleanContent = cleanContent.replace(/&gt;/gi, '>');
+        cleanContent = cleanContent.replace(/&amp;/gi, '&');
+        cleanContent = cleanContent.replace(/&quot;/gi, '"');
+        cleanContent = cleanContent.replace(/&#39;/gi, "'");
+        cleanContent = cleanContent.replace(/&apos;/gi, "'");
+        
+        // Replace multiple spaces/tabs with single space
+        cleanContent = cleanContent.replace(/[\s\t]+/g, ' ').trim();
+        
+        modalContent.textContent = cleanContent;
 
-        if (news.image) {
-          modalImageContainer.innerHTML = `<img src="${news.image}" class="img-fluid rounded mb-3" alt="${news.title}">`;
+        // Set image with error handling and try to get from thumbnail if available
+        const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="16" font-family="Arial"%3EImage not available%3C/text%3E%3C/svg%3E';
+        
+        // Clear container first
+        modalImageContainer.innerHTML = '';
+        
+        // Try to get image from already loaded thumbnail first
+        const thumbnailImages = document.querySelectorAll('.lazy-load');
+        let thumbnailSrc = null;
+        if (thumbnailImages[index]) {
+          const thumbImg = thumbnailImages[index];
+          // Check if thumbnail has been loaded (not the placeholder)
+          if (thumbImg.src && !thumbImg.src.includes('data:image/svg+xml') && thumbImg.src !== placeholderImg) {
+            thumbnailSrc = thumbImg.src;
+          }
+          // Also check data-src if src is still placeholder
+          else if (thumbImg.dataset && thumbImg.dataset.src) {
+            thumbnailSrc = thumbImg.dataset.src;
+          }
+        }
+        
+        // Set image source - prefer thumbnail if available, otherwise use news.image
+        const imageToLoad = thumbnailSrc || news.image;
+        
+        if (imageToLoad && imageToLoad.trim() !== '') {
+          const imgElement = document.createElement('img');
+          imgElement.src = imageToLoad;
+          imgElement.alt = news.title || 'News image';
+          imgElement.className = 'img-fluid rounded mb-3';
+          imgElement.style.maxWidth = '100%';
+          imgElement.style.height = 'auto';
+          imgElement.style.display = 'block';
+          imgElement.style.margin = '0 auto';
+          
+          imgElement.onerror = function() {
+            // If image fails to load, try the other source or show placeholder
+            if (this.src === thumbnailSrc && news.image && news.image.trim() !== '' && news.image !== imageToLoad) {
+              // Try the original news.image if thumbnail failed
+              this.src = news.image;
         } else {
-          modalImageContainer.innerHTML = "";
+              // Both failed, show placeholder
+              modalImageContainer.innerHTML = `<div class="bg-light rounded d-flex align-items-center justify-content-center p-5 mb-3">
+                  <div class="text-center">
+                      <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
+                      <p class="text-muted mt-2 mb-0">Image not available</p>
+                  </div>
+              </div>`;
+            }
+          };
+          
+          imgElement.onload = function() {
+            this.style.display = 'block';
+          };
+          
+          modalImageContainer.appendChild(imgElement);
+        } else {
+          // If no image URL, show placeholder
+          modalImageContainer.innerHTML = `<div class="bg-light rounded d-flex align-items-center justify-content-center p-5 mb-3">
+              <div class="text-center">
+                  <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
+                  <p class="text-muted mt-2 mb-0">Image not available</p>
+              </div>
+          </div>`;
         }
 
         const modal = new bootstrap.Modal(document.getElementById("newsCardModal"));
@@ -1400,15 +1812,411 @@
         if (!info) return;
 
         document.getElementById("infographicModalTitle").textContent = info.title;
-        document.getElementById("infographicModalImage").src = info.image;
-        document.getElementById("infographicModalDownload").href = info.download;
+        
+        // Set image with error handling and try to get from thumbnail if available
+        const modalImage = document.getElementById("infographicModalImage");
+        const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"%3E%3Crect fill="%23f0f0f0" width="400" height="400"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="16" font-family="Arial"%3EImage not available%3C/text%3E%3C/svg%3E';
+        
+        // Try to get image from already loaded thumbnail first
+        const thumbnailImages = document.querySelectorAll('.infographic-thumb .lazy-load, .lazy-load');
+        let thumbnailSrc = null;
+        if (thumbnailImages[index]) {
+          const thumbImg = thumbnailImages[index];
+          // Check if thumbnail has been loaded (not the placeholder)
+          if (thumbImg.src && !thumbImg.src.includes('data:image/svg+xml') && thumbImg.src !== placeholderImg) {
+            thumbnailSrc = thumbImg.src;
+          }
+          // Also check data-src if src is still placeholder
+          else if (thumbImg.dataset && thumbImg.dataset.src) {
+            thumbnailSrc = thumbImg.dataset.src;
+          }
+        }
+        
+        // Set image source - prefer thumbnail if available, otherwise use info.image
+        const imageToLoad = thumbnailSrc || info.image;
+        
+        if (imageToLoad && imageToLoad.trim() !== '') {
+          modalImage.src = imageToLoad;
+          modalImage.alt = info.title || 'Infographic image';
+          modalImage.style.display = 'block';
+          modalImage.onerror = function() {
+            // If image fails to load, try the other source or show placeholder
+            if (this.src === thumbnailSrc && info.image && info.image.trim() !== '' && info.image !== imageToLoad) {
+              // Try the original info.image if thumbnail failed
+              this.src = info.image;
+            } else {
+              // Both failed, show placeholder
+              this.src = placeholderImg;
+              this.alt = 'Image not available';
+            }
+          };
+          modalImage.onload = function() {
+            this.style.display = 'block';
+          };
+        } else {
+          // If no image URL, show placeholder
+          modalImage.src = placeholderImg;
+          modalImage.alt = 'Image not available';
+          modalImage.style.display = 'block';
+        }
+        
+        document.getElementById("infographicModalDownload").href = info.download || '#';
 
         const modal = new bootstrap.Modal(document.getElementById("infographicModal"));
         modal.show();
       }
+      // Format numbers with Indonesian format (replace comma with dot)
+      (function() {
+        const formattedNumbers = document.querySelectorAll('.formatted-number');
+        formattedNumbers.forEach(el => {
+          let text = el.textContent.trim();
+          // Replace comma with dot for Indonesian number format
+          text = text.replace(/,/g, '.');
+          el.textContent = text;
+        });
+        
+        // Format currency values and add ribu/juta if needed
+        const currencyValues = document.querySelectorAll('.currency-value[data-value]');
+        currencyValues.forEach(el => {
+          const value = parseFloat(el.dataset.value);
+          if (!isNaN(value)) {
+            const formattedSpan = el.querySelector('.formatted-number');
+            if (formattedSpan) {
+              let text = formattedSpan.textContent.trim().replace(/,/g, '.');
+              let suffix = '';
+              if (value >= 1000000) {
+                suffix = ' juta';
+              } else if (value >= 1000) {
+                suffix = ' ribu';
+              }
+              formattedSpan.textContent = text + suffix;
+            }
+          }
+        });
+      })();
+
+      // Indicator Carousel - Continuous Infinite Scroll to Right
+      (function () {
+        const carousel = document.getElementById("indicatorCarousel");
+        if (!carousel) return;
+
+        const contentSets = carousel.querySelectorAll(".indicator-carousel-content");
+        if (contentSets.length < 2) return;
+
+        // Get width of one content set
+        function getContentSetWidth() {
+          return contentSets[0] ? contentSets[0].offsetWidth + 20 : 0; // +20 for gap
+        }
+
+        let currentPosition = 0;
+        let isPaused = false;
+        let animationFrameId;
+        const scrollSpeed = 1.5; // pixels per frame (adjust for speed)
+
+        function animate() {
+          if (!isPaused) {
+            const contentSetWidth = getContentSetWidth();
+            
+            // Move to the right (negative translateX = content moves right)
+            currentPosition += scrollSpeed;
+
+            // When we've scrolled past one complete set, reset seamlessly
+            if (currentPosition >= contentSetWidth) {
+              // Reset position without transition for seamless loop
+              currentPosition = currentPosition - contentSetWidth;
+            }
+
+            carousel.style.transform = `translateX(-${currentPosition}px)`;
+          }
+
+          animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // Pause on hover
+        const carouselWrapper = carousel.closest(".indicator-carousel-wrapper");
+        if (carouselWrapper) {
+          carouselWrapper.addEventListener("mouseenter", () => {
+            isPaused = true;
+          });
+
+          carouselWrapper.addEventListener("mouseleave", () => {
+            isPaused = false;
+          });
+        }
+
+        // Start animation
+        animate();
+
+        // Handle window resize - maintain collapsed state when switching to mobile
+        let resizeTimeout;
+        window.addEventListener("resize", () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            // When switching to mobile view, ensure sidebar is collapsed
+            if (window.innerWidth <= 991) {
+              // If sidebar is not collapsed, collapse it
+              if (!sidebar.classList.contains('collapsed')) {
+                sidebar.classList.add('collapsed');
+                body.classList.add('sidebar-icon-only');
+                
+                // Handle logo visibility for collapsed state
+                if (brandLogo) brandLogo.style.display = 'none';
+                if (brandLogoMini) brandLogoMini.style.display = 'none';
+                if (navbarBrandMoved) {
+                  navbarBrandMoved.classList.remove('d-none');
+                  if (brandLogoMoved) brandLogoMoved.style.display = 'block';
+                  if (brandLogoMiniMoved) brandLogoMiniMoved.style.display = 'none';
+                }
+                if (navbarMenuWrapper) {
+                  navbarMenuWrapper.style.justifyContent = 'flex-start';
+                }
+              }
+              // Remove active class on mobile resize if sidebar should be hidden
+              sidebar.classList.remove('active');
+            } else {
+              // When switching to desktop view, maintain collapsed state
+              // Don't automatically expand, keep current state
+            }
+            const contentSetWidth = getContentSetWidth();
+            if (currentPosition >= contentSetWidth) {
+              currentPosition = currentPosition % contentSetWidth;
+            }
+          }, 250);
+        });
+      })();
+
+      // Sidebar toggle functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const body = document.body;
+        const navbarBrandWrapper = document.querySelector('.navbar-brand-wrapper');
+        const navbarMenuWrapper = document.querySelector('.navbar-menu-wrapper');
+        const brandLogo = navbarBrandWrapper?.querySelector('.brand-logo');
+        const brandLogoMini = navbarBrandWrapper?.querySelector('.brand-logo-mini');
+        const brandLogoMoved = navbarMenuWrapper?.querySelector('.brand-logo-moved');
+        const brandLogoMiniMoved = navbarMenuWrapper?.querySelector('.brand-logo-mini-moved');
+        const navbarBrandMoved = navbarMenuWrapper?.querySelector('.navbar-brand-moved');
+
+        if (sidebarToggle && sidebar) {
+          sidebarToggle.addEventListener('click', function() {
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            const isMobile = window.innerWidth <= 991;
+            
+            if (isMobile) {
+              // On mobile, toggle active class (show/hide sidebar overlay)
+              // Sidebar always shows full width with text on mobile
+              sidebar.classList.toggle('active');
+              // Remove collapsed state on mobile - always show full sidebar
+              sidebar.classList.remove('collapsed');
+              body.classList.remove('sidebar-icon-only');
+            } else {
+              // On desktop, toggle collapsed state
+              sidebar.classList.toggle('collapsed');
+              body.classList.toggle('sidebar-icon-only');
+              // Remove active class on desktop
+              sidebar.classList.remove('active');
+            }
+
+            // Handle logo visibility based on collapsed state (only for desktop)
+            if (!isMobile) {
+              // Get current collapsed state after toggle
+              const nowCollapsed = sidebar.classList.contains('collapsed');
+              
+              // Pindahkan logo ke navbar-menu-wrapper ketika sidebar collapsed
+              if (nowCollapsed) {
+                // Sidebar collapsed - sembunyikan logo di navbar-brand-wrapper
+                if (brandLogo) brandLogo.style.display = 'none';
+                if (brandLogoMini) brandLogoMini.style.display = 'none';
+                
+                // Tampilkan logo besar (A-removebg-preview.png) di navbar-menu-wrapper (paling kiri)
+                if (navbarBrandMoved) {
+                  navbarBrandMoved.classList.remove('d-none');
+                  if (brandLogoMoved) brandLogoMoved.style.display = 'block';
+                  if (brandLogoMiniMoved) brandLogoMiniMoved.style.display = 'none';
+                }
+                
+                // Ubah justify-content navbar-menu-wrapper
+                if (navbarMenuWrapper) {
+                  navbarMenuWrapper.style.justifyContent = 'flex-start';
+                }
+              } else {
+                // Sidebar expanded - kembalikan logo ke navbar-brand-wrapper
+                if (brandLogo) brandLogo.style.display = 'block';
+                if (brandLogoMini) brandLogoMini.style.display = 'none';
+                
+                // Sembunyikan logo di navbar-menu-wrapper
+                if (navbarBrandMoved) {
+                  navbarBrandMoved.classList.add('d-none');
+                }
+                
+                // Kembalikan justify-content navbar-menu-wrapper
+                if (navbarMenuWrapper) {
+                  navbarMenuWrapper.style.justifyContent = 'flex-end';
+                }
+              }
+            }
+          });
+        }
+
+        // Handle window resize to maintain sidebar state consistency
+        let resizeTimeout;
+        let previousWidth = window.innerWidth;
+        let sidebarStateBeforeMobile = null; // Store sidebar state before switching to mobile
+        
+        window.addEventListener('resize', function() {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(function() {
+            const currentWidth = window.innerWidth;
+            const isMobile = currentWidth <= 991;
+            const wasMobile = previousWidth <= 991;
+            
+            if (isMobile && !wasMobile) {
+              // Switching from desktop to mobile - save current state
+              sidebarStateBeforeMobile = sidebar.classList.contains('collapsed');
+              
+              // On mobile, sidebar always shows full width with text (not collapsed)
+              sidebar.classList.remove('collapsed');
+              body.classList.remove('sidebar-icon-only');
+              
+              // Handle logo visibility for expanded state on mobile
+              if (brandLogo) brandLogo.style.display = 'block';
+              if (brandLogoMini) brandLogoMini.style.display = 'none';
+              if (navbarBrandMoved) {
+                navbarBrandMoved.classList.add('d-none');
+              }
+              if (navbarMenuWrapper) {
+                navbarMenuWrapper.style.justifyContent = 'flex-end';
+              }
+              
+              // Remove active class on mobile resize to hide sidebar overlay initially
+              sidebar.classList.remove('active');
+            } else if (!isMobile && wasMobile) {
+              // Switching from mobile to desktop - restore previous state
+              sidebar.classList.remove('active');
+              
+              // Restore collapsed state if it was collapsed before
+              if (sidebarStateBeforeMobile === true) {
+                sidebar.classList.add('collapsed');
+                body.classList.add('sidebar-icon-only');
+                
+                // Handle logo visibility for collapsed state
+                if (brandLogo) brandLogo.style.display = 'none';
+                if (brandLogoMini) brandLogoMini.style.display = 'none';
+                if (navbarBrandMoved) {
+                  navbarBrandMoved.classList.remove('d-none');
+                  if (brandLogoMoved) brandLogoMoved.style.display = 'block';
+                  if (brandLogoMiniMoved) brandLogoMiniMoved.style.display = 'none';
+                }
+                if (navbarMenuWrapper) {
+                  navbarMenuWrapper.style.justifyContent = 'flex-start';
+                }
+              } else {
+                // Sidebar was expanded before, keep it expanded
+                sidebar.classList.remove('collapsed');
+                body.classList.remove('sidebar-icon-only');
+                
+                // Handle logo visibility for expanded state
+                if (brandLogo) brandLogo.style.display = 'block';
+                if (brandLogoMini) brandLogoMini.style.display = 'none';
+                if (navbarBrandMoved) {
+                  navbarBrandMoved.classList.add('d-none');
+                }
+                if (navbarMenuWrapper) {
+                  navbarMenuWrapper.style.justifyContent = 'flex-end';
+                }
+              }
+            }
+            
+            previousWidth = currentWidth;
+          }, 100);
+        });
+        
+        // Initialize: check if on mobile on page load
+        if (window.innerWidth <= 991) {
+          sidebar.classList.remove('collapsed');
+          body.classList.remove('sidebar-icon-only');
+          sidebar.classList.remove('active');
+        } else {
+          // On desktop, save initial state
+          sidebarStateBeforeMobile = sidebar.classList.contains('collapsed');
+        }
+        
+        // Initialize previousWidth
+        previousWidth = window.innerWidth;
+
+        // Handle sidebar menu item clicks when sidebar is collapsed
+        const sidebarNavLinks = sidebar.querySelectorAll('.nav-link');
+        sidebarNavLinks.forEach(link => {
+          link.addEventListener('click', function(e) {
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            
+            // Check if this link has a submenu (has data-bs-toggle="collapse")
+            const hasSubmenu = this.hasAttribute('data-bs-toggle') && 
+                              this.getAttribute('data-bs-toggle') === 'collapse';
+            
+            if (isCollapsed && hasSubmenu) {
+              // Prevent default collapse behavior temporarily
+              e.preventDefault();
+              
+              // Get the collapse target ID
+              const collapseTargetId = this.getAttribute('href');
+              const collapseTarget = document.querySelector(collapseTargetId);
+              
+              // Expand sidebar first
+              sidebar.classList.remove('collapsed');
+              body.classList.remove('sidebar-icon-only');
+              
+              // Handle logo visibility
+              if (brandLogo) brandLogo.style.display = 'block';
+              if (brandLogoMini) brandLogoMini.style.display = 'none';
+              if (navbarBrandMoved) {
+                navbarBrandMoved.classList.add('d-none');
+              }
+              if (navbarMenuWrapper) {
+                navbarMenuWrapper.style.justifyContent = 'flex-end';
+              }
+              
+              // Wait for sidebar animation to complete, then open the submenu
+              setTimeout(() => {
+                if (collapseTarget) {
+                  // Use Bootstrap collapse API to show the submenu
+                  const bsCollapse = new bootstrap.Collapse(collapseTarget, {
+                    toggle: false
+                  });
+                  bsCollapse.show();
+                  
+                  // Set aria-expanded to true
+                  this.setAttribute('aria-expanded', 'true');
+                }
+              }, 300); // Wait for sidebar animation (adjust timing if needed)
+            }
+            // If no submenu, let the default behavior happen (navigation)
+          });
+        });
+      });
     </script>
 
     <style>
+      /* Infinite Scroll Animation for Indicator Carousel - Continuous Right Scroll */
+      .indicator-carousel-wrapper {
+        overflow: hidden !important;
+      }
+
+      .indicator-carousel-track {
+        display: flex !important;
+        gap: 20px;
+        will-change: transform;
+        /* Animation handled by JavaScript for seamless continuous scroll */
+      }
+
+      .indicator-carousel-content {
+        display: flex;
+        gap: 20px;
+        flex-shrink: 0;
+        min-width: fit-content;
+      }
+
       .hover-card {
         transition: all 0.3s ease;
       }
@@ -1443,6 +2251,799 @@
         transform: scale(1.03);
       }
 
+      /* Carousel border radius */
+      #carouselNewsContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60%;
+        padding: 20px 0;
+      }
+
+      #carouselNews,
+      #carouselInfographic,
+      #carouselPublication {
+        border-radius: 20px;
+        overflow: hidden;
+        width: 80%;
+        max-width: 100%;
+        max-height: 450px;
+        height: auto;
+        margin: 0 auto;
+      }
+
+      #carouselNews .carousel-inner,
+      #carouselInfographic .carousel-inner,
+      #carouselPublication .carousel-inner {
+        border-radius: 20px;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+      }
+
+      #carouselNews .carousel-inner img,
+      #carouselInfographic .carousel-inner img,
+      #carouselPublication .carousel-inner img {
+        border-radius: 20px;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        background-color: #f5f5f5;
+      }
+
+      /* Ensure carousel container card maintains proper width and height */
+      .col-md-6.grid-margin.stretch-card.transparent .card {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 220px;
+        height: auto;
+      }
+
+      /* Ensure carousel items maintain aspect ratio */
+      #carouselNews .carousel-item,
+      #carouselInfographic .carousel-item,
+      #carouselPublication .carousel-item {
+        height: 100%;
+        width: 100%;
+        position: relative;
+      }
+
+      /* Maintain aspect ratio for carousel images */
+      #carouselNews .carousel-item img,
+      #carouselInfographic .carousel-item img,
+      #carouselPublication .carousel-item img {
+        border-radius: 20px;
+        object-fit: contain;
+        object-position: center;
+        background-color: #f5f5f5;
+      }
+
+      /* Ensure carousel maintains width and doesn't get squashed */
+      .col-md-6.grid-margin.stretch-card.transparent {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Ensure cards can be adjusted in height */
+      .col-md-6.grid-margin.transparent .card {
+        transition: height 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      /* Custom color for cards */
+      .col-md-6.grid-margin.transparent .card.card-tale,
+      .col-md-6.grid-margin.transparent .card.card-light-blue {
+        background-color: #234C6A !important;
+        color: #ffffff;
+      }
+
+      .col-md-6.grid-margin.transparent .card.card-tale:hover,
+      .col-md-6.grid-margin.transparent .card.card-light-blue:hover {
+        background-color: #2d5f82 !important;
+      }
+
+      /* Custom primary color - change all blue/primary colors to #234C6A */
+      .text-primary,
+      a.text-primary,
+      .btn-link.text-primary {
+        color: #234C6A !important;
+      }
+
+      .bg-primary,
+      .badge.bg-primary {
+        background-color: #234C6A !important;
+        color: #ffffff !important;
+      }
+
+      .btn-primary,
+      .btn-primary:hover,
+      .btn-primary:focus,
+      .btn-primary:active {
+        background-color: #234C6A !important;
+        border-color: #234C6A !important;
+        color: #ffffff !important;
+      }
+
+      .btn-outline-primary {
+        color: #234C6A !important;
+        border-color: #234C6A !important;
+      }
+
+      .btn-outline-primary:hover,
+      .btn-outline-primary:focus,
+      .btn-outline-primary:active {
+        background-color: #234C6A !important;
+        border-color: #234C6A !important;
+        color: #ffffff !important;
+      }
+
+      .col-md-6.grid-margin.transparent .card .card-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+      }
+
+      /* Ensure rows don't add extra height */
+      .col-md-6.grid-margin.transparent .row {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      /* Ensure stretch-card doesn't interfere */
+      .col-md-6.grid-margin.transparent .stretch-card {
+        height: auto;
+      }
+
+      /* Responsive improvements */
+      @media (max-width: 576px) {
+        .card-body {
+          padding: 1rem;
+        }
+
+        .card-title {
+          font-size: 1.1rem;
+        }
+
+        .card-text {
+          font-size: 0.9rem;
+        }
+
+        .btn-sm {
+          font-size: 0.8rem;
+          padding: 0.25rem 0.5rem;
+        }
+
+        .badge {
+          font-size: 0.75rem;
+        }
+
+        #newsSection .col-12,
+        #publicationsSection .col-12,
+        #infographicsSection .col-12 {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+
+        /* Responsive styling untuk summary cards - 2 kolom */
+        .summary-card {
+          padding: 12px !important;
+          min-height: 140px !important;
+        }
+
+        .summary-card h6 {
+          font-size: 10px !important;
+          margin-bottom: 6px !important;
+        }
+
+        .summary-card h3 {
+          font-size: 20px !important;
+        }
+
+        .summary-card p {
+          font-size: 10px !important;
+          margin: 3px 0 0 0 !important;
+        }
+
+        .summary-card span {
+          font-size: 10px !important;
+        }
+
+        .summary-card i {
+          font-size: 40px !important;
+        }
+
+        .summary-card .d-flex {
+          gap: 3px !important;
+        }
+
+        /* Spacing antar kartu di mobile */
+        .row .col-6.mb-3 {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+      }
+
+      @media (min-width: 577px) and (max-width: 768px) {
+        .card-body {
+          padding: 1.25rem;
+        }
+      }
+
+      /* Ensure proper spacing on all devices */
+      #newsSection,
+      #publicationsSection,
+      #infographicsSection {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+
+      @media (min-width: 992px) {
+        #newsSection,
+        #publicationsSection,
+        #infographicsSection {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+
+      /* Modal Publication Detail - Remove scroll and show all content */
+      #publicationModal .modal-dialog {
+        max-width: 90%;
+        margin: 1.75rem auto;
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 3.5rem);
+      }
+
+      #publicationModal .modal-content {
+        max-height: 95vh;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      #publicationModal .modal-header {
+        flex-shrink: 0;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      #publicationModal .modal-body {
+        flex: 1 1 auto;
+        overflow-y: visible;
+        overflow-x: visible;
+        padding: 1.5rem;
+        padding-bottom: 2rem;
+        min-height: 0;
+      }
+
+      #publicationModal .modal-footer {
+        flex-shrink: 0;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: auto;
+      }
+
+      #publicationModal .abstract-container {
+        margin-bottom: 0;
+        padding-bottom: 1.5rem;
+      }
+
+      #publicationModal #modalAbstract {
+        word-wrap: break-word;
+        white-space: normal;
+        line-height: 1.6;
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 992px) {
+        #publicationModal .abstract-container {
+          padding-bottom: 1.25rem;
+        }
+
+        #publicationModal #modalAbstract {
+          font-size: 0.9375rem;
+          line-height: 1.55;
+        }
+      }
+
+      @media (max-width: 768px) {
+        #publicationModal .modal-dialog {
+          max-width: 95%;
+          margin: 0.5rem auto;
+        }
+
+        #publicationModal .modal-header,
+        #publicationModal .modal-body,
+        #publicationModal .modal-footer {
+          padding: 1rem;
+        }
+
+        #publicationModal .modal-body {
+          padding-bottom: 2rem;
+        }
+
+        #publicationModal .abstract-container {
+          padding-bottom: 1.5rem;
+          margin-bottom: 0.5rem;
+        }
+
+        #publicationModal #modalAbstract {
+          font-size: 0.8115rem;
+          line-height: 1.5;
+        }
+
+        #publicationModal .modal-footer {
+          flex-direction: column;
+          padding-top: 1.25rem;
+          margin-top: 0.5rem;
+        }
+
+        #publicationModal .modal-footer .btn {
+          width: 100%;
+          margin: 0;
+        }
+      }
+
+      @media (max-width: 576px) {
+        #publicationModal .modal-body {
+          padding-bottom: 2.5rem;
+        }
+
+        #publicationModal .abstract-container {
+          padding-bottom: 2rem;
+          margin-bottom: 0.75rem;
+        }
+
+        #publicationModal #modalAbstract {
+          font-size: 0.75rem;
+          line-height: 1.45;
+        }
+
+        #publicationModal .modal-footer {
+          padding-top: 1.5rem;
+          margin-top: 0.75rem;
+        }
+      }
+
+      @media (max-width: 400px) {
+        #publicationModal .modal-body {
+          padding-bottom: 3rem;
+        }
+
+        #publicationModal .abstract-container {
+          padding-bottom: 2.5rem;
+          margin-bottom: 1rem;
+        }
+
+        #publicationModal #modalAbstract {
+          font-size: 0.6875rem;
+          line-height: 1.4;
+        }
+
+        #publicationModal .modal-footer {
+          padding-top: 2rem;
+        }
+      }
+
+      /* Reorder carousel and cards on mobile */
+      @media (max-width: 767.98px) {
+        #carouselAndCardsRow {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        #cardsContainer {
+          order: -1;
+          margin-bottom: 1.5rem;
+          background-color: #fff !important;
+        }
+        
+        #cardsContainer.col-md-6.grid-margin.transparent {
+          background-color: #fff !important;
+        }
+        
+        #carouselContainer {
+          order: 1;
+        }
+        
+        /* Change cards layout to horizontal on mobile - 1 row 3 columns */
+        #cardsContainer {
+          display: flex !important;
+          flex-direction: row !important;
+          gap: 0.25rem;
+          padding: 0.5rem 1.5rem;
+          margin: 0;
+          margin-bottom: 1.5rem;
+          background-color: #fff !important;
+        }
+        
+        #cardsContainer > .row {
+          flex: 1;
+          margin-bottom: 0 !important;
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+        
+        #cardsContainer > .row > div {
+          flex: 1;
+          margin-bottom: 0 !important;
+          width: 100%;
+        }
+        
+        #cardsContainer .card {
+          background: #fff !important;
+          border: none;
+          box-shadow: none;
+          height: auto !important;
+          margin: 0;
+        }
+        
+        #cardsContainer .card-body {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 1rem 0.1rem;
+          min-height: auto;
+        }
+        
+        #cardsContainer .card-body > div {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+        
+        #cardsContainer .card-body > p:last-child {
+          display: none;
+        }
+        
+        /* Icon square styling */
+        #cardsContainer .card-body i {
+          width: 70px;
+          height: 70px;
+          min-width: 70px;
+          min-height: 70px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 12px;
+          font-size: 1.75rem !important;
+          margin-bottom: 0.5rem;
+          margin-top: 0;
+          flex-shrink: 0;
+        }
+        
+        /* Different colors for each card icon - solid colors with white icon */
+        #cardsContainer .row:nth-child(1) .card-body i {
+          background-color: #234C6A;
+          color: #fff;
+        }
+        
+        #cardsContainer .row:nth-child(2) .card-body i {
+          background-color: #234C6A;
+          color: #fff;
+        }
+        
+        #cardsContainer .row:nth-child(3) .card-body i {
+          background-color: #234C6A;
+          color: #fff;
+        }
+        
+        /* Show title as label below icon */
+        #cardsContainer .card-body p.mb-4 {
+          display: block !important;
+          margin-bottom: 0 !important;
+          margin-top: 0;
+          font-size: 0.8125rem;
+          color: #000;
+          font-weight: 500;
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+        }
+        
+        /* Ensure card body content doesn't overflow */
+        #cardsContainer .card-body > div {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        /* Reorder elements: icon first, then title */
+        #cardsContainer .card-body > div {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        #cardsContainer .card-body > div i {
+          order: 1;
+        }
+        
+        #cardsContainer .card-body > div p.mb-4 {
+          order: 2;
+        }
+      }
+
+      /* Sidebar toggle and logo visibility */
+      .navbar-brand-wrapper .brand-logo-mini {
+        display: none;
+      }
+
+      /* Hide logo in navbar-brand-wrapper when sidebar is collapsed */
+      .sidebar-offcanvas.collapsed ~ .page-body-wrapper .navbar-brand-wrapper .brand-logo,
+      body.sidebar-icon-only .navbar-brand-wrapper .brand-logo {
+        display: none !important;
+      }
+
+      .sidebar-offcanvas.collapsed ~ .page-body-wrapper .navbar-brand-wrapper .brand-logo-mini,
+      body.sidebar-icon-only .navbar-brand-wrapper .brand-logo-mini {
+        display: none !important;
+      }
+
+      /* Logo yang dipindahkan ke navbar-menu-wrapper */
+      .navbar-brand-moved {
+        margin-right: auto;
+        padding-right: 1rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar-brand-moved .brand-logo-moved {
+        display: none;
+      }
+
+      .navbar-brand-moved .brand-logo-mini-moved {
+        display: none;
+      }
+
+      /* Tampilkan logo besar ketika sidebar collapsed */
+      body.sidebar-icon-only .navbar-brand-moved .brand-logo-moved,
+      .sidebar-offcanvas.collapsed ~ .page-body-wrapper ~ * .navbar-brand-moved .brand-logo-moved {
+        display: block !important;
+      }
+
+      /* Ketika sidebar collapsed, ubah justify-content navbar-menu-wrapper */
+      body.sidebar-icon-only .navbar-menu-wrapper {
+        justify-content: flex-start !important;
+      }
+
+      /* Pastikan navbar-menu-wrapper memiliki logo di kiri ketika collapsed */
+      .navbar-menu-wrapper {
+        transition: justify-content 0.3s ease;
+      }
+
+      /* Sidebar toggle button styling - centered vertically */
+      #sidebarToggle {
+        border: none;
+        background: transparent;
+        padding: 0.5rem;
+        cursor: pointer;
+        color: #27367f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        margin: 0;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
+      #sidebarToggle:hover {
+        color: #27367f;
+        background-color: transparent;
+        border-radius: 0;
+      }
+
+      #sidebarToggle:active,
+      #sidebarToggle:focus,
+      #sidebarToggle:focus-visible,
+      #sidebarToggle:focus-within {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        background-color: transparent !important;
+      }
+
+      /* Hilangkan efek pada navbar-toggler */
+      .navbar-toggler:focus,
+      .navbar-toggler:active,
+      .navbar-toggler:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        background-color: transparent !important;
+      }
+
+      #sidebarToggle .icon-menu {
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+
+      /* Styling untuk dropdown logout */
+      .navbar-dropdown .dropdown-item-form {
+        display: block;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        border: 0;
+      }
+
+      .navbar-dropdown .dropdown-item-button {
+        display: block;
+        width: 100%;
+        padding: 0.687rem 1.562rem;
+        margin-bottom: 0;
+        clear: both;
+        font-weight: 400;
+        font-size: 0.875rem;
+        color: #1f1f1f;
+        text-align: left;
+        text-decoration: none;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+      }
+
+      .navbar-dropdown .dropdown-item-button:hover,
+      .navbar-dropdown .dropdown-item-button:focus {
+        color: #1f1f1f;
+        background-color: #eaeaf1;
+        outline: none;
+      }
+
+      .navbar-dropdown .dropdown-item-button:active {
+        background: initial;
+      }
+
+      .navbar-dropdown .dropdown-item-button i {
+        font-size: 17px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+      }
+
+      /* Hide scrollbar by default, show on hover - applies to all screen sizes */
+      .sidebar-offcanvas {
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+        margin-top: -10px;
+      }
+
+      .sidebar-offcanvas::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar-offcanvas::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .sidebar-offcanvas::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+      }
+
+      .sidebar-offcanvas:hover {
+        scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+      }
+
+      .sidebar-offcanvas:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+
+      .sidebar-offcanvas:hover::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      /* Sidebar collapsed state - icon only */
+      .sidebar-offcanvas.collapsed {
+        width: 70px !important;
+      }
+
+      .sidebar-offcanvas.collapsed .menu-title,
+      .sidebar-offcanvas.collapsed .menu-arrow {
+        display: none !important;
+      }
+
+      .sidebar-offcanvas.collapsed .nav-link {
+        justify-content: center;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+
+      .sidebar-offcanvas.collapsed .sub-menu {
+        display: none !important;
+      }
+
+      .sidebar-offcanvas.collapsed .nav-item {
+        position: relative;
+      }
+
+      /* Fixed and scrollable sidebar for desktop */
+      @media (min-width: 992px) {
+        .sidebar-offcanvas {
+          position: fixed;
+          top: 60px;
+          left: 0;
+          height: calc(100vh - 60px);
+          min-height: calc(100vh - 60px);
+          max-height: calc(100vh - 60px);
+          overflow-y: auto;
+          overflow-x: hidden;
+          z-index: 1000;
+          width: 235px;
+          transition: width 0.3s ease;
+        }
+
+        .sidebar-offcanvas.active {
+          height: calc(100vh - 60px);
+          min-height: calc(100vh - 60px);
+          max-height: calc(100vh - 60px);
+        }
+
+        /* Adjust page body wrapper to accommodate fixed sidebar */
+        .page-body-wrapper {
+          margin-left: 235px;
+          transition: margin-left 0.3s ease;
+        }
+
+        body.sidebar-icon-only .page-body-wrapper,
+        .sidebar-offcanvas.collapsed ~ .page-body-wrapper {
+          margin-left: 70px;
+        }
+      }
+
+      /* Sidebar animation from left to right for mobile */
+      @media screen and (max-width: 991px) {
+        .sidebar-offcanvas {
+          position: fixed;
+          height: calc(100vh - 60px);
+          min-height: calc(100vh - 60px);
+          max-height: calc(100vh - 60px);
+          top: 60px;
+          bottom: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+          left: -235px !important;
+          right: auto !important;
+          -webkit-transition: left 0.25s ease-out;
+          -o-transition: left 0.25s ease-out;
+          transition: left 0.25s ease-out;
+          z-index: 1045;
+          width: 235px !important;
+        }
+
+        .sidebar-offcanvas.active {
+          left: 0 !important;
+          right: auto !important;
+          height: calc(100vh - 60px);
+          min-height: calc(100vh - 60px);
+          max-height: calc(100vh - 60px);
+        }
+
+        /* On mobile, collapsed state still shows full sidebar when active */
+        .sidebar-offcanvas.collapsed.active {
+          width: 235px !important;
+        }
+      }
+
       #check {
         display: none;
       }
@@ -1458,7 +3059,7 @@
         justify-content: center;
         align-items: center;
         border-radius: 50%;
-        background-color: #0d6efd;
+        background-color: #234C6A;
         color: white;
         font-size: 24px;
         z-index: 1000;
@@ -1498,7 +3099,7 @@
 
       .wrapper .header {
         padding: 15px;
-        background: #0d6efd;
+        background: #234C6A;
         border-radius: 10px 10px 0 0;
         text-align: center;
         color: white;
@@ -1529,7 +3130,7 @@
       }
 
       .chat-area .outgoing {
-        background: #0d6efd;
+        background: #234C6A;
         color: #fff;
         align-self: flex-end;
         border-bottom-right-radius: 0;
@@ -1552,6 +3153,266 @@
       .chat-form textarea {
         margin-bottom: 10px;
       }
+
+      /* Reduce sidebar font size to prevent text cutoff */
+      .sidebar .nav .nav-item .nav-link .menu-title {
+        font-size: 0.8125rem !important;
+      }
+
+      .sidebar .nav.sub-menu .nav-item .nav-link {
+        font-size: 0.8125rem !important;
+      }
     </style>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: rgba(225, 224, 224, 0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);">
+          <div class="modal-header border-0 pb-0" style="background: transparent;">
+            <div class="w-100 text-center">
+              <img src="{% static 'icon/logoastabayav2.png' %}" alt="Logo Astabaya" width="150" class="mb-2" />
+              <h2 style="font-size: 25px; font-weight: 600; color: #fff; margin-bottom: 8px; letter-spacing: -0.5px;">Selamat Datang</h2>
+              <h3 style="font-size: 15px; font-weight: 400; color: #fff; margin-bottom: 20px; margin-top: 7px; letter-spacing: -0.5px;">Masuk ke akun anda</h3>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 15px;"></button>
+          </div>
+          <div class="modal-body pt-0">
+            <p id="login-error" class="text-danger" style="display: none; text-align: center; padding: 8px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; margin-bottom: 15px;"></p>
+            <form id="login-form-modal" style="display: flex; flex-direction: column; gap: 15px;">
+              {% csrf_token %}
+              <input type="text" name="username" placeholder="Username" required style="width: 100%; padding: 8px 16px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
+              <input type="password" name="password" placeholder="Password" required style="width: 100%; padding: 8px 16px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
+              <button type="submit" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #258ffa 0%, #1c7dd8 100%); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">Login</button>
+            </form>
+            <div class="text-center mb-3 mt-3">
+              <p class="text-muted" style="color: rgba(255, 255, 255, 0.7); margin: 15px 0;">atau</p>
+              <button type="button" onclick="signInWithGoogle()" class="btn btn-outline-danger w-100" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; border: 1px solid #dadce0; background: #fff; color: #3c4043; font-size: 14px; font-weight: 500; border-radius: 4px; cursor: pointer;">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="#000" fill-rule="evenodd">
+                    <path d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z" fill="#EA4335"/>
+                    <path d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.21 1.18-.84 2.18-1.79 2.85l2.75 2.13c1.66-1.52 2.72-3.76 2.72-6.48z" fill="#4285F4"/>
+                    <path d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z" fill="#FBBC05"/>
+                    <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.75-2.13c-.76.53-1.78.9-3.21.9-2.38 0-4.4-1.57-5.12-3.74L.96 13.04C2.45 15.98 5.48 18 9 18z" fill="#34A853"/>
+                  </g>
+                </svg>
+                Masuk dengan Google
+              </button>
+            </div>
+            <div class="text-center" style="margin-top: 24px; font-size: 14px; color: #d0e1f0;">
+              <p class="mb-0">Belum memiliki akun? <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal" style="color: #ffffff; text-decoration: none; font-weight: 600; transition: color 0.3s ease;">Daftar</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: rgba(225, 224, 224, 0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);">
+          <div class="modal-header border-0 pb-0" style="background: transparent;">
+            <div class="w-100 text-center">
+              <img src="{% static 'icon/logoastabayav2.png' %}" alt="Logo Astabaya" width="150" class="mb-2" />
+              <h2 style="font-size: 25px; font-weight: 600; color: #fff; margin-bottom: 0px; letter-spacing: -0.5px;">Selamat Datang</h2>
+              <h3 style="font-size: 15px; font-weight: 400; color: #fff; margin-bottom: 20px; margin-top: 7px; letter-spacing: -0.5px;">Buat akun anda</h3>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 15px;"></button>
+          </div>
+          <div class="modal-body pt-0">
+            <p id="register-error" class="text-danger" style="display: none; text-align: center; padding: 8px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; margin-bottom: 15px;"></p>
+            <form id="register-form-modal" style="display: flex; flex-direction: column; gap: 16px;">
+              {% csrf_token %}
+              <input type="text" name="username" placeholder="Username" required style="width: 100%; padding: 8px 16px; font-family: 'Poppins', system-ui, -apple-system, sans-serif; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 16px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
+              <input type="email" name="email" placeholder="Email" required style="width: 100%; padding: 8px 16px; font-family: 'Poppins', system-ui, -apple-system, sans-serif; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 16px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
+              <input type="password" name="password" placeholder="Password" required style="width: 100%; padding: 8px 16px; font-family: 'Poppins', system-ui, -apple-system, sans-serif; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 16px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
+              <button type="submit" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #258ffa 0%, #1c7dd8 100%); color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">Sign Up</button>
+            </form>
+            <div class="text-center mb-3 mt-3">
+              <p class="text-muted" style="color: rgba(255, 255, 255, 0.7); margin: 15px 0;">atau</p>
+              <button type="button" onclick="signInWithGoogle()" class="btn btn-outline-danger w-100" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; border: 1px solid #dadce0; background: #fff; color: #3c4043; font-size: 14px; font-weight: 500; border-radius: 4px; cursor: pointer;">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="#000" fill-rule="evenodd">
+                    <path d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z" fill="#EA4335"/>
+                    <path d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.21 1.18-.84 2.18-1.79 2.85l2.75 2.13c1.66-1.52 2.72-3.76 2.72-6.48z" fill="#4285F4"/>
+                    <path d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z" fill="#FBBC05"/>
+                    <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.75-2.13c-.76.53-1.78.9-3.21.9-2.38 0-4.4-1.57-5.12-3.74L.96 13.04C2.45 15.98 5.48 18 9 18z" fill="#34A853"/>
+                  </g>
+                </svg>
+                Daftar dengan Google
+              </button>
+            </div>
+            <div class="text-center" style="margin-top: 0px; padding-top: 0px;">
+              <p style="font-size: 14px; color: rgba(255, 255, 255, 0.9); margin-bottom: 0;">Already have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal" style="background: linear-gradient(135deg, #06b6d4, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">Login</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Required Modal for Downloads -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginRequiredModalLabel">Login Diperlukan</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p id="login-required-message">Ingin mengunduh <span id="download-item-name"></span> ini? Silakan login terlebih dahulu.</p>
+            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Login Form Handler
+      document.getElementById('login-form-modal')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        const csrfToken = data.csrfmiddlewaretoken;
+        const errorElement = document.getElementById('login-error');
+        errorElement.style.display = 'none';
+
+        try {
+          const response = await fetch('{% url "api-login" %}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify(data),
+          });
+
+          const responseData = await response.json();
+          if (response.ok) {
+            // Reload page to update UI
+            window.location.reload();
+          } else {
+            errorElement.textContent = responseData.error || 'Login gagal. Silakan coba lagi.';
+            errorElement.style.display = 'block';
+          }
+        } catch (error) {
+          errorElement.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+          errorElement.style.display = 'block';
+        }
+      });
+
+      // Register Form Handler
+      document.getElementById('register-form-modal')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        const csrfToken = data.csrfmiddlewaretoken;
+        const errorElement = document.getElementById('register-error');
+        errorElement.style.display = 'none';
+
+        try {
+          const response = await fetch('{% url "api-register" %}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            alert('Registrasi berhasil! Silakan login.');
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            registerModal.hide();
+            loginModal.show();
+          } else {
+            const errorData = await response.json();
+            const errorMessage = Object.values(errorData).flat().join('\\n');
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'block';
+          }
+        } catch (error) {
+          errorElement.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+          errorElement.style.display = 'block';
+        }
+      });
+
+      // Function to show login required modal
+      function showLoginRequiredModal(itemName) {
+        document.getElementById('download-item-name').textContent = itemName;
+        const modal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+        modal.show();
+      }
+
+      // Global function to check authentication before download
+      function checkAuthBeforeDownload(callback, itemName = 'data') {
+        {% if user.is_authenticated %}
+        if (typeof callback === 'function') {
+          callback();
+        }
+        {% else %}
+        // Redirect to login page instead of showing modal
+        window.location.href = "{% url 'login' %}";
+        {% endif %}
+      }
+
+      // Handle Google Sign-In with redirect (same tab, no popup)
+      function signInWithGoogle() {
+        // Close modal first
+        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+        const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+        if (loginModal) loginModal.hide();
+        if (registerModal) registerModal.hide();
+        
+        // Redirect to Google OAuth in the same tab
+        const clientId = '477948872524-8h48o7jmg3seadns5ddmb7hpi336e5a5.apps.googleusercontent.com';
+        // Use the exact redirect URI that matches Google Cloud Console
+        let redirectUri;
+        if (window.location.hostname === 'localhost') {
+          redirectUri = 'http://localhost:8000/accounts/google/login/callback/';
+        } else {
+          redirectUri = 'http://127.0.0.1:8000/accounts/google/login/callback/';
+        }
+        redirectUri = encodeURIComponent(redirectUri);
+        const scope = encodeURIComponent('openid email profile');
+        const responseType = 'code';
+        const state = 'google_login'; // Can be used to track the login state
+        
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${clientId}&` +
+          `redirect_uri=${redirectUri}&` +
+          `response_type=${responseType}&` +
+          `scope=${scope}&` +
+          `state=${state}&` +
+          `access_type=online&` +
+          `prompt=select_account`;
+        
+        // Redirect in the same tab
+        window.location.href = googleAuthUrl;
+      }
+
+      // Add/remove class to body for login/register modal styling
+      document.addEventListener('DOMContentLoaded', function() {
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        
+        if (loginModal) {
+          loginModal.addEventListener('show.bs.modal', function() {
+            document.body.classList.add('login-register-modal-open');
+          });
+          loginModal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('login-register-modal-open');
+          });
+        }
+        
+        if (registerModal) {
+          registerModal.addEventListener('show.bs.modal', function() {
+            document.body.classList.add('login-register-modal-open');
+          });
+          registerModal.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('login-register-modal-open');
+          });
+        }
+      });
+    </script>
   </body>
 </html>

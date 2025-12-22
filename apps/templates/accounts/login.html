@@ -234,7 +234,7 @@
       <h2>Selamat Datang</h2>
       <h3>Masuk ke akun anda</h3>
       <p id="login-error" class="error-message" style="color: red; display: none"></p>
-      <form id="login-form">
+      <form id="login-form" method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         <input type="text" name="username" placeholder="Username" required />
         <input type="password" name="password" placeholder="Password" required />
@@ -243,49 +243,56 @@
 
       <!-- Forgot Password -->
 
+      <div class="text-center mb-3 mt-3">
+        <p style="color: rgba(255, 255, 255, 0.7); margin: 15px 0;">atau</p>
+        <button type="button" onclick="signInWithGoogle()" style="width: 100%; padding: 10px; border: 1px solid #dadce0; background: #fff; color: #3c4043; font-size: 14px; font-weight: 500; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#000" fill-rule="evenodd">
+              <path d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z" fill="#EA4335"/>
+              <path d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.21 1.18-.84 2.18-1.79 2.85l2.75 2.13c1.66-1.52 2.72-3.76 2.72-6.48z" fill="#4285F4"/>
+              <path d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z" fill="#FBBC05"/>
+              <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.75-2.13c-.76.53-1.78.9-3.21.9-2.38 0-4.4-1.57-5.12-3.74L.96 13.04C2.45 15.98 5.48 18 9 18z" fill="#34A853"/>
+            </g>
+          </svg>
+          Masuk dengan Google
+        </button>
+      </div>
       <div class="register-link">Belum memiliki akun? <a href="{% url 'signup' %}">Daftar</a></div>
     </div>
 
     <script>
-      document.getElementById("login-form").addEventListener("submit", async function (event) {
-        event.preventDefault(); // Mencegah form dari submit default
-
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-        const csrfToken = data.csrfmiddlewaretoken;
-
-        const loginError = document.getElementById("login-error");
-        loginError.style.display = "none";
-
-        try {
-          const response = await fetch("{% url 'api-login' %}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify(data),
-          });
-
-          const responseData = await response.json();
-
-          if (response.ok) {
-            if (responseData.token) {
-              // API response - store token
-              localStorage.setItem("authToken", responseData.token);
-            }
-            // Redirect to dashboard (works for both API and form responses)
-            window.location.href = responseData.redirect || "{% url 'dashboard' %}";
-          } else {
-            loginError.textContent = `⚠️ ${responseData.error || "Login failed."}`;
-            loginError.style.display = "block";
-          }
-        } catch (error) {
-          loginError.textContent = "⚠️ An unexpected error occurred. Please try again.";
-          loginError.style.display = "block";
+      // Handle Google Sign-In with redirect (same tab, no popup)
+      function signInWithGoogle() {
+        const clientId = '477948872524-8h48o7jmg3seadns5ddmb7hpi336e5a5.apps.googleusercontent.com';
+        let redirectUri;
+        if (window.location.hostname === 'localhost') {
+          redirectUri = 'http://localhost:8000/accounts/google/login/callback/';
+        } else {
+          redirectUri = 'http://127.0.0.1:8000/accounts/google/login/callback/';
         }
-      });
+        redirectUri = encodeURIComponent(redirectUri);
+        const scope = encodeURIComponent('openid email profile');
+        const responseType = 'code';
+        const state = 'google_login';
+        
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${clientId}&` +
+          `redirect_uri=${redirectUri}&` +
+          `response_type=${responseType}&` +
+          `scope=${scope}&` +
+          `state=${state}&` +
+          `access_type=online&` +
+          `prompt=select_account`;
+        
+        window.location.href = googleAuthUrl;
+      }
+    </script>
+    <script>
+      // Display error if any
+      {% if error %}
+      document.getElementById("login-error").textContent = "⚠️ {{ error }}";
+      document.getElementById("login-error").style.display = "block";
+      {% endif %}
     </script>
   </body>
 </html>

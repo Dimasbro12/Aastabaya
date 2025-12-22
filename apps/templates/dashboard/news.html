@@ -21,21 +21,19 @@
     <!-- Filter & Search - Better Layout with AJAX -->
     <div class="row mb-4">
         <div class="col-md-6 mb-3 mb-md-0">
-            <div class="input-group shadow-sm">
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="bi bi-search text-muted"></i>
-                </span>
+            <div class="search-input-wrapper shadow-sm">
                 <input type="text" 
-                       class="form-control border-start-0 ps-0" 
+                       class="form-control" 
                        id="searchInput"
                        name="search"
-                       value="{{ search_query }}"
-                       placeholder="Cari berita berdasarkan judul atau konten...">
-                {% if search_query or category_id_filter %}
-                <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">
-                    <i class="bi bi-x-circle"></i> Clear
-                </button>
-                {% endif %}
+                       value="{{ search_query|default:'' }}"
+                       placeholder="Cari berita berdasarkan judul atau konten..." />
+                <span class="search-icon">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <span class="clear-icon" id="clearIcon" style="display: none;">
+                    <i class="bi bi-x-circle text-muted"></i>
+                </span>
             </div>
         </div>
         <div class="col-md-3 mb-3 mb-md-0">
@@ -68,7 +66,74 @@
                  data-date="{{ news.release_date|date:'Y-m-d' }}">
                 <div class="card hover-card">
                     <div class="card-body">
-                        <div class="row">
+                        <!-- Mobile Layout (Compact) -->
+                        <div class="row g-1 align-items-center d-md-none">
+                            <!-- News Image -->
+                            <div class="col-auto">
+                                {% if news.picture_url %}
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3Ctext fill='%23999' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='Arial'%3ELoading...%3C/text%3E%3C/svg%3E"
+                                     data-src="{{ news.picture_url }}" 
+                                     alt="{{ news.title }}"
+                                     class="rounded shadow-sm lazy-load news-thumbnail-mobile"
+                                     style="width: 55px; height: 75px; object-fit: cover; cursor: pointer"
+                                     loading="lazy"
+                                     data-index="{{ forloop.counter0 }}"
+                                     onclick="showNewsModal(this.dataset.index)">
+                                {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center news-thumbnail-mobile" 
+                                     style="width: 55px; height: 75px;">
+                                    <i class="bi bi-newspaper" style="font-size: 1.2rem; color: #ccc;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- News Content -->
+                            <div class="col">
+                                <h6 class="card-title mb-0 fw-bold" style="font-size: 0.8rem; line-height: 1.15; margin-bottom: 0.2rem !important">{{ news.title }}</h6>
+
+                                <div class="mb-0" style="margin-bottom: 0.2rem !important">
+                                    {% if news.category_name %}
+                                    <span class="badge bg-primary me-1" style="font-size: 0.6rem; padding: 0.15rem 0.35rem; line-height: 1.1">{{ news.category_name }}</span>
+                                    {% endif %}
+                                    
+                                    {% if news.release_date %}
+                                    <span class="badge bg-info" style="font-size: 0.6rem; padding: 0.15rem 0.35rem; line-height: 1.1">
+                                        <i class="bi bi-calendar" style="font-size: 0.65rem"></i> {{ news.release_date|date:"d M Y" }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="card-text text-muted mb-0" style="font-size: 0.7rem; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 0.2rem">
+                                    {{ news.content|truncatewords:18 }}
+                                </p>
+                            </div>
+
+                            <!-- Action Button -->
+                            <div class="col-auto">
+                                <button class="btn btn-outline-primary btn-sm" 
+                                        style="font-size: 0.6rem; padding: 0.2rem 0.45rem; white-space: nowrap; line-height: 1.1"
+                                        data-index="{{ forloop.counter0 }}"
+                                        onclick="showNewsModal(this.dataset.index)">
+                                    <i class="bi bi-book" style="font-size: 0.65rem"></i> Baca Selengkapnya
+                                </button>
+                                {% if user.is_authenticated %}
+                                <button 
+                                    class="btn btn-sm btn-outline-secondary bookmark-btn {% if news.bookmark_id %}bookmarked{% endif %}"
+                                    data-content-type="news"
+                                    data-object-id="{{ news.news_id }}"
+                                    data-bookmark-id="{{ news.bookmark_id|default:'' }}"
+                                    onclick="toggleBookmark(this)">
+                                    <i class="bi {% if news.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+                                    <span class="d-none d-sm-inline">
+                                        {% if news.bookmark_id %}Tersimpan{% else %}Bookmark{% endif %}
+                                    </span>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Desktop Layout (Horizontal) -->
+                        <div class="row d-none d-md-flex">
                             <!-- News Image -->
                             <div class="col-md-3">
                                 {% if news.picture_url %}
@@ -111,26 +176,11 @@
                                     {{ news.content|truncatewords:50 }}
                                 </p>
                                 
-                                <div class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-sm btn-outline-primary" 
-                                            data-index="{{ forloop.counter0 }}"
-                                            onclick="showNewsModal(this.dataset.index)">
-                                        <i class="bi bi-book"></i> Baca Selengkapnya
-                                    </button>
-                                    {% if user.is_authenticated %}
-                                    <button 
-                                        class="btn btn-sm btn-outline-secondary bookmark-btn {% if news.bookmark_id %}bookmarked{% endif %}"
-                                        data-content-type="news"
-                                        data-object-id="{{ news.news_id }}"
-                                        data-bookmark-id="{{ news.bookmark_id|default:'' }}"
-                                        onclick="toggleBookmark(this)">
-                                        <i class="bi {% if news.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
-                                        <span class="d-none d-sm-inline">
-                                            {% if news.bookmark_id %}Tersimpan{% else %}Bookmark{% endif %}
-                                        </span>
-                                    </button>
-                                    {% endif %}
-                                </div>
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        data-index="{{ forloop.counter0 }}"
+                                        onclick="showNewsModal(this.dataset.index)">
+                                    <i class="bi bi-book"></i> Baca Selengkapnya
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -193,21 +243,31 @@
 
 <!-- Modal for News Detail -->
 <div class="modal fade" id="newsModal" tabindex="-1">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <span class="badge bg-primary me-2" id="modalCategory"></span>
-                    <span class="text-muted small" id="modalDate"></span>
+                <div class="row g-3">
+                    <!-- News Image (Left) -->
+                    <div class="col-md-3">
+                        <div id="modalImageContainer" class="mb-3"></div>
+                    </div>
+                    
+                    <!-- News Content (Right) -->
+                    <div class="col-md-9">
+                        <!-- Category and Date (Top) -->
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="badge bg-primary" id="modalCategory"></span>
+                            <span class="text-muted small" id="modalDate"></span>
+                        </div>
+                        
+                        <!-- Description (Below) -->
+                        <div id="modalContent" style="line-height: 1.8; text-align: justify;"></div>
+                    </div>
                 </div>
-                
-                <div class="mb-4" id="modalImageContainer"></div>
-                
-                <div id="modalContent" style="line-height: 1.8; text-align: justify;"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -231,8 +291,105 @@
 
 
 <style>
+/* News Detail Modal Styles */
+#newsModal .modal-dialog {
+    max-width: 900px;
+}
+
+#newsModal .modal-body {
+    padding: 1.5rem 0.25rem;
+}
+
+#newsModal #modalImageContainer {
+    width: 100%;
+}
+
+#newsModal #modalImageContainer img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+#newsModal #modalContent {
+    margin-bottom: 1rem;
+}
+
+#newsModal .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Search and Filter Input Styling */
+#searchInput,
+#categoryFilter,
+#sortFilter {
+    border-radius: 25rem !important;
+    height: 38px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    border-radius: 25rem !important;
+}
+
+.search-input-wrapper #searchInput {
+    border-radius: 25rem !important;
+    padding-left: 45px;
+    padding-right: 45px;
+    border: 1px solid #ced4da;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+}
+
+.search-input-wrapper .clear-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-input-wrapper .clear-icon:hover {
+    background-color: #e9ecef;
+}
+
+.search-input-wrapper .clear-icon i {
+    font-size: 1.1rem;
+}
+
+.search-input-wrapper #searchInput:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
 .hover-card {
     transition: all 0.3s ease;
+    border-radius: 12px;
 }
 
 .hover-card:hover {
@@ -255,25 +412,89 @@
     background: #e0e0e0;
 }
 
-.bookmark-btn .bi-bookmark-fill {
-    color: #0d6efd;
-}
+/* Mobile Layout (Compact) */
+@media (max-width: 767.98px) {
+    .news-item .card-body {
+        padding: 0.4rem;
+    }
 
-.bookmark-btn.bookmarked {
-    background-color: #e7f1ff;
-    border-color: #0d6efd;
-}
+    .news-item {
+        margin-bottom: 0.4rem;
+    }
 
-.bookmark-btn.bookmarked .bi-bookmark {
-    display: none;
-}
-.bookmark-btn:not(.bookmarked) .bi-bookmark-fill {
-    display: none;
+    .news-item .card {
+        border-radius: 6px;
+    }
+
+    .news-thumbnail-mobile {
+        flex-shrink: 0;
+        border-radius: 4px;
+    }
+
+    .news-item .card-title {
+        font-size: 0.8rem;
+        line-height: 1.15;
+        margin-bottom: 0.2rem !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .news-item .badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.35rem;
+        line-height: 1.1;
+    }
+
+    .news-item .badge i {
+        font-size: 0.65rem;
+    }
+
+    .news-item .card-text {
+        font-size: 0.7rem;
+        line-height: 1.25;
+        margin-bottom: 0;
+        margin-top: 0.2rem;
+    }
+
+    .news-item .btn-sm {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.45rem;
+        white-space: nowrap;
+        line-height: 1.1;
+    }
+
+    .news-item .btn-sm i {
+        font-size: 0.65rem;
+    }
+
+    .news-item .col-auto:last-child {
+        display: flex;
+        align-items: center;
+    }
+
+    .news-item .row.g-1 {
+        --bs-gutter-x: 0.4rem;
+        --bs-gutter-y: 0.4rem;
+    }
 }
 </style>
 
 
 <script>
+    // Toggle clear icon visibility
+    function toggleClearIcon() {
+        const searchInput = document.getElementById("searchInput");
+        const clearIcon = document.getElementById("clearIcon");
+        if (searchInput.value.trim().length > 0) {
+            clearIcon.style.display = "flex";
+        } else {
+            clearIcon.style.display = "none";
+        }
+    }
+
     // Clear all filters - smooth transition
     function clearFilters() {
         // Clear input values
@@ -334,15 +555,34 @@
 
     // Event listeners
     document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        
+        // Show/hide clear icon on page load
+        toggleClearIcon();
+        
+        // Clear search functionality (clear icon click)
+        document.getElementById('clearIcon').addEventListener('click', function() {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('search');
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        });
+        
         // Search on input with debounce
-        document.getElementById('searchInput').addEventListener('input', debounceSearch);
+        searchInput.addEventListener('input', function(e) {
+            // Toggle clear icon visibility
+            toggleClearIcon();
+            
+            // Debounce search
+            debounceSearch();
+        });
         
         // Filter on change
         document.getElementById('categoryFilter').addEventListener('change', applyFilters);
         document.getElementById('sortFilter').addEventListener('change', applyFilters);
         
         // Allow pressing Enter to search immediately
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 clearTimeout(searchTimeout);
@@ -352,8 +592,94 @@
     });
 
 
-    // Lazy loading for images
+    // Clean news content in listing
+    function cleanNewsContent() {
+        // Clean content in all news cards
+        const newsContentElements = document.querySelectorAll('.card-text, .news-item .card-text');
+        newsContentElements.forEach(function(el) {
+            if (el.textContent) {
+                let content = el.textContent;
+                
+                // Decode Unicode escape sequences
+                try {
+                    content = content.replace(/\\u([0-9a-fA-F]{4})/g, function(match, hex) {
+                        return String.fromCharCode(parseInt(hex, 16));
+                    });
+                } catch (e) {
+                    // Continue if decoding fails
+                }
+                
+                // Remove HTML tags and style attributes
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+                content = tempDiv.textContent || tempDiv.innerText || '';
+                
+                // Remove style attributes patterns
+                content = content.replace(/style\s*=\s*["'][^"']*["']/gi, '');
+                content = content.replace(/<[^>]+>/g, '');
+                
+                // Clean control characters and HTML entities
+                content = content.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+                content = content.replace(/&nbsp;/gi, ' ').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>');
+                content = content.replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#39;/gi, "'");
+                
+                // Normalize whitespace
+                content = content.replace(/[\s\t]+/g, ' ').trim();
+                
+                // Update the element only if content changed
+                if (el.textContent !== content) {
+                    el.textContent = content;
+                }
+            }
+        });
+    }
+
+    // Clean news content in listing
+    function cleanNewsContent() {
+        // Clean content in all news cards (both mobile and desktop)
+        const newsContentElements = document.querySelectorAll('.news-item .card-text');
+        newsContentElements.forEach(function(el) {
+            if (el.textContent) {
+                let content = el.textContent;
+                
+                // Decode Unicode escape sequences first
+                try {
+                    content = content.replace(/\\u([0-9a-fA-F]{4})/g, function(match, hex) {
+                        return String.fromCharCode(parseInt(hex, 16));
+                    });
+                } catch (e) {
+                    // Continue if decoding fails
+                }
+                
+                // Remove HTML tags and style attributes
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+                content = tempDiv.textContent || tempDiv.innerText || '';
+                
+                // Remove style attributes patterns that might remain
+                content = content.replace(/style\s*=\s*["'][^"']*["']/gi, '');
+                content = content.replace(/<[^>]+>/g, '');
+                
+                // Clean control characters and HTML entities
+                content = content.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+                content = content.replace(/&nbsp;/gi, ' ').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>');
+                content = content.replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#39;/gi, "'");
+                content = content.replace(/&apos;/gi, "'");
+                
+                // Normalize whitespace
+                content = content.replace(/[\s\t]+/g, ' ').trim();
+                
+                // Update the element
+                el.textContent = content;
+            }
+        });
+    }
+
+    // Lazy loading for images and clean content
     document.addEventListener('DOMContentLoaded', function() {
+        // Clean news content on page load
+        cleanNewsContent();
+        
     const lazyImages = document.querySelectorAll('img.lazy-load');
     
     if ('IntersectionObserver' in window) {
@@ -394,12 +720,24 @@
     // Load data from HTML attributes
     const newsElements = document.querySelectorAll('.news-data');
     newsElements.forEach(el => {
+        // Get image URL - try to decode if needed
+        let imageUrl = el.dataset.image || '';
+        // Ensure image URL is properly decoded
+        if (imageUrl) {
+            try {
+                imageUrl = decodeURIComponent(imageUrl);
+            } catch (e) {
+                // If decoding fails, use original
+                imageUrl = el.dataset.image;
+            }
+        }
+        
         newsData.push({
-            title: el.dataset.title,
-            content: el.dataset.content,
-            category: el.dataset.category,
-            date: el.dataset.date,
-            image: el.dataset.image
+            title: el.dataset.title || '',
+            content: el.dataset.content || '',
+            category: el.dataset.category || 'Umum',
+            date: el.dataset.date || 'N/A',
+            image: imageUrl
         });
     });
 
@@ -456,22 +794,121 @@
     // Modal functionality
     function showNewsModal(index) {
         const news = newsData[index];
+        if (!news) return;
         
         document.getElementById('modalTitle').textContent = news.title;
         document.getElementById('modalCategory').textContent = news.category;
         document.getElementById('modalDate').innerHTML = '<i class="bi bi-calendar"></i> ' + news.date;
-        document.getElementById('modalContent').textContent = news.content;
         
+        // Clean content from HTML tags and special characters
+        let cleanContent = news.content || '';
+        
+        // First, decode all Unicode escape sequences (\uXXXX) to their actual characters
+        try {
+            cleanContent = cleanContent.replace(/\\u([0-9a-fA-F]{4})/g, function(match, hex) {
+                return String.fromCharCode(parseInt(hex, 16));
+            });
+        } catch (e) {
+            // If decoding fails, continue with original string
+        }
+        
+        // Now that Unicode escapes are decoded, remove HTML tags and their attributes
+        // Remove style attributes and their content first
+        cleanContent = cleanContent.replace(/style\s*=\s*["'][^"']*["']/gi, '');
+        cleanContent = cleanContent.replace(/style\s*=\s*[^\s>]*/gi, '');
+        
+        // Remove all HTML tags
+        cleanContent = cleanContent.replace(/<[^>]+>/g, '');
+        
+        // Remove HTML tags but preserve text content (redundant but safe)
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cleanContent;
+        cleanContent = tempDiv.textContent || tempDiv.innerText || '';
+        
+        // Remove actual control characters
+        cleanContent = cleanContent.replace(/[\r\n]+/g, ' ');
+        cleanContent = cleanContent.replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ');
+        
+        // Remove HTML entities if any remain
+        cleanContent = cleanContent.replace(/&nbsp;/gi, ' ');
+        cleanContent = cleanContent.replace(/&lt;/gi, '<');
+        cleanContent = cleanContent.replace(/&gt;/gi, '>');
+        cleanContent = cleanContent.replace(/&amp;/gi, '&');
+        cleanContent = cleanContent.replace(/&quot;/gi, '"');
+        cleanContent = cleanContent.replace(/&#39;/gi, "'");
+        cleanContent = cleanContent.replace(/&apos;/gi, "'");
+        
+        // Replace multiple spaces/tabs with single space
+        cleanContent = cleanContent.replace(/[\s\t]+/g, ' ').trim();
+        
+        document.getElementById('modalContent').textContent = cleanContent;
+        
+        // Set image with error handling and try to get from thumbnail if available
         const imageContainer = document.getElementById('modalImageContainer');
-        if (news.image) {
+        const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="16" font-family="Arial"%3EImage not available%3C/text%3E%3C/svg%3E';
+        
+        // Clear container first
+        imageContainer.innerHTML = '';
+        
+        // Try to get image from already loaded thumbnail first
+        const thumbnailImages = document.querySelectorAll('.lazy-load.news-thumbnail-mobile, .lazy-load');
+        let thumbnailSrc = null;
+        if (thumbnailImages[index]) {
+            const thumbImg = thumbnailImages[index];
+            // Check if thumbnail has been loaded (not the placeholder)
+            if (thumbImg.src && !thumbImg.src.includes('data:image/svg+xml') && thumbImg.src !== placeholderImg) {
+                thumbnailSrc = thumbImg.src;
+            }
+            // Also check data-src if src is still placeholder
+            else if (thumbImg.dataset && thumbImg.dataset.src) {
+                thumbnailSrc = thumbImg.dataset.src;
+            }
+        }
+        
+        // Set image source - prefer thumbnail if available, otherwise use news.image
+        const imageToLoad = thumbnailSrc || news.image;
+        
+        if (imageToLoad && imageToLoad.trim() !== '') {
             const imgElement = document.createElement('img');
-            imgElement.src = news.image;
+            imgElement.src = imageToLoad;
+            imgElement.alt = news.title || 'News image';
+            imgElement.className = 'img-fluid rounded shadow';
+            imgElement.style.maxWidth = '100%';
+            imgElement.style.width = '100%';
+            imgElement.style.height = 'auto';
+            imgElement.style.maxHeight = '300px';
+            imgElement.style.objectFit = 'cover';
+            imgElement.style.display = 'block';
+            
             imgElement.onerror = function() {
-                imageContainer.innerHTML = '<div class="alert alert-warning">Image not available</div>';
+                // If image fails to load, try the other source or show placeholder
+                if (this.src === thumbnailSrc && news.image && news.image.trim() !== '' && news.image !== imageToLoad) {
+                    // Try the original news.image if thumbnail failed
+                    this.src = news.image;
+                } else {
+                    // Both failed, show placeholder
+                    imageContainer.innerHTML = `<div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <div class="text-center">
+                            <i class="bi bi-image" style="font-size: 2rem; color: #ccc;"></i>
+                            <p class="text-muted mt-2 mb-0 small">Image not available</p>
+                        </div>
+                    </div>`;
+                }
             };
+            
+            imgElement.onload = function() {
+                this.style.display = 'block';
+            };
+            
             imageContainer.appendChild(imgElement);
         } else {
-            imageContainer.innerHTML = '';
+            // If no image URL, show placeholder
+            imageContainer.innerHTML = `<div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                <div class="text-center">
+                    <i class="bi bi-image" style="font-size: 2rem; color: #ccc;"></i>
+                    <p class="text-muted mt-2 mb-0 small">Image not available</p>
+                </div>
+            </div>`;
         }
         
         const modal = new bootstrap.Modal(document.getElementById('newsModal'));
