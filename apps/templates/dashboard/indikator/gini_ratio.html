@@ -115,13 +115,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4 class="mb-0">Trend Gini Ratio Kota Surabaya dan Jawa Timur</h4>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadLineChartExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLineChartDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadLineChartPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadLineChartDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadLineChartExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadLineChartPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -131,19 +132,20 @@
     </div>
   </div>
 
-  <!-- Bar Chart for Recent Years -->
+  <!-- Line Chart for Recent Years -->
   <div class="row mb-4">
     <div class="col-md-12">
       <div class="dashboard-card" style="position: relative;">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4 class="mb-0">Perbandingan Gini Ratio 5 Tahun Terakhir</h4>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadBarChartExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadBarChartDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadBarChartPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadBarChartDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadBarChartExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadBarChartPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -619,7 +621,7 @@
       window.comparisonLineChartInstance.setOption(option);
     }
 
-    // Create comparison bar chart for recent years
+    // Create comparison line chart for recent years
     function createComparisonBarChart() {
       const chartDom = document.getElementById('comparisonBarChart');
       
@@ -645,7 +647,6 @@
       const option = {
         tooltip: {
           trigger: 'axis',
-          axisPointer: { type: 'shadow' },
           formatter: function(params) {
             let result = 'Tahun: ' + params[0].axisValue + '<br/>';
             params.forEach(function(item) {
@@ -679,6 +680,7 @@
         },
         xAxis: {
           type: 'category',
+          boundaryGap: false,
           data: labels,
           name: 'Tahun',
           nameLocation: 'middle',
@@ -713,9 +715,10 @@
         series: [
           {
             name: 'Kota Surabaya',
-            type: 'bar',
+            type: 'line',
+            smooth: 0.4,
             data: surabayaValues,
-            itemStyle: {
+            areaStyle: {
               color: {
                 type: 'linear',
                 x: 0,
@@ -723,20 +726,29 @@
                 x2: 0,
                 y2: 1,
                 colorStops: [
-                  { offset: 0, color: '#3b82f6' },
-                  { offset: 1, color: '#2563eb' }
+                  { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+                  { offset: 1, color: 'rgba(37, 99, 235, 0.1)' }
                 ]
-              },
-              borderColor: '#3b82f6',
-              borderWidth: 2,
-              borderRadius: [6, 6, 0, 0]
-            }
+              }
+            },
+            lineStyle: {
+              color: '#3b82f6',
+              width: 2
+            },
+            itemStyle: {
+              color: '#3b82f6',
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            symbol: 'circle',
+            symbolSize: 8
           },
           {
             name: 'Jawa Timur',
-            type: 'bar',
+            type: 'line',
+            smooth: 0.4,
             data: jatimValues,
-            itemStyle: {
+            areaStyle: {
               color: {
                 type: 'linear',
                 x: 0,
@@ -744,14 +756,22 @@
                 x2: 0,
                 y2: 1,
                 colorStops: [
-                  { offset: 0, color: '#ef4444' },
-                  { offset: 1, color: '#dc2626' }
+                  { offset: 0, color: 'rgba(239, 68, 68, 0.3)' },
+                  { offset: 1, color: 'rgba(220, 38, 38, 0.1)' }
                 ]
-              },
-              borderColor: '#ef4444',
-              borderWidth: 2,
-              borderRadius: [6, 6, 0, 0]
-            }
+              }
+            },
+            lineStyle: {
+              color: '#ef4444',
+              width: 2
+            },
+            itemStyle: {
+              color: '#ef4444',
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            symbol: 'circle',
+            symbolSize: 8
           }
         ]
       };
@@ -870,8 +890,36 @@
       link.click();
     }
 
-    document.getElementById('downloadLineChartExcel').addEventListener('click', exportLineChartToExcel);
-    document.getElementById('downloadLineChartPNG').addEventListener('click', exportLineChartToPNG);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadLineChartExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportLineChartToExcel, 'data line chart gini ratio');
+    });
+    document.getElementById('downloadLineChartPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportLineChartToPNG, 'grafik line chart gini ratio');
+    });
 
     // Export functions for Bar Chart
     function exportBarChartToExcel() {
@@ -895,21 +943,25 @@
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(exportData);
       ws['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 20 }];
-      XLSX.utils.book_append_sheet(wb, ws, 'Data Bar Chart');
+      XLSX.utils.book_append_sheet(wb, ws, 'Data Line Chart');
       const today = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `Gini_Ratio_BarChart_${today}.xlsx`);
+      XLSX.writeFile(wb, `Gini_Ratio_LineChart_5Tahun_${today}.xlsx`);
     }
 
     function exportBarChartToPNG() {
       const url = window.comparisonBarChartInstance.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' });
       const link = document.createElement('a');
-      link.download = `Gini_Ratio_BarChart_${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `Gini_Ratio_LineChart_5Tahun_${new Date().toISOString().split('T')[0]}.png`;
       link.href = url;
       link.click();
     }
 
-    document.getElementById('downloadBarChartExcel').addEventListener('click', exportBarChartToExcel);
-    document.getElementById('downloadBarChartPNG').addEventListener('click', exportBarChartToPNG);
+    document.getElementById('downloadBarChartExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportBarChartToExcel, 'data bar chart gini ratio');
+    });
+    document.getElementById('downloadBarChartPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportBarChartToPNG, 'grafik bar chart gini ratio');
+    });
   });
 </script>
 

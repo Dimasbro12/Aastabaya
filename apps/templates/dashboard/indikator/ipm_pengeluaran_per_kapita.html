@@ -243,7 +243,33 @@
       const today = new Date();
       XLSX.writeFile(wb, `Pengeluaran_Per_Kapita_Surabaya_vs_JawaTimur_${today.toISOString().split('T')[0]}.xlsx`);
     }
-    document.getElementById('downloadChartPengeluaran').addEventListener('click', exportToExcelPengeluaran);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadChartPengeluaran').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToExcelPengeluaran, 'data pengeluaran per kapita');
+    });
     
     function exportToPNGPengeluaran() {
       const url = comparisonChart.getDataURL({
@@ -257,7 +283,9 @@
       link.click();
     }
     
-    document.getElementById('downloadImagePengeluaran').addEventListener('click', exportToPNGPengeluaran);
+    document.getElementById('downloadImagePengeluaran').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToPNGPengeluaran, 'grafik pengeluaran per kapita');
+    });
   });
 </script>
 

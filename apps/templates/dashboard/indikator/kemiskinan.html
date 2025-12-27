@@ -163,7 +163,7 @@
       <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
         <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
           <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Garis Kemiskinan</h6>
-          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+          <h3 style="font-size: 24px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
             {% if latest_surabaya and latest_surabaya.garis_kemiskinan %}
               <span class="garis-kemiskinan-value">Rp {{ latest_surabaya.garis_kemiskinan|floatformat:0 }}</span>
             {% else %}
@@ -203,13 +203,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Tren Jumlah dan Persentase Penduduk Miskin</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadChart1Excel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadChart1Dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadChart1PNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadChart1Dropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadChart1Excel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadChart1PNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -223,13 +224,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Tren Garis Kemiskinan</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadChart2Excel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadChart2Dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadChart2PNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadChart2Dropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadChart2Excel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadChart2PNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -243,13 +245,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Tren Indeks Kedalaman (P1)</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadChart3Excel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadChart3Dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadChart3PNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadChart3Dropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadChart3Excel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadChart3PNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -263,13 +266,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Tren Indeks Keparahan (P2)</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadChart4Excel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadChart4Dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadChart4PNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadChart4Dropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadChart4Excel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadChart4PNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -285,13 +289,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Perbandingan Surabaya vs Jawa Timur</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadComparisonExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadComparisonPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="mb-3">
@@ -306,6 +311,30 @@
         <div class="chart-container-mobile">
         <div id="comparisonChart" style="width: 100%; height: 400px;"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Kemiskinan</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Kemiskinan</strong> adalah kondisi ketidakmampuan seseorang atau rumah tangga untuk memenuhi kebutuhan dasar hidupnya. 
+          Di Indonesia, kemiskinan diukur menggunakan pendekatan kebutuhan dasar (basic needs approach) yang mencakup:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          <li><strong>Garis Kemiskinan</strong>: Batas minimum pengeluaran per kapita per bulan untuk memenuhi kebutuhan dasar makanan dan non-makanan</li>
+          <li><strong>Jumlah Penduduk Miskin</strong>: Jumlah penduduk yang pengeluarannya berada di bawah garis kemiskinan</li>
+          <li><strong>Persentase Penduduk Miskin</strong>: Proporsi penduduk miskin terhadap total penduduk</li>
+          <li><strong>Indeks Kedalaman Kemiskinan (P1)</strong>: Mengukur rata-rata kesenjangan pengeluaran penduduk miskin terhadap garis kemiskinan</li>
+          <li><strong>Indeks Keparahan Kemiskinan (P2)</strong>: Mengukur ketimpangan pengeluaran di antara penduduk miskin</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
+          Semakin tinggi nilai P1 dan P2, semakin dalam dan parah kondisi kemiskinan di suatu wilayah. 
+          Indikator-indikator ini membantu pemerintah dalam merancang program pengentasan kemiskinan yang lebih tepat sasaran.
+        </p>
       </div>
     </div>
   </div>
@@ -1466,11 +1495,35 @@
       link.click();
     }
 
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
     document.getElementById('downloadChart1Excel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportChart1ToExcel, 'data grafik kemiskinan');
+      checkAuthBeforeDownload(exportChart1ToExcel, 'data chart kemiskinan 1');
     });
     document.getElementById('downloadChart1PNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportChart1ToPNG, 'grafik kemiskinan');
+      checkAuthBeforeDownload(exportChart1ToPNG, 'grafik chart kemiskinan 1');
     });
 
     // Export functions for Chart 2
@@ -1499,8 +1552,12 @@
       link.click();
     }
 
-    document.getElementById('downloadChart2Excel').addEventListener('click', exportChart2ToExcel);
-    document.getElementById('downloadChart2PNG').addEventListener('click', exportChart2ToPNG);
+    document.getElementById('downloadChart2Excel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportChart2ToExcel, 'data chart kemiskinan 2');
+    });
+    document.getElementById('downloadChart2PNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportChart2ToPNG, 'grafik chart kemiskinan 2');
+    });
 
     // Export functions for Chart 3
     function exportChart3ToExcel() {
@@ -1528,8 +1585,12 @@
       link.click();
     }
 
-    document.getElementById('downloadChart3Excel').addEventListener('click', exportChart3ToExcel);
-    document.getElementById('downloadChart3PNG').addEventListener('click', exportChart3ToPNG);
+    document.getElementById('downloadChart3Excel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportChart3ToExcel, 'data chart kemiskinan 3');
+    });
+    document.getElementById('downloadChart3PNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportChart3ToPNG, 'grafik chart kemiskinan 3');
+    });
 
     // Export functions for Chart 4
     function exportChart4ToExcel() {
@@ -1557,8 +1618,12 @@
       link.click();
     }
 
-    document.getElementById('downloadChart4Excel').addEventListener('click', exportChart4ToExcel);
-    document.getElementById('downloadChart4PNG').addEventListener('click', exportChart4ToPNG);
+    document.getElementById('downloadChart4Excel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportChart4ToExcel, 'data chart kemiskinan 4');
+    });
+    document.getElementById('downloadChart4PNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportChart4ToPNG, 'grafik chart kemiskinan 4');
+    });
 
     // Export functions for Comparison Chart
     function exportComparisonToExcel() {
@@ -1603,8 +1668,12 @@
       link.click();
     }
 
-    document.getElementById('downloadComparisonExcel').addEventListener('click', exportComparisonToExcel);
-    document.getElementById('downloadComparisonPNG').addEventListener('click', exportComparisonToPNG);
+    document.getElementById('downloadComparisonExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportComparisonToExcel, 'data perbandingan kemiskinan');
+    });
+    document.getElementById('downloadComparisonPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportComparisonToPNG, 'grafik perbandingan kemiskinan');
+    });
   });
 </script>
 

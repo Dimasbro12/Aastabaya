@@ -163,13 +163,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Tren Penduduk per Tahun (5 Tahun Terakhir)</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadTrendExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTrendDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadTrendPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadTrendDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadTrendExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadTrendPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -186,13 +187,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Distribusi Penduduk Berdasarkan Umur</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadDistributionExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadDistributionDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadDistributionPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadDistributionDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadDistributionExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadDistributionPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -206,13 +208,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Proporsi Penduduk per Kelompok Umur</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadPieExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadPiePNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadPieDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -228,13 +231,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Perbandingan Laki-laki dan Perempuan per Kelompok Umur</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadGenderComparisonExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadGenderComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadGenderComparisonPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadGenderComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadGenderComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadGenderComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -250,18 +254,42 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Piramida Penduduk (LK vs PR)</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadPyramidExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPyramidDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadPyramidPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadPyramidDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadPyramidExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadPyramidPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
         <div id="pyramidChart" style="width: 100%; height: 500px;"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Kependudukan</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Kependudukan</strong> adalah studi tentang jumlah, komposisi, dan distribusi penduduk dalam suatu wilayah. 
+          Data kependudukan mencakup berbagai aspek penting untuk perencanaan pembangunan:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          <li><strong>Total Penduduk</strong>: Jumlah keseluruhan penduduk yang tinggal di suatu wilayah pada waktu tertentu</li>
+          <li><strong>Komposisi Jenis Kelamin</strong>: Distribusi penduduk berdasarkan jenis kelamin (laki-laki dan perempuan)</li>
+          <li><strong>Rasio Jenis Kelamin</strong>: Perbandingan jumlah penduduk laki-laki terhadap perempuan (biasanya dinyatakan per 100 perempuan)</li>
+          <li><strong>Struktur Umur</strong>: Distribusi penduduk berdasarkan kelompok umur, yang dapat menggambarkan struktur piramida penduduk</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
+          Piramida penduduk menunjukkan struktur umur dan jenis kelamin penduduk, yang dapat mengindikasikan apakah suatu wilayah memiliki struktur penduduk muda (ekspansif), menua (konstriktif), atau stabil (stasioner). 
+          Data kependudukan sangat penting untuk perencanaan pembangunan, alokasi sumber daya, dan kebijakan sosial.
+        </p>
       </div>
     </div>
   </div>
@@ -1141,8 +1169,36 @@
       }
     }
 
-    document.getElementById('downloadTrendExcel').addEventListener('click', exportTrendToExcel);
-    document.getElementById('downloadTrendPNG').addEventListener('click', exportTrendToPNG);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadTrendExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTrendToExcel, 'data trend kependudukan');
+    });
+    document.getElementById('downloadTrendPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTrendToPNG, 'grafik trend kependudukan');
+    });
 
     // Export functions for Distribution Chart
     function exportDistributionToExcel() {
@@ -1171,8 +1227,12 @@
       }
     }
 
-    document.getElementById('downloadDistributionExcel').addEventListener('click', exportDistributionToExcel);
-    document.getElementById('downloadDistributionPNG').addEventListener('click', exportDistributionToPNG);
+    document.getElementById('downloadDistributionExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportDistributionToExcel, 'data distribusi kependudukan');
+    });
+    document.getElementById('downloadDistributionPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportDistributionToPNG, 'grafik distribusi kependudukan');
+    });
 
     // Export functions for Pie Chart
     function exportPieToExcel() {
@@ -1202,8 +1262,12 @@
       }
     }
 
-    document.getElementById('downloadPieExcel').addEventListener('click', exportPieToExcel);
-    document.getElementById('downloadPiePNG').addEventListener('click', exportPieToPNG);
+    document.getElementById('downloadPieExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportPieToExcel, 'data proporsi kependudukan');
+    });
+    document.getElementById('downloadPiePNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportPieToPNG, 'grafik proporsi kependudukan');
+    });
 
     // Export functions for Gender Comparison Chart
     function exportGenderComparisonToExcel() {
@@ -1236,8 +1300,12 @@
       }
     }
 
-    document.getElementById('downloadGenderComparisonExcel').addEventListener('click', exportGenderComparisonToExcel);
-    document.getElementById('downloadGenderComparisonPNG').addEventListener('click', exportGenderComparisonToPNG);
+    document.getElementById('downloadGenderComparisonExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportGenderComparisonToExcel, 'data perbandingan gender kependudukan');
+    });
+    document.getElementById('downloadGenderComparisonPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportGenderComparisonToPNG, 'grafik perbandingan gender kependudukan');
+    });
 
     // Export functions for Pyramid Chart
     function exportPyramidToExcel() {
@@ -1270,8 +1338,12 @@
       }
     }
 
-    document.getElementById('downloadPyramidExcel').addEventListener('click', exportPyramidToExcel);
-    document.getElementById('downloadPyramidPNG').addEventListener('click', exportPyramidToPNG);
+    document.getElementById('downloadPyramidExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportPyramidToExcel, 'data piramida kependudukan');
+    });
+    document.getElementById('downloadPyramidPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportPyramidToPNG, 'grafik piramida kependudukan');
+    });
   });
 </script>
 

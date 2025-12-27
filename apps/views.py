@@ -2,6 +2,7 @@ from multiprocessing import context
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.urls import reverse
 import requests
 from urllib.parse import urlparse
 import os
@@ -1158,6 +1159,40 @@ def dashboard(request):
     dataPublications = Publication.objects.order_by('-date')
     dataPublicationsLatest = Publication.objects.order_by('-date')[:5]
 
+    # Add bookmark_id to dataNewsLatest, dataInfographicLatest, and dataPublicationsLatest if user is authenticated
+    if request.user.is_authenticated:
+        from django.contrib.contenttypes.models import ContentType
+        
+        # Add bookmark_id to news
+        news_ct = ContentType.objects.get_for_model(News)
+        news_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=news_ct
+        ).values_list('object_id', 'id')
+        news_bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in news_bookmarks}
+        for news in dataNewsLatest:
+            news.bookmark_id = news_bookmark_dict.get(str(news.news_id), None)
+        
+        # Add bookmark_id to infographics
+        infographic_ct = ContentType.objects.get_for_model(Infographic)
+        infographic_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=infographic_ct
+        ).values_list('object_id', 'id')
+        infographic_bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in infographic_bookmarks}
+        for infographic in dataInfographicLatest:
+            infographic.bookmark_id = infographic_bookmark_dict.get(str(infographic.id), None)
+        
+        # Add bookmark_id to publications
+        publication_ct = ContentType.objects.get_for_model(Publication)
+        publication_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=publication_ct
+        ).values_list('object_id', 'id')
+        publication_bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in publication_bookmarks}
+        for publication in dataPublicationsLatest:
+            publication.bookmark_id = publication_bookmark_dict.get(str(publication.pk), None)
+
     # --- Bookmark ---
     bookmarked_items = []
     if request.user.is_authenticated:
@@ -1168,18 +1203,31 @@ def dashboard(request):
             item = bookmark.content_object
             if item:
                 item_url = '#' # URL default jika tidak ditemukan
-                # Tentukan URL berdasarkan tipe model
+                icon_class = 'bi bi-bookmark-fill'  # Default icon
+                content_type_label = ''  # Label untuk menampilkan asal bookmark
+                
+                # Tentukan URL, icon, dan label berdasarkan tipe model
                 if isinstance(item, News):
                     # Arahkan ke halaman daftar berita dengan anchor ke ID item
                     item_url = reverse('news') + f'#news-{item.pk}'
+                    icon_class = 'bi bi-file-earmark-text'  # Icon berita dari sidebar
+                    content_type_label = 'Berita'
                 elif isinstance(item, Infographic):
                     item_url = reverse('infographics') + f'#infographic-{item.pk}'
+                    icon_class = 'bi bi-bar-chart-line'  # Icon infografis dari sidebar
+                    content_type_label = 'Infografis'
                 elif isinstance(item, Publication):
                     item_url = reverse('publications') + f'#publication-{item.pk}'
+                    icon_class = 'icon-book'  # Icon publikasi dari sidebar
+                    content_type_label = 'Publikasi'
+                
+                # Format: "Judul (Asal)"
+                formatted_title = f"{item.title} ({content_type_label})" if content_type_label else item.title
                 
                 bookmarked_items.append({
-                    'title': item.title,
+                    'title': formatted_title,
                     'url': item_url,
+                    'icon_class': icon_class,
                 })
 
     # Helper function to get latest sub-category IPM data for carousel
@@ -2152,12 +2200,39 @@ def infographics(request):
     except EmptyPage:
         infographics_data = paginator.page(paginator.num_pages)
     
+    # Add bookmark_id to each infographic if user is authenticated
+    if request.user.is_authenticated:
+        from django.contrib.contenttypes.models import ContentType
+        infographic_ct = ContentType.objects.get_for_model(Infographic)
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=infographic_ct
+        ).values_list('object_id', 'id')
+        bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in user_bookmarks}
+        
+        # Add bookmark_id to each infographic object
+        for infographic in infographics_data:
+            infographic.bookmark_id = bookmark_dict.get(str(infographic.id), None)
+    
     # Get latest news for sidebar
     latest_news = News.objects.order_by('-release_date', '-news_id')[:5]
     news_count = News.objects.count()
     
     # Get all infographics for related items (exclude current page items)
     all_infographics = list(Infographic.objects.all().order_by('-created_at', '-id')[:20])
+    
+    # Add bookmark_id to all_infographics if user is authenticated
+    if request.user.is_authenticated:
+        from django.contrib.contenttypes.models import ContentType
+        infographic_ct = ContentType.objects.get_for_model(Infographic)
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=infographic_ct
+        ).values_list('object_id', 'id')
+        bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in user_bookmarks}
+        
+        for infographic in all_infographics:
+            infographic.bookmark_id = bookmark_dict.get(str(infographic.id), None)
     
     context = {
         'dataInpographic': infographics_data,
@@ -2367,6 +2442,21 @@ def publications(request):
     latest_news = News.objects.order_by('-release_date', '-news_id')[:5]
     news_count = News.objects.count()
     
+    # Add bookmark_id to each publication if user is authenticated
+    if request.user.is_authenticated:
+        from django.contrib.contenttypes.models import ContentType
+        publication_ct = ContentType.objects.get_for_model(Publication)
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=publication_ct
+        ).values_list('object_id', 'id')
+        bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in user_bookmarks}
+        
+        # Add bookmark_id to each publication object
+        # Note: Bookmark.object_id uses Publication.pk (primary key), not pub_id
+        for publication in publications_data:
+            publication.bookmark_id = bookmark_dict.get(str(publication.pk), None)
+    
     context = {
         'dataPublication': publications_data,
         'dataNews': latest_news,
@@ -2428,6 +2518,20 @@ def news(request):
         news_data = paginator.page(1)
     except EmptyPage:
         news_data = paginator.page(paginator.num_pages)
+    
+    # Add bookmark_id to each news if user is authenticated
+    if request.user.is_authenticated:
+        from django.contrib.contenttypes.models import ContentType
+        news_ct = ContentType.objects.get_for_model(News)
+        user_bookmarks = Bookmark.objects.filter(
+            user=request.user,
+            content_type=news_ct
+        ).values_list('object_id', 'id')
+        bookmark_dict = {str(obj_id): bookmark_id for obj_id, bookmark_id in user_bookmarks}
+        
+        # Add bookmark_id to each news object
+        for news in news_data:
+            news.bookmark_id = bookmark_dict.get(str(news.news_id), None)
     
     context = {
         'dataNewss': news_data,
@@ -2707,6 +2811,9 @@ def hotel_occupancy(request):
     # Get all data - we'll sort manually by month order
     all_occupancy_data = list(HotelOccupancyCombined.objects.all())
     
+    # Get yearly data for annual TPK chart
+    yearly_occupancy_data = list(HotelOccupancyYearly.objects.all().order_by('year'))
+    
     # Helper function to get month index for sorting
     def get_month_index(month_name):
         try:
@@ -2761,26 +2868,40 @@ def hotel_occupancy(request):
             except ValueError:
                 previous_month_data = None
             
-            # Calculate TPK change
-            if previous_month_data and latest_month_data.tpk and previous_month_data.tpk:
-                tpk_change = float(latest_month_data.tpk) - float(previous_month_data.tpk)
-                tpk_change_abs = abs(tpk_change)
+            # Calculate changes for all fields
+            changes = {}
+            if previous_month_data:
+                if latest_month_data.tpk and previous_month_data.tpk:
+                    changes['tpk'] = float(latest_month_data.tpk) - float(previous_month_data.tpk)
+                if latest_month_data.mktj and previous_month_data.mktj:
+                    changes['mktj'] = float(latest_month_data.mktj) - float(previous_month_data.mktj)
+                if latest_month_data.rlmtgab and previous_month_data.rlmtgab:
+                    changes['rlmtgab'] = float(latest_month_data.rlmtgab) - float(previous_month_data.rlmtgab)
+                if latest_month_data.gpr and previous_month_data.gpr:
+                    changes['gpr'] = float(latest_month_data.gpr) - float(previous_month_data.gpr)
             else:
-                tpk_change = None
-                tpk_change_abs = None
+                changes = {}
+            
+            # Keep backward compatibility
+            tpk_change = changes.get('tpk')
+            tpk_change_abs = abs(tpk_change) if tpk_change else None
         else:
             previous_month_data = None
+            changes = {}
             tpk_change = None
+            tpk_change_abs = None
     else:
         current_year_data = None
         previous_year_data = None
         latest_month_data = None
         previous_month_data = None
+        changes = {}
         tpk_change = None
         tpk_change_abs = None
     
     context = {
         'occupancy_data': occupancy_data,
+        'yearly_occupancy_data': yearly_occupancy_data,
         'distinct_years': distinct_years,
         'latest_data': latest_data,
         'current_year_data': current_year_data if 'current_year_data' in locals() else None,
@@ -2789,6 +2910,7 @@ def hotel_occupancy(request):
         'previous_month_data': previous_month_data if 'previous_month_data' in locals() else None,
         'tpk_change': tpk_change if 'tpk_change' in locals() else None,
         'tpk_change_abs': tpk_change_abs if 'tpk_change_abs' in locals() else None,
+        'changes': changes if 'changes' in locals() else {},
         'latest_year': latest_year,
         'page_title': 'Tingkat Hunian Hotel',
     }

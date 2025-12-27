@@ -357,8 +357,34 @@
       XLSX.writeFile(wb, filename);
     }
     
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
     // Add click event to download button
-    document.getElementById('downloadChartHLS').addEventListener('click', exportToExcel);
+    document.getElementById('downloadChartHLS').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToExcel, 'data HLS');
+    });
     
     // Export chart as PNG
     function exportToPNGHLS() {
@@ -373,7 +399,9 @@
       link.click();
     }
     
-    document.getElementById('downloadImageHLS').addEventListener('click', exportToPNGHLS);
+    document.getElementById('downloadImageHLS').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToPNGHLS, 'grafik HLS');
+    });
   });
 </script>
 

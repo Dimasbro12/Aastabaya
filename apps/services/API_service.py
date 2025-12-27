@@ -282,13 +282,16 @@ class HotelOccupancyCombinedService:
             # Convert data types
             df['Tahun'] = pd.to_numeric(df['Tahun'], errors='coerce')
             
-            # Convert numeric columns
+            # Convert numeric columns - same logic as IPM/GiniRatio
             numeric_cols = ['MKTJ', 'TPK', 'RLMTA', 'RLMTNUS', 'RLMTGAB', 'GPR']
             for col in numeric_cols:
                 if col in df.columns:
-                    # Remove dots (thousand separators) and replace comma with dot for decimal
-                    df[col] = df[col].astype(str).str.replace('.', '', regex=False)
+                    # Convert value to numeric, handling both comma and dot as decimal separator
+                    # Handle both formats: "12.34" (dot) and "12,34" (comma)
+                    df[col] = df[col].astype(str)
+                    # Replace comma with dot for decimal separator
                     df[col] = df[col].str.replace(',', '.', regex=False)
+                    # Convert to numeric
                     df[col] = pd.to_numeric(df[col], errors='coerce')
             
             # Hapus baris dengan tahun yang tidak valid
@@ -320,6 +323,16 @@ class HotelOccupancyCombinedService:
         created_count = 0
         updated_count = 0
 
+        # Helper function to round decimal values to 2 decimal places
+        def round_decimal(value, decimal_places=2):
+            """Round a value to specified decimal places, handling None and NaN."""
+            if value is None or pd.isna(value):
+                return None
+            try:
+                return round(float(value), decimal_places)
+            except (ValueError, TypeError):
+                return None
+
         for index, row in df.iterrows():
             year = int(row['Tahun']) if pd.notna(row['Tahun']) else None
             month = str(row['Bulan']).strip() if pd.notna(row['Bulan']) else None
@@ -330,12 +343,12 @@ class HotelOccupancyCombinedService:
             data_to_serialize = {
                 'year': year,
                 'month': month,
-                'mktj': row.get('MKTJ') if pd.notna(row.get('MKTJ')) else None,
-                'tpk': row.get('TPK') if pd.notna(row.get('TPK')) else None,
-                'rlmta': row.get('RLMTA') if pd.notna(row.get('RLMTA')) else None,
-                'rlmtnus': row.get('RLMTNUS') if pd.notna(row.get('RLMTNUS')) else None,
-                'rlmtgab': row.get('RLMTGAB') if pd.notna(row.get('RLMTGAB')) else None,
-                'gpr': row.get('GPR') if pd.notna(row.get('GPR')) else None,
+                'mktj': round_decimal(row.get('MKTJ'), 2),
+                'tpk': round_decimal(row.get('TPK'), 2),
+                'rlmta': round_decimal(row.get('RLMTA'), 2),
+                'rlmtnus': round_decimal(row.get('RLMTNUS'), 2),
+                'rlmtgab': round_decimal(row.get('RLMTGAB'), 2),
+                'gpr': round_decimal(row.get('GPR'), 2),
             }
 
             # Coba dapatkan instance yang ada terlebih dahulu
@@ -427,13 +440,16 @@ class HotelOccupancyYearlyService:
             # Convert data types
             df['Tahun'] = pd.to_numeric(df['Tahun'], errors='coerce')
             
-            # Convert numeric columns
+            # Convert numeric columns - same logic as IPM/GiniRatio
             numeric_cols = ['MKTJ', 'TPK', 'RLMTA', 'RLMTNUS', 'RLMTGAB', 'GPR']
             for col in numeric_cols:
                 if col in df.columns:
-                    # Remove dots (thousand separators) and replace comma with dot for decimal
-                    df[col] = df[col].astype(str).str.replace('.', '', regex=False)
+                    # Convert value to numeric, handling both comma and dot as decimal separator
+                    # Handle both formats: "12.34" (dot) and "12,34" (comma)
+                    df[col] = df[col].astype(str)
+                    # Replace comma with dot for decimal separator
                     df[col] = df[col].str.replace(',', '.', regex=False)
+                    # Convert to numeric
                     df[col] = pd.to_numeric(df[col], errors='coerce')
             
             # Hapus baris dengan tahun yang tidak valid
@@ -461,6 +477,16 @@ class HotelOccupancyYearlyService:
         created_count = 0
         updated_count = 0
 
+        # Helper function to round decimal values to 2 decimal places
+        def round_decimal(value, decimal_places=2):
+            """Round a value to specified decimal places, handling None and NaN."""
+            if value is None or pd.isna(value):
+                return None
+            try:
+                return round(float(value), decimal_places)
+            except (ValueError, TypeError):
+                return None
+
         for index, row in df.iterrows():
             year = int(row['Tahun']) if pd.notna(row['Tahun']) else None
 
@@ -469,12 +495,12 @@ class HotelOccupancyYearlyService:
 
             data_to_serialize = {
                 'year': year,
-                'mktj': row.get('MKTJ') if pd.notna(row.get('MKTJ')) else None,
-                'tpk': row.get('TPK') if pd.notna(row.get('TPK')) else None,
-                'rlmta': row.get('RLMTA') if pd.notna(row.get('RLMTA')) else None,
-                'rlmtnus': row.get('RLMTNUS') if pd.notna(row.get('RLMTNUS')) else None,
-                'rlmtgab': row.get('RLMTGAB') if pd.notna(row.get('RLMTGAB')) else None,
-                'gpr': row.get('GPR') if pd.notna(row.get('GPR')) else None,
+                'mktj': round_decimal(row.get('MKTJ'), 2),
+                'tpk': round_decimal(row.get('TPK'), 2),
+                'rlmta': round_decimal(row.get('RLMTA'), 2),
+                'rlmtnus': round_decimal(row.get('RLMTNUS'), 2),
+                'rlmtgab': round_decimal(row.get('RLMTGAB'), 2),
+                'gpr': round_decimal(row.get('GPR'), 2),
             }
 
             # Coba dapatkan instance yang ada terlebih dahulu

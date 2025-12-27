@@ -200,7 +200,33 @@
       const today = new Date();
       XLSX.writeFile(wb, `RLS_Surabaya_vs_JawaTimur_${today.toISOString().split('T')[0]}.xlsx`);
     }
-    document.getElementById('downloadChartRLS').addEventListener('click', exportToExcelRLS);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadChartRLS').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToExcelRLS, 'data RLS');
+    });
     
     function exportToPNGRLS() {
       const url = comparisonChart.getDataURL({
@@ -214,7 +240,9 @@
       link.click();
     }
     
-    document.getElementById('downloadImageRLS').addEventListener('click', exportToPNGRLS);
+    document.getElementById('downloadImageRLS').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToPNGRLS, 'grafik RLS');
+    });
   });
 </script>
 
