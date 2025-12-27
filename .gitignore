@@ -6,7 +6,6 @@ db.sqlite3
 
 # Credentials
 credentials.json
-credential_oauth2
 
 # Python
 __pycache__/
@@ -23,3 +22,4 @@ media/
 credentials.json
 .env
 
+credential_oauth2.json
