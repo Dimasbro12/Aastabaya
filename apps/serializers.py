@@ -46,7 +46,7 @@ class NewsSerializer(serializers.ModelSerializer):
 class InfographicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Infographic
-        fields = ('title','image','dl')
+        fields = ('id','title','image','dl')
         
 
 class PublicationSerializer(serializers.ModelSerializer):
@@ -89,6 +89,13 @@ class BookmarkSerializer(serializers.ModelSerializer):
         content_type_name = data.get('content_type_name').lower()
         object_id = data.get('object_id')
         
+        # Handle array case (shouldn't happen, but just in case)
+        if isinstance(object_id, list):
+            if len(object_id) > 0:
+                object_id = object_id[0]
+            else:
+                raise serializers.ValidationError("Object ID tidak boleh kosong.")
+        
         # Mendapatkan model dari ContentType
         try:
             content_type = ContentType.objects.get(app_label='apps', model=content_type_name)
@@ -97,11 +104,37 @@ class BookmarkSerializer(serializers.ModelSerializer):
 
         # Memeriksa apakah objek dengan ID tersebut ada
         model_class = content_type.model_class()
-        if not model_class.objects.filter(pk=object_id).exists():
-            raise serializers.ValidationError(f"Objek dengan ID {object_id} untuk model '{content_type_name}' tidak ditemukan.")
         
-        # Menyimpan instance ContentType untuk digunakan di method create
+        # For Publication model, pub_id is CharField, but Bookmark.object_id is PositiveIntegerField
+        # So we need to use the Publication's primary key (id) instead of pub_id
+        if content_type_name == 'publication':
+            # First, try to find publication by pub_id (string)
+            pub_obj = model_class.objects.filter(pub_id=str(object_id)).first()
+            if not pub_obj:
+                # If not found by pub_id, try by primary key (in case object_id is already the pk)
+                try:
+                    pub_obj = model_class.objects.filter(pk=int(object_id)).first()
+                except (ValueError, TypeError):
+                    pass
+            
+            if not pub_obj:
+                raise serializers.ValidationError(f"Publikasi dengan ID '{object_id}' tidak ditemukan.")
+            
+            # Use the primary key (id) for Bookmark.object_id
+            object_id = pub_obj.pk
+        else:
+            # For News and Infographic, convert to integer
+            try:
+                object_id = int(object_id)
+            except (ValueError, TypeError):
+                raise serializers.ValidationError(f"Object ID '{object_id}' tidak valid. Harus berupa angka.")
+            
+            if not model_class.objects.filter(pk=object_id).exists():
+                raise serializers.ValidationError(f"Objek dengan ID {object_id} untuk model '{content_type_name}' tidak ditemukan.")
+        
+        # Menyimpan instance ContentType dan object_id yang sudah dikonversi untuk digunakan di method create
         data['content_type'] = content_type
+        data['object_id'] = object_id
         return data
 
     def create(self, validated_data):

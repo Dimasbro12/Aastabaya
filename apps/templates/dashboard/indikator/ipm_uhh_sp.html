@@ -383,7 +383,33 @@
       XLSX.writeFile(wb, `UHH_SP_Surabaya_vs_JawaTimur_${dateStr}.xlsx`);
     }
     
-    document.getElementById('downloadChartUHHSP').addEventListener('click', exportToExcelUHHSP);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadChartUHHSP').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToExcelUHHSP, 'data UHH SP');
+    });
     
     function exportToPNGUHHSP() {
       const url = comparisonChart.getDataURL({
@@ -397,7 +423,9 @@
       link.click();
     }
     
-    document.getElementById('downloadImageUHHSP').addEventListener('click', exportToPNGUHHSP);
+    document.getElementById('downloadImageUHHSP').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToPNGUHHSP, 'grafik UHH SP');
+    });
   });
 </script>
 

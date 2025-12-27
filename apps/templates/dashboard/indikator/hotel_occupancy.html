@@ -9,152 +9,203 @@
   <h3 class="font-weight-bold mb-4">Tingkat Hunian Hotel</h3>
   
   <!-- Summary Cards -->
-<div class="row mb-4">
-  <!-- TPK Total Card -->
-  <div class="col-6 col-md-3 mb-3">
-    <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 16px; height: 100%; min-height: 140px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-      <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-        <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 11px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">TPK Total</h6>
-        <h2 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 auto 0;">
-          {% if latest_month_data and latest_month_data.tpk %}
-            {{ latest_month_data.tpk|floatformat:2 }}%
-          {% else %}
-            -
-          {% endif %}
-        </h2>
-        <small style="color: rgba(255, 255, 255, 0.8); font-size: 10px; margin-top: 8px;">
-          {% if latest_month_data %}
-            {% if latest_month_data.month == "Januari" %}Jan
-            {% elif latest_month_data.month == "Februari" %}Feb
-            {% elif latest_month_data.month == "Maret" %}Mar
-            {% elif latest_month_data.month == "April" %}Apr
-            {% elif latest_month_data.month == "Mei" %}Mei
-            {% elif latest_month_data.month == "Juni" %}Jun
-            {% elif latest_month_data.month == "Juli" %}Jul
-            {% elif latest_month_data.month == "Agustus" %}Ags
-            {% elif latest_month_data.month == "September" %}Sep
-            {% elif latest_month_data.month == "Oktober" %}Okt
-            {% elif latest_month_data.month == "November" %}Nov
-            {% elif latest_month_data.month == "Desember" %}Des
-            {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
-          {% endif %}
-        </small>
-      </div>
-      <div style="position: absolute; top: 12px; right: 12px; opacity: 0.15; z-index: 1;">
-        <i class="fas fa-bed" style="font-size: 48px;"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- MKTJ Card -->
-  <div class="col-6 col-md-3 mb-3">
-    <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 16px; height: 100%; min-height: 140px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-      <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-        <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 11px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">MKTJ</h6>
-        <h2 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 auto 0;">
-          {% if latest_month_data and latest_month_data.mktj %}
-            {{ latest_month_data.mktj|floatformat:0 }}
-          {% else %}
-            -
-          {% endif %}
-        </h2>
-        <small style="color: rgba(255, 255, 255, 0.8); font-size: 10px; margin-top: 8px;">
-          {% if latest_month_data %}
-            {% if latest_month_data.month == "Januari" %}Jan
-            {% elif latest_month_data.month == "Februari" %}Feb
-            {% elif latest_month_data.month == "Maret" %}Mar
-            {% elif latest_month_data.month == "April" %}Apr
-            {% elif latest_month_data.month == "Mei" %}Mei
-            {% elif latest_month_data.month == "Juni" %}Jun
-            {% elif latest_month_data.month == "Juli" %}Jul
-            {% elif latest_month_data.month == "Agustus" %}Ags
-            {% elif latest_month_data.month == "September" %}Sep
-            {% elif latest_month_data.month == "Oktober" %}Okt
-            {% elif latest_month_data.month == "November" %}Nov
-            {% elif latest_month_data.month == "Desember" %}Des
-            {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
-          {% endif %}
-        </small>
-      </div>
-      <div style="position: absolute; top: 12px; right: 12px; opacity: 0.15; z-index: 1;">
-        <i class="fas fa-users" style="font-size: 48px;"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- RLMT Gabungan Card -->
-  <div class="col-6 col-md-3 mb-3">
-    <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 16px; height: 100%; min-height: 140px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-      <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-        <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 11px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">RLMT Gabungan</h6>
-        <div style="margin: 0 0 auto 0;">
-          {% if latest_month_data and latest_month_data.rlmtgab %}
-            <h2 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">{{ latest_month_data.rlmtgab|floatformat:2 }}</h2>
-            <div style="font-size: 13px; font-weight: 500; margin-top: 2px; line-height: 1.2; color: rgba(255, 255, 255, 0.9);">malam</div>
-          {% else %}
-            <h2 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h2>
-          {% endif %}
+  <div class="row mb-4 summary-cards-row">
+    <!-- TPK Total Card -->
+    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
+      <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
+        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">TPK Total</h6>
+          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_month_data and latest_month_data.tpk %}
+              {{ latest_month_data.tpk|floatformat:2 }}%
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
+            {% if changes.tpk is not None %}
+              {% if changes.tpk > 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+{{ changes.tpk|floatformat:2 }}%</span>
+              {% elif changes.tpk < 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">{{ changes.tpk|floatformat:2 }}%</span>
+              {% else %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
+              {% endif %}
+              {% if previous_month_data %} <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari bulan sebelumnya</span>{% endif %}
+            {% endif %}
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;">
+            {% if latest_month_data %}
+              {% if latest_month_data.month == "Januari" %}Jan
+              {% elif latest_month_data.month == "Februari" %}Feb
+              {% elif latest_month_data.month == "Maret" %}Mar
+              {% elif latest_month_data.month == "April" %}Apr
+              {% elif latest_month_data.month == "Mei" %}Mei
+              {% elif latest_month_data.month == "Juni" %}Jun
+              {% elif latest_month_data.month == "Juli" %}Jul
+              {% elif latest_month_data.month == "Agustus" %}Ags
+              {% elif latest_month_data.month == "September" %}Sep
+              {% elif latest_month_data.month == "Oktober" %}Okt
+              {% elif latest_month_data.month == "November" %}Nov
+              {% elif latest_month_data.month == "Desember" %}Des
+              {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
         </div>
-        <small style="color: rgba(255, 255, 255, 0.8); font-size: 10px; margin-top: 8px;">
-          {% if latest_month_data %}
-            {% if latest_month_data.month == "Januari" %}Jan
-            {% elif latest_month_data.month == "Februari" %}Feb
-            {% elif latest_month_data.month == "Maret" %}Mar
-            {% elif latest_month_data.month == "April" %}Apr
-            {% elif latest_month_data.month == "Mei" %}Mei
-            {% elif latest_month_data.month == "Juni" %}Jun
-            {% elif latest_month_data.month == "Juli" %}Jul
-            {% elif latest_month_data.month == "Agustus" %}Ags
-            {% elif latest_month_data.month == "September" %}Sep
-            {% elif latest_month_data.month == "Oktober" %}Okt
-            {% elif latest_month_data.month == "November" %}Nov
-            {% elif latest_month_data.month == "Desember" %}Des
-            {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
-          {% endif %}
-        </small>
-      </div>
-      <div style="position: absolute; top: 12px; right: 12px; opacity: 0.15; z-index: 1;">
-        <i class="fas fa-moon" style="font-size: 48px;"></i>
       </div>
     </div>
-  </div>
 
-  <!-- GPR Card -->
-  <div class="col-6 col-md-3 mb-3">
-    <div class="summary-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);; color: white; border-radius: 12px; padding: 16px; height: 100%; min-height: 140px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-      <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-        <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 11px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">GPR</h6>
-        <h2 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 auto 0;">
-          {% if latest_month_data and latest_month_data.gpr %}
-            {{ latest_month_data.gpr|floatformat:2 }}
-          {% else %}
-            -
-          {% endif %}
-        </h2>
-        <small style="color: rgba(255, 255, 255, 0.8); font-size: 10px; margin-top: 8px;">
-          {% if latest_month_data %}
-            {% if latest_month_data.month == "Januari" %}Jan
-            {% elif latest_month_data.month == "Februari" %}Feb
-            {% elif latest_month_data.month == "Maret" %}Mar
-            {% elif latest_month_data.month == "April" %}Apr
-            {% elif latest_month_data.month == "Mei" %}Mei
-            {% elif latest_month_data.month == "Juni" %}Jun
-            {% elif latest_month_data.month == "Juli" %}Jul
-            {% elif latest_month_data.month == "Agustus" %}Ags
-            {% elif latest_month_data.month == "September" %}Sep
-            {% elif latest_month_data.month == "Oktober" %}Okt
-            {% elif latest_month_data.month == "November" %}Nov
-            {% elif latest_month_data.month == "Desember" %}Des
-            {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
-          {% endif %}
-        </small>
+    <!-- MKTJ Card -->
+    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
+      <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
+        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">MKTJ</h6>
+          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_month_data and latest_month_data.mktj %}
+              {{ latest_month_data.mktj|floatformat:0 }}
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
+            {% if changes.mktj is not None %}
+              {% if changes.mktj > 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+{{ changes.mktj|floatformat:0 }}</span>
+              {% elif changes.mktj < 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">{{ changes.mktj|floatformat:0 }}</span>
+              {% else %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
+              {% endif %}
+              {% if previous_month_data %} <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari bulan sebelumnya</span>{% endif %}
+            {% endif %}
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;">
+            {% if latest_month_data %}
+              {% if latest_month_data.month == "Januari" %}Jan
+              {% elif latest_month_data.month == "Februari" %}Feb
+              {% elif latest_month_data.month == "Maret" %}Mar
+              {% elif latest_month_data.month == "April" %}Apr
+              {% elif latest_month_data.month == "Mei" %}Mei
+              {% elif latest_month_data.month == "Juni" %}Jun
+              {% elif latest_month_data.month == "Juli" %}Jul
+              {% elif latest_month_data.month == "Agustus" %}Ags
+              {% elif latest_month_data.month == "September" %}Sep
+              {% elif latest_month_data.month == "Oktober" %}Okt
+              {% elif latest_month_data.month == "November" %}Nov
+              {% elif latest_month_data.month == "Desember" %}Des
+              {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
+        </div>
       </div>
-      <div style="position: absolute; top: 12px; right: 12px; opacity: 0.15; z-index: 1;">
-        <i class="fas fa-chart-line" style="font-size: 48px;"></i>
+    </div>
+
+    <!-- RLMT Gabungan Card -->
+    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
+      <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
+        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">RLMT Gabungan</h6>
+          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_month_data and latest_month_data.rlmtgab %}
+              {{ latest_month_data.rlmtgab|floatformat:2 }} <span style="font-size: 16px; font-weight: 400;">malam</span>
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
+            {% if changes.rlmtgab is not None %}
+              {% if changes.rlmtgab > 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+{{ changes.rlmtgab|floatformat:2 }}</span>
+              {% elif changes.rlmtgab < 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">{{ changes.rlmtgab|floatformat:2 }}</span>
+              {% else %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
+              {% endif %}
+              {% if previous_month_data %} <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari bulan sebelumnya</span>{% endif %}
+            {% endif %}
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;">
+            {% if latest_month_data %}
+              {% if latest_month_data.month == "Januari" %}Jan
+              {% elif latest_month_data.month == "Februari" %}Feb
+              {% elif latest_month_data.month == "Maret" %}Mar
+              {% elif latest_month_data.month == "April" %}Apr
+              {% elif latest_month_data.month == "Mei" %}Mei
+              {% elif latest_month_data.month == "Juni" %}Jun
+              {% elif latest_month_data.month == "Juli" %}Jul
+              {% elif latest_month_data.month == "Agustus" %}Ags
+              {% elif latest_month_data.month == "September" %}Sep
+              {% elif latest_month_data.month == "Oktober" %}Okt
+              {% elif latest_month_data.month == "November" %}Nov
+              {% elif latest_month_data.month == "Desember" %}Des
+              {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- GPR Card -->
+    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
+      <div class="summary-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
+        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">GPR</h6>
+          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            {% if latest_month_data and latest_month_data.gpr %}
+              {{ latest_month_data.gpr|floatformat:2 }}
+            {% else %}
+              -
+            {% endif %}
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
+            {% if changes.gpr is not None %}
+              {% if changes.gpr > 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+{{ changes.gpr|floatformat:2 }}</span>
+              {% elif changes.gpr < 0 %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">{{ changes.gpr|floatformat:2 }}</span>
+              {% else %}
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
+              {% endif %}
+              {% if previous_month_data %} <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari bulan sebelumnya</span>{% endif %}
+            {% endif %}
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;">
+            {% if latest_month_data %}
+              {% if latest_month_data.month == "Januari" %}Jan
+              {% elif latest_month_data.month == "Februari" %}Feb
+              {% elif latest_month_data.month == "Maret" %}Mar
+              {% elif latest_month_data.month == "April" %}Apr
+              {% elif latest_month_data.month == "Mei" %}Mei
+              {% elif latest_month_data.month == "Juni" %}Jun
+              {% elif latest_month_data.month == "Juli" %}Jul
+              {% elif latest_month_data.month == "Agustus" %}Ags
+              {% elif latest_month_data.month == "September" %}Sep
+              {% elif latest_month_data.month == "Oktober" %}Okt
+              {% elif latest_month_data.month == "November" %}Nov
+              {% elif latest_month_data.month == "Desember" %}Des
+              {% else %}{{ latest_month_data.month|slice:":3" }}{% endif %} {{ latest_month_data.year }}
+            {% else %}
+              Data tidak tersedia
+            {% endif %}
+          </small>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- Year Selector and Chart -->
   <div class="row">
@@ -173,12 +224,15 @@
                 {% endfor %}
               </ul>
             </div>
-            <button id="downloadTpkLineExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
-            </button>
-            <button id="downloadTpkLinePNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadTpkLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadTpkLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadTpkLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="chart-container-wrapper">
@@ -194,18 +248,69 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h4 class="mb-0" style="font-size: clamp(18px, 3vw, 24px);">Perbandingan TPK Beberapa Tahun</h4>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadTpkComparisonExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadTpkComparisonPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadTpkComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadTpkComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadTpkComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-wrapper">
           <div id="tpkComparisonChart" class="chart-container"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Annual TPK Chart -->
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h4 class="mb-0" style="font-size: clamp(18px, 3vw, 24px);">TPK Tahunan</h4>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkYearlyDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadTpkYearlyDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadTpkYearlyExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadTpkYearlyPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="chart-container-wrapper">
+          <div id="tpkYearlyChart" class="chart-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Tingkat Hunian Hotel</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Tingkat Hunian Hotel</strong> mengukur kinerja industri perhotelan melalui berbagai indikator yang mencerminkan tingkat pemanfaatan fasilitas hotel. 
+          Indikator-indikator utama meliputi:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          <li><strong>Tingkat Penghunian Kamar (TPK)</strong>: Persentase kamar yang terisi dari total kamar yang tersedia. 
+            TPK yang tinggi menunjukkan permintaan yang baik terhadap akomodasi hotel.</li>
+          <li><strong>Jumlah Malam Tamu (MKTJ)</strong>: Total jumlah malam yang dihabiskan oleh tamu di hotel. 
+            Indikator ini mencerminkan durasi rata-rata kunjungan tamu.</li>
+          <li><strong>Rata-rata Lama Menginap Tamu Gabungan (RLMT Gabungan)</strong>: Rata-rata jumlah malam menginap per tamu, 
+            yang mengindikasikan pola kunjungan wisatawan atau pelaku bisnis.</li>
+          <li><strong>Gross Profit Ratio (GPR)</strong>: Rasio keuntungan kotor terhadap pendapatan, 
+            yang menunjukkan efisiensi operasional hotel.</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
+          Indikator-indikator ini penting untuk menilai kesehatan sektor pariwisata dan perhotelan, 
+          serta dapat menjadi acuan dalam pengembangan kebijakan pariwisata dan investasi di sektor perhotelan.
+        </p>
       </div>
     </div>
   </div>
@@ -228,6 +333,52 @@
   .summary-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Mobile responsive: 3 baris x 2 kolom */
+  @media (max-width: 767.98px) {
+    .summary-card-mobile {
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+    }
+    
+    .summary-card-mobile .summary-card {
+      padding: 12px !important;
+      min-height: auto !important;
+      height: auto !important;
+    }
+    
+    .summary-card-mobile .summary-card[style*="min-height: 160px"] {
+      min-height: auto !important;
+    }
+    
+    .summary-card-mobile .summary-card > div[style*="position: relative"] {
+      margin: 0 !important;
+      padding: 0 !important;
+      flex: 0 0 auto !important;
+    }
+    
+    .summary-card-mobile .summary-card > div[style*="flex: 1"] {
+      flex: 0 0 auto !important;
+    }
+    
+    .summary-card-mobile h6 {
+      font-size: 11px !important;
+      margin-bottom: 6px !important;
+    }
+    
+    .summary-card-mobile h3 {
+      font-size: 20px !important;
+      margin-bottom: 4px !important;
+      line-height: 1.1 !important;
+    }
+    
+    .summary-card-mobile small {
+      font-size: 10px !important;
+      margin-top: 4px !important;
+    }
   }
 
   /* Chart container styles */
@@ -324,6 +475,60 @@
       margin: 0 !important;
     }
   }
+
+  /* Year Dropdown Menu - Scrollable */
+  #yearDropdownMenu {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 0.5rem;
+    /* Ensure scroll works on all browsers */
+    -webkit-overflow-scrolling: touch;
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  }
+
+  /* Custom scrollbar for year dropdown menu - Webkit browsers (Chrome, Safari, Edge) */
+  #yearDropdownMenu::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  #yearDropdownMenu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+    margin: 4px 0;
+  }
+
+  #yearDropdownMenu::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    min-height: 30px;
+  }
+
+  #yearDropdownMenu::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  /* Year dropdown item styling */
+  #yearDropdownMenu .dropdown-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  #yearDropdownMenu .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  #yearDropdownMenu .dropdown-item.active {
+    background-color: #0d6efd;
+    color: white;
+  }
+
+  #yearDropdownMenu .dropdown-item.active:hover {
+    background-color: #0b5ed7;
+  }
 </style>
 
 <script>
@@ -411,6 +616,7 @@
     // Initialize ECharts instances
     const lineChart = echarts.init(document.getElementById('tpkLineChart'));
     const comparisonChart = echarts.init(document.getElementById('tpkComparisonChart'));
+    const yearlyChart = echarts.init(document.getElementById('tpkYearlyChart'));
 
     // Filter data by selected year and sort by month order
     function getDataByYear(year) {
@@ -718,6 +924,136 @@
       comparisonChart.setOption(option);
     }
 
+    // Create annual TPK chart using yearly data
+    function createYearlyTpkChart() {
+      const yearlyData = [
+        {% for data in yearly_occupancy_data %}
+        {
+          year: {{ data.year }},
+          tpk: {{ data.tpk|default:"null" }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
+
+      // Filter out null values and sort by year
+      const validData = yearlyData.filter(d => d.tpk !== null && d.tpk !== undefined);
+      validData.sort((a, b) => a.year - b.year);
+
+      if (validData.length === 0) {
+        console.warn('No yearly TPK data available');
+        return;
+      }
+
+      const years = validData.map(d => d.year.toString());
+      const tpkValues = validData.map(d => parseFloat(d.tpk));
+
+      // Calculate min and max with 10% gap
+      const minValue = Math.min(...tpkValues);
+      const maxValue = Math.max(...tpkValues);
+      const range = maxValue - minValue;
+      const yMin = Math.max(0, minValue - (range * 0.1)); // 10% gap below
+      const yMax = maxValue + (range * 0.1); // 10% gap above
+
+      const option = {
+        title: {
+          show: false
+        },
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          borderColor: 'transparent',
+          textStyle: {
+            color: '#fff',
+            fontSize: 13
+          },
+          formatter: function(params) {
+            const param = params[0];
+            return `Tahun: ${param.name}<br/>TPK: ${param.value}%`;
+          }
+        },
+        legend: {
+          show: false
+        },
+        grid: {
+          left: 60,
+          right: 40,
+          bottom: 60,
+          top: 40,
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: years,
+          name: 'Tahun',
+          nameLocation: 'middle',
+          nameGap: 30,
+          nameTextStyle: {
+            fontSize: 13,
+            fontWeight: 'bold'
+          },
+          axisLabel: {
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Tingkat Penghunian Kamar (%)',
+          nameLocation: 'middle',
+          nameGap: 50,
+          nameTextStyle: {
+            fontSize: 13,
+            fontWeight: 'bold'
+          },
+          min: yMin,
+          max: yMax,
+          axisLabel: {
+            formatter: '{value}%',
+            fontSize: 12
+          },
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          }
+        },
+        series: [
+          {
+            name: 'TPK Tahunan',
+            type: 'line',
+            data: tpkValues,
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 10,
+            itemStyle: {
+              color: 'rgb(59, 130, 246)',
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            lineStyle: {
+              color: 'rgb(59, 130, 246)',
+              width: 3
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+                { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+              ])
+            },
+            emphasis: {
+              focus: 'series',
+              itemStyle: {
+                shadowBlur: 10,
+                shadowColor: 'rgba(59, 130, 246, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+
+      yearlyChart.setOption(option);
+    }
+
     // Year dropdown handler
     document.querySelectorAll('.year-option').forEach(option => {
       option.addEventListener('click', function(e) {
@@ -733,11 +1069,13 @@
       createLineChart(selectedYear);
     }
     createComparisonChart();
+    createYearlyTpkChart();
 
     // Handle window resize for responsive charts
     window.addEventListener('resize', function() {
       lineChart.resize();
       comparisonChart.resize();
+      yearlyChart.resize();
     });
 
     // Adjust grid for mobile
@@ -760,6 +1098,13 @@
         compOption.grid[0].right = 20;
         compOption.grid[0].bottom = 50;
         comparisonChart.setOption(compOption);
+
+        // Update yearly chart grid for mobile
+        const yearlyOption = yearlyChart.getOption();
+        yearlyOption.grid[0].left = 50;
+        yearlyOption.grid[0].right = 20;
+        yearlyOption.grid[0].bottom = 50;
+        yearlyChart.setOption(yearlyOption);
       }
     }
 
@@ -796,8 +1141,36 @@
       link.click();
     }
 
-    document.getElementById('downloadTpkLineExcel').addEventListener('click', exportTpkLineToExcel);
-    document.getElementById('downloadTpkLinePNG').addEventListener('click', exportTpkLineToPNG);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadTpkLineExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpkLineToExcel, 'data TPK line hotel');
+    });
+    document.getElementById('downloadTpkLinePNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpkLineToPNG, 'grafik TPK line hotel');
+    });
 
     // Export functions for TPK Comparison Chart
     function exportTpkComparisonToExcel() {
@@ -856,8 +1229,56 @@
       link.click();
     }
 
-    document.getElementById('downloadTpkComparisonExcel').addEventListener('click', exportTpkComparisonToExcel);
-    document.getElementById('downloadTpkComparisonPNG').addEventListener('click', exportTpkComparisonToPNG);
+    document.getElementById('downloadTpkComparisonExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpkComparisonToExcel, 'data perbandingan TPK hotel');
+    });
+    document.getElementById('downloadTpkComparisonPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpkComparisonToPNG, 'grafik perbandingan TPK hotel');
+    });
+
+    // Export functions for TPK Yearly Chart
+    function exportTpkYearlyToExcel() {
+      const yearlyData = [
+        {% for data in yearly_occupancy_data %}
+        {
+          year: {{ data.year }},
+          tpk: {{ data.tpk|default:"null" }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
+
+      const validData = yearlyData.filter(d => d.tpk !== null && d.tpk !== undefined);
+      validData.sort((a, b) => a.year - b.year);
+
+      const exportData = [];
+      exportData.push(['Tahun', 'TPK (%)']);
+      validData.forEach(data => {
+        const tpk = data.tpk !== null ? parseFloat(data.tpk).toFixed(2) : 'Data tidak tersedia';
+        exportData.push([data.year.toString(), tpk]);
+      });
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(exportData);
+      ws['!cols'] = [{ wch: 15 }, { wch: 15 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Data TPK Tahunan');
+      const today = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `Hotel_TPK_Tahunan_${today}.xlsx`);
+    }
+
+    function exportTpkYearlyToPNG() {
+      const url = yearlyChart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' });
+      const link = document.createElement('a');
+      link.download = `Hotel_TPK_Tahunan_${new Date().toISOString().split('T')[0]}.png`;
+      link.href = url;
+      link.click();
+    }
+
+    document.getElementById('downloadTpkYearlyExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpkYearlyToExcel, 'data TPK tahunan hotel');
+    });
+    document.getElementById('downloadTpkYearlyPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpkYearlyToPNG, 'grafik TPK tahunan hotel');
+    });
   });
 </script>
 {% endblock %}

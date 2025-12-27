@@ -76,6 +76,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">ADHB <span style="font-size: 14px; font-weight: normal; color: #666;">(Rupiah)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadAdhbDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadAdhbDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadAdhbExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadAdhbPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div id="adhbChart" style="width: 100%; height: 400px;"></div>
         </div>
@@ -86,6 +95,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">ADHK <span style="font-size: 14px; font-weight: normal; color: #666;">(Rupiah)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadAdhkDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadAdhkDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadAdhkExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadAdhkPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div id="adhkChart" style="width: 100%; height: 400px;"></div>
         </div>
@@ -98,6 +116,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">Distribusi - Komponen Pengeluaran <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadDistribusiDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadDistribusiDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadDistribusiExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadDistribusiPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px;">
             <label for="yearFilterDistribusi" style="margin: 0; font-weight: 500; color: #333; font-size: 12px; margin-bottom: 5px; display: block;">Tahun:</label>
@@ -117,6 +144,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">Laju PDRB <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadLajuDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadLajuExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadLajuPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div id="lajuChart" style="width: 100%; height: 400px;"></div>
         </div>
@@ -216,6 +252,15 @@
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <h5 class="mb-0" id="filteredChartTitle">Grafik PDRB Pengeluaran</h5>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadFilteredDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadFilteredDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadFilteredExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadFilteredPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
+              </div>
             </div>
             <div id="filteredChart" style="width: 100%; height: 400px;"></div>
           </div>
@@ -232,6 +277,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">ADHB Triwulanan <span style="font-size: 14px; font-weight: normal; color: #666;">(Rupiah)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadAdhbTriwulananDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadAdhbTriwulananDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadAdhbTriwulananExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadAdhbTriwulananPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px;">
             <label for="yearFilterADHBTriwulanan" style="margin: 0; font-weight: 500; color: #333; font-size: 12px; margin-bottom: 5px; display: block;">Tahun:</label>
@@ -251,6 +305,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">ADHK Triwulanan <span style="font-size: 14px; font-weight: normal; color: #666;">(Rupiah)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadAdhkTriwulananDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadAdhkTriwulananDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadAdhkTriwulananExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadAdhkTriwulananPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px;">
             <label for="yearFilterADHKTriwulanan" style="margin: 0; font-weight: 500; color: #333; font-size: 12px; margin-bottom: 5px; display: block;">Tahun:</label>
@@ -272,6 +335,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">Distribusi Triwulanan - Komponen Pengeluaran <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadDistribusiTriwulananDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadDistribusiTriwulananDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadDistribusiTriwulananExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadDistribusiTriwulananPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 150px;">
@@ -303,6 +375,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">Laju Q-to-Q <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuQtoQDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadLajuQtoQDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadLajuQtoQExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadLajuQtoQPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px;">
             <label for="yearFilterLajuQtoQ" style="margin: 0; font-weight: 500; color: #333; font-size: 12px; margin-bottom: 5px; display: block;">Tahun:</label>
@@ -324,6 +405,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">Laju Y-to-Y <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuYtoYDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadLajuYtoYDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadLajuYtoYExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadLajuYtoYPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px;">
             <label for="yearFilterLajuYtoY" style="margin: 0; font-weight: 500; color: #333; font-size: 12px; margin-bottom: 5px; display: block;">Tahun:</label>
@@ -343,6 +433,15 @@
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h5 class="mb-0">Laju C-to-C <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuCtoCDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadLajuCtoCDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadLajuCtoCExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadLajuCtoCPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
           <div style="margin-bottom: 10px;">
             <label for="yearFilterLajuCtoC" style="margin: 0; font-weight: 500; color: #333; font-size: 12px; margin-bottom: 5px; display: block;">Tahun:</label>
@@ -448,10 +547,48 @@
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <h5 class="mb-0" id="filteredChartTitleTriwulanan">Grafik PDRB Pengeluaran Triwulanan</h5>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadFilteredTriwulananDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadFilteredTriwulananDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadFilteredTriwulananExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadFilteredTriwulananPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
+              </div>
             </div>
             <div id="filteredChartTriwulanan" style="width: 100%; height: 400px;"></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang PDRB Pengeluaran</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Produk Domestik Regional Bruto (PDRB)</strong> adalah nilai tambah barang dan jasa yang dihasilkan oleh unit-unit produksi di suatu wilayah dalam jangka waktu tertentu. 
+          PDRB Pengeluaran mengelompokkan kegiatan ekonomi berdasarkan komponen pengeluaran (expenditure approach). 
+          Terdapat beberapa jenis PDRB yang dihitung:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          <li><strong>ADHB (Atas Dasar Harga Berlaku)</strong>: PDRB yang dihitung menggunakan harga yang berlaku pada tahun berjalan. 
+            Menggambarkan nilai tambah bruto berdasarkan harga pasar saat ini.</li>
+          <li><strong>ADHK (Atas Dasar Harga Konstan)</strong>: PDRB yang dihitung menggunakan harga pada tahun dasar tertentu. 
+            Digunakan untuk mengukur pertumbuhan ekonomi riil dengan menghilangkan pengaruh inflasi.</li>
+          <li><strong>Distribusi</strong>: Kontribusi masing-masing komponen pengeluaran terhadap total PDRB, dinyatakan dalam persen. 
+            Menunjukkan komponen pengeluaran mana yang dominan di suatu wilayah.</li>
+          <li><strong>Laju Pertumbuhan</strong>: Perubahan PDRB dari periode ke periode, dinyatakan dalam persen. 
+            Menggambarkan dinamika pertumbuhan ekonomi.</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
+          Komponen pengeluaran dalam PDRB meliputi: Pengeluaran Konsumsi Rumah Tangga, Pengeluaran Konsumsi LNPRT (Lembaga Non-Profit yang Melayani Rumah Tangga), 
+          Pengeluaran Konsumsi Pemerintah, Pembentukan Modal Tetap Bruto, Perubahan Inventori, dan Net Ekspor Barang dan Jasa. 
+          PDRB Pengeluaran memberikan gambaran tentang bagaimana output ekonomi digunakan atau dialokasikan dalam perekonomian regional.
+        </p>
       </div>
     </div>
   </div>

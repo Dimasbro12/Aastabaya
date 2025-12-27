@@ -53,18 +53,19 @@
         <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 px-3">
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">BPS Kota Surabaya</small>
-            {% if user.is_authenticated %}
             <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); showInfographicDetail({{ infographic.id }})">
               <i class="bi bi-eye"></i> Lihat
             </button>
             
+            {% if user.is_authenticated %}
             <button
+              type="button"
               class="btn btn-sm btn-outline-secondary bookmark-btn {% if infographic.bookmark_id %}bookmarked{% endif %}"
               style="min-width: 40px"
               data-content-type="infographic"
               data-object-id="{{ infographic.id }}"
               data-bookmark-id="{{ infographic.bookmark_id|default:'' }}"
-              onclick="toggleBookmark(this)"
+              onclick="event.stopPropagation(); toggleBookmark(this);"
               title="Bookmark"
             >
               <i class="bi {% if infographic.bookmark_id %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
@@ -177,7 +178,20 @@
               <img id="detailModalImage" src="" alt="" class="img-fluid" style="max-width: 100%; max-height: calc(100vh - 280px); width: auto; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
             </div>
             <div class="p-3 border-top bg-white" style="flex-shrink: 0;">
-              <div class="d-flex justify-content-end align-items-center">
+              <div class="d-flex justify-content-end align-items-center gap-2">
+                {% if user.is_authenticated %}
+                <button
+                  id="modalInfographicBookmarkBtn"
+                  class="btn btn-outline-secondary btn-sm bookmark-btn"
+                  data-content-type="infographic"
+                  data-object-id=""
+                  data-bookmark-id=""
+                  onclick="toggleBookmark(this)"
+                >
+                  <i class="bi bi-bookmark"></i>
+                  <span class="d-none d-sm-inline">Bookmark</span>
+                </button>
+                {% endif %}
                 <a id="detailModalDownload" href="" class="btn btn-primary btn-sm download-infographic-btn" data-infographic-id="" data-infographic-title="">
                   <i class="bi bi-download"></i> Unduh
                 </a>
@@ -188,7 +202,7 @@
           <!-- Related Infographics -->
           <div class="col-lg-4">
             <div class="p-3">
-              <h6 class="fw-bold mb-3">Terkait</h6>
+              <h6 class="fw-bold mb-3">Lainnya</h6>
               <div id="relatedInfographics" class="d-flex flex-column gap-3" style="overflow: visible; padding-right: 10px;">
                 <!-- Related items will be populated by JavaScript -->
               </div>
@@ -736,6 +750,40 @@
     detailModalDownloadBtn.setAttribute('data-infographic-title', infographic.title || 'infografis');
     detailModalDownloadBtn.href = infographic.download || '#';
 
+    // Update bookmark button in modal
+    {% if user.is_authenticated %}
+    const modalBookmarkBtn = document.getElementById("modalInfographicBookmarkBtn");
+    if (modalBookmarkBtn) {
+      // Find the infographic in the list to get bookmark_id
+      const infographicItem = document.querySelector(`[data-infographic-id="${infographicId}"]`);
+      if (infographicItem) {
+        const listBookmarkBtn = infographicItem.querySelector('.bookmark-btn');
+        if (listBookmarkBtn) {
+          const bookmarkId = listBookmarkBtn.dataset.bookmarkId || '';
+          const isBookmarked = listBookmarkBtn.classList.contains('bookmarked');
+          
+          modalBookmarkBtn.dataset.objectId = infographicId;
+          modalBookmarkBtn.dataset.bookmarkId = bookmarkId;
+          
+          const icon = modalBookmarkBtn.querySelector('i');
+          const text = modalBookmarkBtn.querySelector('span');
+          
+          if (isBookmarked) {
+            modalBookmarkBtn.classList.add('bookmarked');
+            icon.classList.remove('bi-bookmark');
+            icon.classList.add('bi-bookmark-fill');
+            if (text) text.textContent = 'Tersimpan';
+          } else {
+            modalBookmarkBtn.classList.remove('bookmarked');
+            icon.classList.remove('bi-bookmark-fill');
+            icon.classList.add('bi-bookmark');
+            if (text) text.textContent = 'Bookmark';
+          }
+        }
+      }
+    }
+    {% endif %}
+
     // Get related infographics (exclude current one, get 3 related)
     const related = allInfographicsData
       .filter(item => item.id !== infographicId)
@@ -798,31 +846,42 @@
   }
 
 
-  // Refresh data
-  async function refreshData() {
+  // Refresh data - Reload dari database
+  function refreshData() {
     const btn = event.target.closest("button");
     const originalContent = btn.innerHTML;
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Syncing...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memuat ulang...';
 
-    try {
-      const response = await fetch("{% url 'sync-bps-infographics' %}");
-      const data = await response.json();
-
-      if (data.status === "success") {
-        alert(`Sync berhasil! ${data.details.created} data baru, ${data.details.updated} data diperbarui.`);
-        location.reload();
-      } else {
-        alert("Sync gagal: " + data.message);
-      }
-    } catch (error) {
-      alert("Error saat sync data: " + error.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = originalContent;
-    }
+    // Reload halaman untuk mengambil data terbaru dari database
+    location.reload();
   }
+
+  // Fix all modal close buttons - Universal handler
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle all close buttons with data-bs-dismiss="modal"
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Find the closest modal
+        const modalElement = this.closest('.modal');
+        if (modalElement) {
+          // Use Bootstrap Modal API to close
+          const modalInstance = bootstrap.Modal.getInstance(modalElement);
+          if (modalInstance) {
+            modalInstance.hide();
+          } else {
+            // If no instance exists, create one and hide it
+            const modal = new bootstrap.Modal(modalElement);
+            modal.hide();
+          }
+        }
+      });
+    });
+  });
 
   // Handle download clicks with login check
   document.addEventListener('DOMContentLoaded', function() {
@@ -848,13 +907,27 @@
 
   // --- Bookmark Functionality ---
   async function toggleBookmark(button) {
+    // Prevent multiple clicks
+    if (button.disabled) return;
+    button.disabled = true;
+
     const contentType = button.dataset.contentType;
     const objectId = button.dataset.objectId;
     let bookmarkId = button.dataset.bookmarkId;
     const isBookmarked = button.classList.contains("bookmarked");
 
-    const icon = button.querySelector("i");
+    // Validate required data
+    if (!contentType || !objectId) {
+      console.error("Missing required data:", { contentType, objectId });
+      alert("Data tidak lengkap. Silakan refresh halaman.");
+      button.disabled = false;
+      return;
+    }
 
+    const icon = button.querySelector("i");
+    const text = button.querySelector("span");
+
+    // Dapatkan CSRF token dari cookie atau meta tag
     function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== "") {
@@ -869,37 +942,255 @@
       }
       return cookieValue;
     }
-    const csrftoken = getCookie("csrftoken");
-
-    if (isBookmarked) {
-      // --- Hapus Bookmark ---
-      const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
-        method: "DELETE",
-        headers: { "X-CSRFToken": csrftoken },
-      });
-
-      if (response.ok) {
-        button.classList.remove("bookmarked");
-        icon.classList.remove("bi-bookmark-fill");
-        icon.classList.add("bi-bookmark");
-        button.dataset.bookmarkId = "";
-      }
-    } else {
-      // --- Tambah Bookmark ---
-      const response = await fetch(`/api/bookmarks/add/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
-        body: JSON.stringify({ content_type_name: contentType, object_id: objectId }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        button.classList.add("bookmarked");
-        icon.classList.remove("bi-bookmark");
-        icon.classList.add("bi-bookmark-fill");
-        button.dataset.bookmarkId = data.id;
+    
+    // Try to get CSRF token from cookie first, then from meta tag
+    let csrftoken = getCookie("csrftoken");
+    if (!csrftoken) {
+      const metaTag = document.querySelector('meta[name="csrf-token"]');
+      if (metaTag) {
+        csrftoken = metaTag.getAttribute("content");
       }
     }
+
+    if (!csrftoken) {
+      console.error("CSRF token not found");
+      alert("Sesi Anda telah berakhir. Silakan refresh halaman dan login kembali.");
+      button.disabled = false;
+      return;
+    }
+
+    try {
+      if (isBookmarked) {
+        // --- Hapus Bookmark ---
+        if (!bookmarkId) {
+          console.error("Bookmark ID tidak ditemukan untuk penghapusan");
+          button.disabled = false;
+          return;
+        }
+
+        console.log("Deleting bookmark:", { bookmarkId, contentType, objectId });
+        const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+          method: "DELETE",
+          headers: { 
+            "X-CSRFToken": csrftoken,
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          credentials: "include",
+        });
+
+        console.log("Delete response status:", response.status);
+        
+        if (response.ok || response.status === 204) {
+          button.classList.remove("bookmarked");
+          icon.classList.remove("bi-bookmark-fill");
+          icon.classList.add("bi-bookmark");
+          button.dataset.bookmarkId = "";
+          if (text) text.textContent = "Bookmark";
+          
+          // Sync with other bookmark buttons for the same item
+          syncBookmarkButtons(contentType, objectId, false, "");
+          
+          // Broadcast change to other tabs
+          if (typeof broadcastBookmarkChange === 'function') {
+            broadcastBookmarkChange(contentType, objectId, false, "");
+          }
+          
+          // Update bookmark list in header
+          if (typeof updateBookmarkList === 'function') {
+            updateBookmarkList();
+          }
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          console.error("Delete bookmark error:", errorData);
+          alert("Gagal menghapus bookmark: " + (errorData.error || errorData.detail || "Terjadi kesalahan"));
+        }
+      } else {
+        // --- Tambah Bookmark ---
+        const requestBody = { 
+          content_type_name: contentType, 
+          object_id: objectId 
+        };
+        
+        console.log("Adding bookmark:", requestBody);
+        
+        const response = await fetch(`/api/bookmarks/add/`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json", 
+            "X-CSRFToken": csrftoken,
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        });
+
+        console.log("Add response status:", response.status);
+        const responseData = await response.json().catch(() => ({}));
+        console.log("Add response data:", responseData);
+
+        if (response.ok) {
+          button.classList.add("bookmarked");
+          icon.classList.remove("bi-bookmark");
+          icon.classList.add("bi-bookmark-fill");
+          button.dataset.bookmarkId = String(responseData.id);
+          if (text) text.textContent = "Tersimpan";
+          
+          // Sync with other bookmark buttons for the same item
+          syncBookmarkButtons(contentType, objectId, true, String(responseData.id));
+          
+          // Broadcast change to other tabs
+          if (typeof broadcastBookmarkChange === 'function') {
+            broadcastBookmarkChange(contentType, objectId, true, String(responseData.id));
+          }
+          
+          // Update bookmark list in header
+          if (typeof updateBookmarkList === 'function') {
+            updateBookmarkList();
+          }
+        } else {
+          if (response.status === 409) {
+            // Bookmark already exists, fetch and update UI
+            try {
+              const existingBookmarks = await fetch(`/api/bookmarks/`, {
+                headers: { 
+                  "X-CSRFToken": csrftoken,
+                  "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "include",
+              }).then(r => r.json()).catch(() => []);
+              
+              const bookmark = existingBookmarks.find(b => 
+                b.content_type_model === contentType && 
+                String(b.object_id) === String(objectId)
+              );
+              
+              if (bookmark) {
+                button.classList.add("bookmarked");
+                icon.classList.remove("bi-bookmark");
+                icon.classList.add("bi-bookmark-fill");
+              button.dataset.bookmarkId = String(bookmark.id);
+              if (text) text.textContent = "Tersimpan";
+              syncBookmarkButtons(contentType, objectId, true, String(bookmark.id));
+              
+              // Broadcast change to other tabs
+              if (typeof broadcastBookmarkChange === 'function') {
+                broadcastBookmarkChange(contentType, objectId, true, String(bookmark.id));
+              }
+              
+              // Update bookmark list in header
+              if (typeof updateBookmarkList === 'function') {
+                updateBookmarkList();
+              }
+            } else {
+              alert("Bookmark sudah ada tetapi tidak dapat ditemukan.");
+            }
+          } catch (fetchError) {
+            console.error("Error fetching existing bookmarks:", fetchError);
+            alert("Bookmark sudah ada di daftar Anda.");
+          }
+        } else {
+            const errorMsg = responseData.error || responseData.detail || responseData.non_field_errors || "Terjadi kesalahan";
+            console.error("Add bookmark error:", responseData);
+            alert("Gagal menambahkan bookmark: " + (Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg));
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      alert("Terjadi kesalahan: " + error.message);
+    } finally {
+      button.disabled = false;
+    }
   }
+
+  // Sync bookmark state across all buttons for the same item
+  function syncBookmarkButtons(contentType, objectId, isBookmarked, bookmarkId) {
+    // Find all bookmark buttons for this item
+    const allButtons = document.querySelectorAll(`.bookmark-btn[data-content-type="${contentType}"][data-object-id="${objectId}"]`);
+    
+    allButtons.forEach(btn => {
+      const icon = btn.querySelector("i");
+      const text = btn.querySelector("span");
+      
+      if (isBookmarked) {
+        btn.classList.add("bookmarked");
+        icon.classList.remove("bi-bookmark");
+        icon.classList.add("bi-bookmark-fill");
+        btn.dataset.bookmarkId = bookmarkId;
+        if (text) text.textContent = "Tersimpan";
+      } else {
+        btn.classList.remove("bookmarked");
+        icon.classList.remove("bi-bookmark-fill");
+        icon.classList.add("bi-bookmark");
+        btn.dataset.bookmarkId = "";
+        if (text) text.textContent = "Bookmark";
+      }
+    });
+  }
+
+  // Cross-tab bookmark synchronization using localStorage
+  function broadcastBookmarkChange(contentType, objectId, isBookmarked, bookmarkId) {
+    const bookmarkData = {
+      contentType,
+      objectId: String(objectId),
+      isBookmarked,
+      bookmarkId: String(bookmarkId || ''),
+      timestamp: Date.now()
+    };
+    
+    console.log('Broadcasting bookmark change:', bookmarkData);
+    
+    // Save to localStorage (triggers storage event in other tabs)
+    localStorage.setItem('bookmark_change', JSON.stringify(bookmarkData));
+    
+    // Dispatch custom event for immediate same-tab sync
+    window.dispatchEvent(new CustomEvent('bookmarkChanged', {
+      detail: bookmarkData
+    }));
+  }
+
+  // Listen for bookmark changes from other tabs
+  {% if user.is_authenticated %}
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'bookmark_change' && e.newValue) {
+      try {
+        const bookmarkData = JSON.parse(e.newValue);
+        const { contentType, objectId, isBookmarked, bookmarkId } = bookmarkData;
+        
+        console.log('Bookmark change from storage:', bookmarkData);
+        
+        // Sync bookmark buttons in current tab
+        if (typeof syncBookmarkButtons === 'function') {
+          syncBookmarkButtons(contentType, objectId, isBookmarked, bookmarkId);
+        }
+        
+        // Update bookmark list in header
+        if (typeof updateBookmarkList === 'function') {
+          updateBookmarkList();
+        }
+      } catch (error) {
+        console.error('Error parsing bookmark change:', error);
+      }
+    }
+  });
+
+  // Listen for custom events (same-tab immediate sync)
+  window.addEventListener('bookmarkChanged', function(e) {
+    const { contentType, objectId, isBookmarked, bookmarkId } = e.detail;
+    console.log('Bookmark change from custom event:', e.detail);
+    
+    if (typeof syncBookmarkButtons === 'function') {
+      syncBookmarkButtons(contentType, objectId, isBookmarked, bookmarkId);
+    }
+    
+    if (typeof updateBookmarkList === 'function') {
+      updateBookmarkList();
+    }
+  });
+  {% endif %}
+
+  // Make functions available globally
+  window.broadcastBookmarkChange = broadcastBookmarkChange;
+  window.syncBookmarkButtons = syncBookmarkButtons;
 </script>
 {% endblock %}

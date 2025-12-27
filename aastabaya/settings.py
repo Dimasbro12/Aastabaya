@@ -81,6 +81,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    # Django APScheduler untuk scheduled tasks
+    'django_apscheduler',
     ]
 
 MIDDLEWARE = [
@@ -149,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jakarta'  # Timezone Indonesia (WIB)
 
 USE_I18N = True
 
@@ -174,6 +176,7 @@ AUTH_USER_MODEL = 'apps.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
@@ -224,3 +227,11 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+# Django APScheduler Configuration
+# Format untuk menyimpan job execution history (opsional, untuk monitoring)
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
+
+# Maximum age untuk job execution history (dalam hari)
+# Set ke None untuk tidak membatasi
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds

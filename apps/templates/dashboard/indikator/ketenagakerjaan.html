@@ -158,18 +158,19 @@
   </div>
 
   <!-- Comparison Chart -->
-  <div class="row mb-4">
+  <div class="row mb-4 comparison-chart-row">
     <div class="col-md-12">
-      <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <div class="dashboard-card comparison-chart-card" style="position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;" class="chart-header">
           <h5 class="mb-0">Perbandingan TPT dan TPAK dari Tahun ke Tahun</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadComparisonExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadComparisonPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -327,13 +328,14 @@
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <h5 class="mb-0">Distribusi TPT Berdasarkan Gender ({{ tpt_latest_data.year|default:"-" }})</h5>
-              <div style="display: flex; gap: 8px;">
-                <button id="downloadTptPieExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-                  <i class="fas fa-file-excel"></i> <span>Excel</span>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
                 </button>
-                <button id="downloadTptPiePNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-                  <i class="fas fa-image"></i> <span>PNG</span>
-                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadTptPieDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadTptPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadTptPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -347,13 +349,14 @@
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <h5 class="mb-0">Tren TPT dari Tahun ke Tahun</h5>
-              <div style="display: flex; gap: 8px;">
-                <button id="downloadTptLineExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-                  <i class="fas fa-file-excel"></i> <span>Excel</span>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
                 </button>
-                <button id="downloadTptLinePNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-                  <i class="fas fa-image"></i> <span>PNG</span>
-                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadTptLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadTptLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadTptLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -496,13 +499,14 @@
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <h5 class="mb-0">Distribusi TPAK Berdasarkan Gender ({{ tpak_latest_data.year|default:"-" }})</h5>
-              <div style="display: flex; gap: 8px;">
-                <button id="downloadTpakPieExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-                  <i class="fas fa-file-excel"></i> <span>Excel</span>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
                 </button>
-                <button id="downloadTpakPiePNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-                  <i class="fas fa-image"></i> <span>PNG</span>
-                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadTpakPieDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadTpakPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadTpakPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -516,13 +520,14 @@
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <h5 class="mb-0">Tren TPAK dari Tahun ke Tahun</h5>
-              <div style="display: flex; gap: 8px;">
-                <button id="downloadTpakLineExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-                  <i class="fas fa-file-excel"></i> <span>Excel</span>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
                 </button>
-                <button id="downloadTpakLinePNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-                  <i class="fas fa-image"></i> <span>PNG</span>
-                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadTpakLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadTpakLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadTpakLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -530,6 +535,30 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Ketenagakerjaan</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Ketenagakerjaan</strong> mencakup berbagai indikator yang mengukur kondisi pasar tenaga kerja dan partisipasi penduduk dalam kegiatan ekonomi. 
+          Dua indikator utama yang digunakan adalah:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          <li><strong>Tingkat Pengangguran Terbuka (TPT)</strong>: Persentase angkatan kerja yang tidak bekerja dan sedang mencari pekerjaan terhadap total angkatan kerja. 
+            TPT yang rendah menunjukkan kondisi pasar tenaga kerja yang baik.</li>
+          <li><strong>Tingkat Partisipasi Angkatan Kerja (TPAK)</strong>: Persentase angkatan kerja (bekerja dan menganggur) terhadap penduduk usia kerja (15 tahun ke atas). 
+            TPAK yang tinggi menunjukkan tingkat partisipasi ekonomi yang tinggi.</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
+          Angkatan kerja terdiri dari penduduk yang bekerja dan yang menganggur. 
+          Penduduk yang bekerja adalah mereka yang melakukan pekerjaan dengan maksud memperoleh atau membantu memperoleh pendapatan atau keuntungan. 
+          Data ketenagakerjaan penting untuk memahami kondisi ekonomi dan merancang kebijakan penciptaan lapangan kerja.
+        </p>
       </div>
     </div>
   </div>
@@ -664,6 +693,8 @@
     -webkit-overflow-scrolling: touch;
     width: 100%;
     position: relative;
+    margin: 0;
+    padding: 0;
   }
 
   @media (max-width: 767.98px) {
@@ -671,22 +702,35 @@
       width: 100%;
       overflow-x: auto;
       overflow-y: visible;
+      margin: 0;
+      padding: 0;
+      -webkit-overflow-scrolling: touch;
     }
     
     .chart-container-mobile > div {
       min-width: 400px;
       width: 100%;
+      margin: 0;
+      padding: 0;
     }
     
     .dashboard-card {
       overflow: hidden;
-      padding: 15px;
+      padding: 12px 10px;
+      margin-bottom: 15px;
     }
     
     .dashboard-card h5 {
       white-space: normal;
       word-wrap: break-word;
       overflow: visible;
+      margin-bottom: 10px !important;
+      font-size: 14px;
+    }
+    
+    /* Reduce spacing in header with download button */
+    .dashboard-card > div[style*="display: flex"][style*="justify-content: space-between"] {
+      margin-bottom: 10px !important;
     }
     
     /* Download button responsive */
@@ -700,6 +744,52 @@
     }
     
     .dashboard-card button[id*="download"] span {
+      display: none;
+    }
+    
+    /* Reduce chart height on mobile to prevent excessive scrolling */
+    .chart-container-mobile > div[id*="Chart"] {
+      height: 350px !important;
+    }
+    
+    /* Specific styling for comparison chart */
+    .comparison-chart-row {
+      margin-bottom: 15px !important;
+    }
+    
+    .comparison-chart-card {
+      margin-bottom: 15px !important;
+    }
+    
+    .comparison-chart-card .chart-header {
+      margin-bottom: 10px !important;
+    }
+    
+    /* Remove extra margins from container */
+    .container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    /* Reduce row margins */
+    .row {
+      margin-left: -5px;
+      margin-right: -5px;
+    }
+    
+    .row > [class*="col-"] {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    
+    /* Remove extra padding from mb-4 class on mobile */
+    .mb-4 {
+      margin-bottom: 1rem !important;
+    }
+    
+    /* Ensure no extra space after charts */
+    .chart-container-mobile:after {
+      content: '';
       display: none;
     }
   }
@@ -765,6 +855,11 @@
 
     // Check if mobile
     const isMobile = window.innerWidth <= 767.98;
+    
+    // Adjust chart height for mobile
+    if (isMobile && comparisonChartDom) {
+      comparisonChartDom.style.height = '350px';
+    }
 
     // TPT Pie Chart
     const tptPieChartDom = document.getElementById('tptPieChart');
@@ -862,12 +957,12 @@
       tptLineChart = echarts.init(tptLineChartDom);
     }
     
-    // Get only last 10 years for TPT
-    const tptLast10Years = tptData.slice(-10);
-    const tptYears = tptLast10Years.map(d => d.year.toString());
-    const tptTotalValues = tptLast10Years.map(d => d.total !== null ? d.total : null);
-    const tptLakiLakiValues = tptLast10Years.map(d => d.laki_laki !== null ? d.laki_laki : null);
-    const tptPerempuanValues = tptLast10Years.map(d => d.perempuan !== null ? d.perempuan : null);
+    // Filter TPT data starting from 2017
+    const tptFilteredData = tptData.filter(d => d.year >= 2017);
+    const tptYears = tptFilteredData.map(d => d.year.toString());
+    const tptTotalValues = tptFilteredData.map(d => d.total !== null ? d.total : null);
+    const tptLakiLakiValues = tptFilteredData.map(d => d.laki_laki !== null ? d.laki_laki : null);
+    const tptPerempuanValues = tptFilteredData.map(d => d.perempuan !== null ? d.perempuan : null);
 
     if (tptLineChart) {
     tptLineChart.setOption({
@@ -1065,12 +1160,12 @@
       tpakLineChart = echarts.init(tpakLineChartDom);
     }
     
-    // Get only last 10 years for TPAK
-    const tpakLast10Years = tpakData.slice(-10);
-    const tpakYears = tpakLast10Years.map(d => d.year.toString());
-    const tpakTotalValues = tpakLast10Years.map(d => d.total !== null ? d.total : null);
-    const tpakLakiLakiValues = tpakLast10Years.map(d => d.laki_laki !== null ? d.laki_laki : null);
-    const tpakPerempuanValues = tpakLast10Years.map(d => d.perempuan !== null ? d.perempuan : null);
+    // Filter TPAK data starting from 2017
+    const tpakFilteredData = tpakData.filter(d => d.year >= 2017);
+    const tpakYears = tpakFilteredData.map(d => d.year.toString());
+    const tpakTotalValues = tpakFilteredData.map(d => d.total !== null ? d.total : null);
+    const tpakLakiLakiValues = tpakFilteredData.map(d => d.laki_laki !== null ? d.laki_laki : null);
+    const tpakPerempuanValues = tpakFilteredData.map(d => d.perempuan !== null ? d.perempuan : null);
 
     if (tpakLineChart) {
     tpakLineChart.setOption({
@@ -1183,18 +1278,18 @@
     const allYearsSet = new Set([...tptData.map(d => d.year), ...tpakData.map(d => d.year)]);
     const allYears = Array.from(allYearsSet).sort((a, b) => a - b);
     
-    // Get only last 10 years
-    const last10Years = allYears.slice(-10);
-    const years = last10Years.map(y => y.toString());
+    // Filter years starting from 2017
+    const filteredYears = allYears.filter(year => year >= 2017);
+    const years = filteredYears.map(y => y.toString());
     
-    // Get TPT total values for last 10 years
-    const tptComparisonValues = last10Years.map(year => {
+    // Get TPT total values for years from 2017
+    const tptComparisonValues = filteredYears.map(year => {
       const data = tptData.find(d => d.year === year);
       return data && data.total !== null ? data.total : null;
     });
     
-    // Get TPAK total values for last 10 years
-    const tpakComparisonValues = last10Years.map(year => {
+    // Get TPAK total values for years from 2017
+    const tpakComparisonValues = filteredYears.map(year => {
       const data = tpakData.find(d => d.year === year);
       return data && data.total !== null ? data.total : null;
     });
@@ -1234,10 +1329,10 @@
         itemGap: isMobile ? 10 : 20
       },
       grid: {
-        left: isMobile ? '15%' : '12%',
-        right: isMobile ? '8%' : '4%',
-        bottom: isMobile ? '12%' : '10%',
-        top: isMobile ? '12%' : '20%',
+        left: isMobile ? '12%' : '12%',
+        right: isMobile ? '5%' : '4%',
+        bottom: isMobile ? '8%' : '10%',
+        top: isMobile ? '8%' : '20%',
         containLabel: false
       },
       xAxis: {
@@ -1510,12 +1605,38 @@
       });
     }
 
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
     // Export functions for Comparison Chart
     function exportComparisonToExcel() {
       const allYears = [...new Set([...tptData.map(d => d.year), ...tpakData.map(d => d.year)])].sort();
+      // Filter years starting from 2017
+      const filteredYears = allYears.filter(year => year >= 2017);
       const exportData = [];
       exportData.push(['Tahun', 'TPT (%)', 'TPAK (%)']);
-      allYears.forEach(year => {
+      filteredYears.forEach(year => {
         const tpt = tptData.find(d => d.year === year);
         const tpak = tpakData.find(d => d.year === year);
         const tptVal = tpt && tpt.total !== null ? tpt.total.toFixed(2) : 'Data tidak tersedia';
@@ -1538,8 +1659,12 @@
       link.click();
     }
 
-    document.getElementById('downloadComparisonExcel').addEventListener('click', exportComparisonToExcel);
-    document.getElementById('downloadComparisonPNG').addEventListener('click', exportComparisonToPNG);
+    document.getElementById('downloadComparisonExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportComparisonToExcel, 'data perbandingan ketenagakerjaan');
+    });
+    document.getElementById('downloadComparisonPNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportComparisonToPNG, 'grafik perbandingan ketenagakerjaan');
+    });
 
     // Export functions for TPT Pie Chart
     function exportTptPieToExcel() {
@@ -1572,8 +1697,12 @@
       link.click();
     }
 
-    document.getElementById('downloadTptPieExcel').addEventListener('click', exportTptPieToExcel);
-    document.getElementById('downloadTptPiePNG').addEventListener('click', exportTptPieToPNG);
+    document.getElementById('downloadTptPieExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTptPieToExcel, 'data TPT pie chart');
+    });
+    document.getElementById('downloadTptPiePNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTptPieToPNG, 'grafik TPT pie chart');
+    });
 
     // Export functions for TPT Line Chart
     function exportTptLineToExcel() {
@@ -1601,8 +1730,12 @@
       link.click();
     }
 
-    document.getElementById('downloadTptLineExcel').addEventListener('click', exportTptLineToExcel);
-    document.getElementById('downloadTptLinePNG').addEventListener('click', exportTptLineToPNG);
+    document.getElementById('downloadTptLineExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTptLineToExcel, 'data TPT line chart');
+    });
+    document.getElementById('downloadTptLinePNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTptLineToPNG, 'grafik TPT line chart');
+    });
 
     // Export functions for TPAK Pie Chart
     function exportTpakPieToExcel() {
@@ -1636,8 +1769,12 @@
       link.click();
     }
 
-    document.getElementById('downloadTpakPieExcel').addEventListener('click', exportTpakPieToExcel);
-    document.getElementById('downloadTpakPiePNG').addEventListener('click', exportTpakPieToPNG);
+    document.getElementById('downloadTpakPieExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpakPieToExcel, 'data TPAK pie chart');
+    });
+    document.getElementById('downloadTpakPiePNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpakPieToPNG, 'grafik TPAK pie chart');
+    });
 
     // Export functions for TPAK Line Chart
     function exportTpakLineToExcel() {
@@ -1665,8 +1802,12 @@
       link.click();
     }
 
-    document.getElementById('downloadTpakLineExcel').addEventListener('click', exportTpakLineToExcel);
-    document.getElementById('downloadTpakLinePNG').addEventListener('click', exportTpakLineToPNG);
+    document.getElementById('downloadTpakLineExcel').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpakLineToExcel, 'data TPAK line chart');
+    });
+    document.getElementById('downloadTpakLinePNG').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTpakLineToPNG, 'grafik TPAK line chart');
+    });
 
     // Listen for transition end on main panel
     if (mainPanel) {

@@ -6,6 +6,7 @@ db.sqlite3
 
 # Credentials
 credentials.json
+credential_oauth2
 
 # Python
 __pycache__/

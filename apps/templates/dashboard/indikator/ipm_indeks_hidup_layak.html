@@ -199,7 +199,33 @@
       const today = new Date();
       XLSX.writeFile(wb, `Indeks_Hidup_Layak_Surabaya_vs_JawaTimur_${today.toISOString().split('T')[0]}.xlsx`);
     }
-    document.getElementById('downloadChartIHL').addEventListener('click', exportToExcelIHL);
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
+    document.getElementById('downloadChartIHL').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToExcelIHL, 'data indeks hidup layak');
+    });
     
     function exportToPNGIHL() {
       const url = comparisonChart.getDataURL({
@@ -213,7 +239,9 @@
       link.click();
     }
     
-    document.getElementById('downloadImageIHL').addEventListener('click', exportToPNGIHL);
+    document.getElementById('downloadImageIHL').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToPNGIHL, 'grafik indeks hidup layak');
+    });
   });
 </script>
 

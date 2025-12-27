@@ -217,13 +217,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Tren IPM Kota Surabaya vs Jawa Timur</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadTrendExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTrendDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadTrendPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadTrendDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadTrendExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadTrendPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="trendChart" style="width: 100%; height: 450px;"></div>
@@ -238,13 +239,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">UHH SP - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadUhhSpExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadUhhSpDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadUhhSpPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadUhhSpDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadUhhSpExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadUhhSpPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="uhhSpChart" style="width: 100%; height: 350px;"></div>
@@ -254,13 +256,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">HLS - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadHlsExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadHlsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadHlsPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadHlsDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadHlsExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadHlsPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="hlsChart" style="width: 100%; height: 350px;"></div>
@@ -274,13 +277,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">RLS - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadRlsExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadRlsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadRlsPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadRlsDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadRlsExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadRlsPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="rlsChart" style="width: 100%; height: 350px;"></div>
@@ -290,13 +294,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Pengeluaran per Kapita - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadPengeluaranExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPengeluaranDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadPengeluaranPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadPengeluaranDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadPengeluaranExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadPengeluaranPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="pengeluaranChart" style="width: 100%; height: 350px;"></div>
@@ -310,13 +315,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Indeks Kesehatan - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadIndeksKesehatanExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksKesehatanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadIndeksKesehatanPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadIndeksKesehatanDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadIndeksKesehatanExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadIndeksKesehatanPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="indeksKesehatanChart" style="width: 100%; height: 350px;"></div>
@@ -326,13 +332,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Indeks Pendidikan - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadIndeksPendidikanExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksPendidikanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadIndeksPendidikanPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadIndeksPendidikanDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadIndeksPendidikanExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadIndeksPendidikanPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="indeksPendidikanChart" style="width: 100%; height: 350px;"></div>
@@ -346,13 +353,14 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Indeks Hidup Layak - Kota Surabaya</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadIndeksHidupLayakExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksHidupLayakDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadIndeksHidupLayakPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadIndeksHidupLayakDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadIndeksHidupLayakExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadIndeksHidupLayakPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="indeksHidupLayakChart" style="width: 100%; height: 350px;"></div>
@@ -362,16 +370,42 @@
       <div class="dashboard-card" style="position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h5 class="mb-0">Komposisi Indikator IPM - Tahun Terakhir</h5>
-          <div style="display: flex; gap: 8px;">
-            <button id="downloadCompositionExcel" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadCompositionDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <i class="fas fa-download"></i> <span>Unduh</span>
             </button>
-            <button id="downloadCompositionPNG" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <ul class="dropdown-menu" aria-labelledby="downloadCompositionDropdown" style="border-radius: 8px; min-width: 100%;">
+              <li><a class="dropdown-item" href="#" id="downloadCompositionExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="downloadCompositionPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+            </ul>
           </div>
         </div>
         <div id="compositionChart" style="width: 100%; height: 350px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Indeks Pembangunan Manusia</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Indeks Pembangunan Manusia (IPM)</strong> adalah indikator komposit yang mengukur pencapaian pembangunan manusia berdasarkan tiga dimensi utama: 
+          kesehatan, pendidikan, dan standar hidup layak. IPM dihitung dengan menggabungkan:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          <li><strong>Indeks Kesehatan</strong>: Diukur melalui Usia Harapan Hidup saat Lahir (UHH SP), 
+            yang mencerminkan kondisi kesehatan dan kualitas hidup penduduk.</li>
+          <li><strong>Indeks Pendidikan</strong>: Diukur melalui Harapan Lama Sekolah (HLS) dan Rata-rata Lama Sekolah (RLS), 
+            yang mencerminkan akses dan kualitas pendidikan.</li>
+          <li><strong>Indeks Hidup Layak</strong>: Diukur melalui Pengeluaran per Kapita yang disesuaikan, 
+            yang mencerminkan kemampuan ekonomi untuk memenuhi kebutuhan dasar.</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
+          Nilai IPM berkisar antara 0 hingga 100, di mana nilai yang lebih tinggi menunjukkan tingkat pembangunan manusia yang lebih baik. 
+          IPM digunakan untuk mengevaluasi kemajuan pembangunan manusia dan membantu dalam perencanaan kebijakan yang lebih fokus pada peningkatan kualitas hidup penduduk.
+        </p>
       </div>
     </div>
   </div>
@@ -1610,64 +1644,124 @@
       link.click();
     }
     
+    // Helper function to check authentication before download
+    function checkAuthBeforeDownload(callback, itemName = 'data') {
+      {% if not user.is_authenticated %}
+      // User not authenticated, show login modal
+      if (typeof showLoginRequiredModal === 'function') {
+        showLoginRequiredModal(itemName);
+      } else {
+        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+          const modal = new bootstrap.Modal(loginModal);
+          modal.show();
+        } else {
+          window.location.href = '{% url "login" %}';
+        }
+      }
+      return false;
+      {% else %}
+      // User authenticated, proceed with download
+      callback();
+      return true;
+      {% endif %}
+    }
+
     // Add event listeners for download buttons
-    document.getElementById('downloadTrendExcel')?.addEventListener('click', exportTrendToExcel);
-    document.getElementById('downloadTrendPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.trend, `Trend_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
+    document.getElementById('downloadTrendExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(exportTrendToExcel, 'data trend IPM');
+    });
+    document.getElementById('downloadTrendPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.trend, `Trend_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik trend IPM');
     });
     
-    document.getElementById('downloadUhhSpExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.uhhSp, 'UHH SP', 'tahun');
+    document.getElementById('downloadUhhSpExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.uhhSp, 'UHH SP', 'tahun');
+      }, 'data UHH SP');
     });
-    document.getElementById('downloadUhhSpPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.uhhSp, `UHH_SP_Chart_${new Date().toISOString().split('T')[0]}.png`);
-    });
-    
-    document.getElementById('downloadHlsExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.hls, 'HLS', 'tahun');
-    });
-    document.getElementById('downloadHlsPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.hls, `HLS_Chart_${new Date().toISOString().split('T')[0]}.png`);
+    document.getElementById('downloadUhhSpPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.uhhSp, `UHH_SP_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik UHH SP');
     });
     
-    document.getElementById('downloadRlsExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.rls, 'RLS', 'tahun');
+    document.getElementById('downloadHlsExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.hls, 'HLS', 'tahun');
+      }, 'data HLS');
     });
-    document.getElementById('downloadRlsPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.rls, `RLS_Chart_${new Date().toISOString().split('T')[0]}.png`);
-    });
-    
-    document.getElementById('downloadPengeluaranExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.pengeluaran, 'Pengeluaran per Kapita', 'Rp');
-    });
-    document.getElementById('downloadPengeluaranPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.pengeluaran, `Pengeluaran_Chart_${new Date().toISOString().split('T')[0]}.png`);
+    document.getElementById('downloadHlsPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.hls, `HLS_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik HLS');
     });
     
-    document.getElementById('downloadIndeksKesehatanExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.indeksKesehatan, 'Indeks Kesehatan');
+    document.getElementById('downloadRlsExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.rls, 'RLS', 'tahun');
+      }, 'data RLS');
     });
-    document.getElementById('downloadIndeksKesehatanPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.indeksKesehatan, `Indeks_Kesehatan_Chart_${new Date().toISOString().split('T')[0]}.png`);
-    });
-    
-    document.getElementById('downloadIndeksPendidikanExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.indeksPendidikan, 'Indeks Pendidikan');
-    });
-    document.getElementById('downloadIndeksPendidikanPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.indeksPendidikan, `Indeks_Pendidikan_Chart_${new Date().toISOString().split('T')[0]}.png`);
+    document.getElementById('downloadRlsPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.rls, `RLS_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik RLS');
     });
     
-    document.getElementById('downloadIndeksHidupLayakExcel')?.addEventListener('click', () => {
-      exportSingleSeriesToExcel(window.chartData.indeksHidupLayak, 'Indeks Hidup Layak');
+    document.getElementById('downloadPengeluaranExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.pengeluaran, 'Pengeluaran per Kapita', 'Rp');
+      }, 'data pengeluaran per kapita');
     });
-    document.getElementById('downloadIndeksHidupLayakPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.indeksHidupLayak, `Indeks_Hidup_Layak_Chart_${new Date().toISOString().split('T')[0]}.png`);
+    document.getElementById('downloadPengeluaranPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.pengeluaran, `Pengeluaran_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik pengeluaran per kapita');
     });
     
-    document.getElementById('downloadCompositionExcel')?.addEventListener('click', exportCompositionToExcel);
-    document.getElementById('downloadCompositionPNG')?.addEventListener('click', () => {
-      exportChartToPNG(window.chartInstances.composition, `Komposisi_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
+    document.getElementById('downloadIndeksKesehatanExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.indeksKesehatan, 'Indeks Kesehatan');
+      }, 'data indeks kesehatan');
+    });
+    document.getElementById('downloadIndeksKesehatanPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.indeksKesehatan, `Indeks_Kesehatan_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik indeks kesehatan');
+    });
+    
+    document.getElementById('downloadIndeksPendidikanExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.indeksPendidikan, 'Indeks Pendidikan');
+      }, 'data indeks pendidikan');
+    });
+    document.getElementById('downloadIndeksPendidikanPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.indeksPendidikan, `Indeks_Pendidikan_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik indeks pendidikan');
+    });
+    
+    document.getElementById('downloadIndeksHidupLayakExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportSingleSeriesToExcel(window.chartData.indeksHidupLayak, 'Indeks Hidup Layak');
+      }, 'data indeks hidup layak');
+    });
+    document.getElementById('downloadIndeksHidupLayakPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.indeksHidupLayak, `Indeks_Hidup_Layak_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik indeks hidup layak');
+    });
+    
+    document.getElementById('downloadCompositionExcel')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(exportCompositionToExcel, 'data komposisi IPM');
+    });
+    document.getElementById('downloadCompositionPNG')?.addEventListener('click', function() {
+      checkAuthBeforeDownload(() => {
+        exportChartToPNG(window.chartInstances.composition, `Komposisi_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
+      }, 'grafik komposisi IPM');
     });
   });
 </script>
