@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 #Connect to dotenv API
 load_dotenv()
@@ -23,10 +24,10 @@ if not ACCESS_KEY:
     raise ValueError("Access_KEY not found in environment variables. Please check your .env file.")
 
 # Secret Key
-SECRET_KEY = os.getenv('SECRET_KEY')
-if not SECRET_KEY:
-    raise ValueError("Secret_KEY not found in environment variables. Please check your .env file.")
-
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-dev-key-change-this"
+)
 
 # API Key 
 API_KEY = os.getenv('API_KEY')
@@ -121,10 +122,9 @@ ASGI_APPLICATION = 'aastabaya.asgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+    )
 }
 
 

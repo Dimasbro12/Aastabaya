@@ -1,4 +1,6 @@
 # Environment
+env/
+venv/
 .env
 
 # Database
